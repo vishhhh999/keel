@@ -12,6 +12,19 @@
 
 The end-to-end script was rewritten for v0.3 and has not yet been run: the sandbox that wrote it could start Docker but its network policy blocked Docker Hub and GitHub. It runs in CI on the first push. If a check fails there, the failure message names it.
 
+## Proof reel (19 Oct 2026, GitHub Actions, `.github/workflows/proof.yml`)
+
+The real stack (mediamtx, OBS, controller, relay) with two simulated phones and a simulated platform, recorded at the platform and on the dashboard. Measured from the platform's own log:
+
+| Event | What the platform received |
+|---|---|
+| Primary phone dies, backup healthy | Unbroken connection, switch to the backup on the next second, no black frames |
+| Both phones die | Unbroken connection, Be right back screen |
+| Primary phone returns | Unbroken connection, live again after the recovery time |
+| OBS killed | Crash shield BRB after about 2 s; program again about 2 s after OBS proved stable; broadcast resumed with no operator action |
+
+The recording found four real problems that the unit tests could not, all fixed: ~1.8 s of black during a failover, a crash shield that took ~4 s to engage and flipped back before sending a frame (~9 s with no video), a 1 s BRB flash at every Go live, and copies occasionally failing to start right after OBS restarted.
+
 ## Verified by hand (v0.1, 19 Oct 2026, Linux sandbox with Docker, OBS 30.0.2, mediamtx 1.21.2)
 
 | What | Result |

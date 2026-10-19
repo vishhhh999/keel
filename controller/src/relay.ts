@@ -49,6 +49,10 @@ export interface RelayOptions {
   now?: () => number;
   /** Patience right after Go live, while OBS starts its output. Default 10 s. */
   startGraceS?: number;
+  /** Seconds the program must stay back before leaving the crash shield, so a flapping OBS does not cause two reconnects. Default 2. */
+  returnStableS?: number;
+  /** Fast, direct check of the program path. When a copy dies, this decides between "OBS is gone, shield now" and "platform problem, retry". */
+  checkInput?: () => Promise<boolean>;
   /** Override backoff for tests. */
   backoffMs?: (attempt: number) => number;
 }
@@ -77,8 +81,11 @@ export function copyArgs(input: string, url: string): string[] {
   return [
     '-hide_banner', '-loglevel', 'error', '-nostats', '-progress', 'pipe:1',
     '-rw_timeout', '5000000',
+    // Start sending within about two seconds instead of analysing the input for five. Shorter windows
+    // sometimes miss the audio format right after OBS (re)starts, and the copy then fails to start.
+    '-analyzeduration', '2000000', '-probesize', '2000000',
     '-i', input,
-    '-map', '0', '-c', 'copy',
+    '-map', '0:v:0', '-map', '0:a:0?', '-c', 'copy',
     '-f', outFormat(url), url,
   ];
 }
@@ -89,7 +96,8 @@ export function shieldArgs(o: { image: string; fps: number; width: number; heigh
     '-re', '-loop', '1', '-framerate', String(o.fps), '-i', o.image,
     '-f', 'lavfi', '-i', 'anullsrc=channel_layout=stereo:sample_rate=48000',
     '-vf', `scale=${o.width}:${o.height}:force_original_aspect_ratio=decrease,pad=${o.width}:${o.height}:(ow-iw)/2:(oh-ih)/2,format=yuv420p`,
-    '-c:v', 'libx264', '-preset', 'veryfast', '-tune', 'stillimage', '-r', String(o.fps), '-g', String(o.fps * 2),
+    // zerolatency: no lookahead buffering, so the first frame leaves within a fraction of a second.
+    '-c:v', 'libx264', '-preset', 'veryfast', '-tune', 'zerolatency', '-bf', '0', '-r', String(o.fps), '-g', String(o.fps * 2),
     '-b:v', '2500k', '-maxrate', '2500k', '-bufsize', '5000k',
     '-c:a', 'aac', '-b:a', '128k',
     '-f', outFormat(url), url,
@@ -102,6 +110,8 @@ export class Relay extends EventEmitter {
   private wanted = false;
   private inputReady = false;
   private shieldTimer: NodeJS.Timeout | null = null;
+  private returnTimer: NodeJS.Timeout | null = null;
+  private shieldOn = false;
   private spawnFn: SpawnFn;
   private now: () => number;
   private backoff: (n: number) => number;
@@ -146,7 +156,9 @@ export class Relay extends EventEmitter {
   stop(): void {
     this.wanted = false;
     if (this.shieldTimer) clearTimeout(this.shieldTimer);
-    this.shieldTimer = null;
+    if (this.returnTimer) clearTimeout(this.returnTimer);
+    this.shieldTimer = this.returnTimer = null;
+    this.shieldOn = false;
     for (const x of this.dests.values()) {
       this.kill(x);
       this.set(x, x.enabled ? 'off' : 'disabled');
@@ -162,11 +174,34 @@ export class Relay extends EventEmitter {
     if (ready) {
       if (this.shieldTimer) clearTimeout(this.shieldTimer);
       this.shieldTimer = null;
-      const wasShield = this.shielding;
-      for (const x of this.dests.values()) if (x.enabled && x.mode !== 'copy') this.restart(x);
-      if (wasShield) this.emit('shield', false);
+      // Nothing on air yet (start of the broadcast): go straight to the program.
+      if (!this.shieldOn) return this.toProgram();
+      // Leaving the shield costs a reconnect on every platform, so only do it once OBS has stayed back.
+      if (this.returnTimer) return;
+      this.returnTimer = setTimeout(() => {
+        this.returnTimer = null;
+        if (this.wanted && this.inputReady) this.toProgram();
+      }, (this.o.returnStableS ?? 2) * 1000);
+      this.returnTimer.unref?.();
     } else {
+      if (this.returnTimer) clearTimeout(this.returnTimer);
+      this.returnTimer = null;
       this.armShield();
+    }
+  }
+
+  private toProgram(): void {
+    for (const x of this.dests.values()) if (x.enabled && x.mode !== 'copy') this.restart(x);
+    if (this.shieldOn) {
+      this.shieldOn = false;
+      this.emit('shield', false);
+    }
+  }
+
+  private shieldNow(): void {
+    if (!this.shieldOn) {
+      this.shieldOn = true;
+      this.emit('shield', true);
     }
   }
 
@@ -176,7 +211,7 @@ export class Relay extends EventEmitter {
       this.shieldTimer = null;
       if (!this.wanted || this.inputReady) return;
       for (const x of this.dests.values()) if (x.enabled && x.mode !== 'shield') this.restart(x);
-      this.emit('shield', true);
+      this.shieldNow();
     }, delayS * 1000);
     this.shieldTimer.unref?.();
   }
@@ -265,13 +300,35 @@ export class Relay extends EventEmitter {
     });
     child.on('exit', (code) => {
       if (x.proc !== child) return; // replaced on purpose
+      const was = x.mode;
       x.proc = null;
       x.mode = null;
       x.kbps = 0;
       if (!this.wanted || !x.enabled) return;
       if (code !== 0 && !x.lastError) x.lastError = `ffmpeg exited with code ${code}`;
+      if (was === 'copy' && this.o.checkInput) {
+        // The copy died. If the program is gone (OBS crashed), cover with the shield immediately
+        // instead of waiting for the next poll; otherwise it is the platform, so retry.
+        this.o.checkInput().then(
+          (ok) => this.afterCopyExit(x, ok),
+          () => this.afterCopyExit(x, true),
+        );
+        return;
+      }
       this.scheduleRetry(x);
     });
+  }
+
+  private afterCopyExit(x: Dest, programOk: boolean): void {
+    if (!this.wanted || !x.enabled || x.proc || x.retry) return;
+    if (programOk) return this.scheduleRetry(x);
+    this.inputReady = false;
+    if (this.returnTimer) clearTimeout(this.returnTimer);
+    this.returnTimer = null;
+    if (this.shieldTimer) clearTimeout(this.shieldTimer);
+    this.shieldTimer = null;
+    this.spawn(x, 'shield');
+    this.shieldNow();
   }
 
   private progress(x: Dest, child: ChildLike, line: string): void {

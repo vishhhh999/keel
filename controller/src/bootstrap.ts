@@ -96,7 +96,8 @@ export async function bootstrapObs(obs: ObsLike, cfg: Config): Promise<SourceIte
           restart_on_activate: false,
           close_when_inactive: false,
           hw_decode: false,
-          clear_on_media_end: true,
+          // Hold the last frame while Keel decides (freeze, then BRB or the backup), never flash black.
+          clear_on_media_end: false,
         },
         sceneItemEnabled: i === 0,
       }),

@@ -161,7 +161,8 @@ export class Keel extends EventEmitter {
     this.program?.on('sample', (x) => this.relay?.setInputReady(x.ready));
     if (this.relay) {
       this.relay.on('retry', (d: { id: string; name: string }, wait: number) => {
-        this.emit('log', `${d.name}: connection lost, retrying in ${Math.round(wait / 1000)}s`);
+        const err = this.relay?.status().find((x) => x.id === d.id)?.lastError;
+        this.emit('log', `${d.name}: connection lost, retrying in ${Math.round(wait / 1000)}s${err ? ` (${err})` : ''}`);
         this.stats.record({ t: this.now(), type: 'dest', state: 'retrying', detail: d.name });
         this.alert(`dest-${d.id}`, `${d.name} dropped the connection. Retrying on its own, other platforms are not affected.`);
       });
@@ -267,8 +268,12 @@ export class Keel extends EventEmitter {
   private pickSource(): SourceRt {
     const primary = this.sources[0]!;
     if (this.pin !== 'auto') return this.sources.find((s) => s.cfg.id === this.pin) ?? primary;
+    // A publisher that has disconnected outright counts as gone right away for failover: there is no reason
+    // to show a frozen or black frame for the degrade delay when a healthy backup is already on screen-ready.
+    // Coming back still needs the full recovery time, because rank follows the switcher state once connected.
+    const rank = (s: SourceRt) => (s.ingest.last.ready ? SEVERITY[s.state] : SEVERITY.offline);
     let best = primary;
-    for (const s of this.sources.slice(1)) if (SEVERITY[s.state] < SEVERITY[best.state]) best = s;
+    for (const s of this.sources.slice(1)) if (rank(s) < rank(best)) best = s;
     return best;
   }
 
@@ -278,6 +283,16 @@ export class Keel extends EventEmitter {
       src.state = d.state;
       src.reason = d.reason;
       if (this.sources.length > 1) this.emit('log', `${src.cfg.label.toLowerCase()} ${d.previous} -> ${d.state} (${d.reason})`);
+    }
+    // A phone that disconnects outright while the other one is healthy is gone now, not after the degrade
+    // delay: viewers switch to the healthy feed immediately, and this one must earn the full recovery time
+    // before it is put back on air (no bounce on a one second blip).
+    if (!s.ready && src.state !== 'offline' && this.sources.some((o) => o !== src && o.state === 'live' && o.ingest.last.ready)) {
+      const prev = src.state;
+      src.switcher.reset('offline');
+      src.state = 'offline';
+      src.reason = 'publisher disconnected';
+      this.emit('log', `${src.cfg.label.toLowerCase()} ${prev} -> offline (publisher disconnected, healthy backup available)`);
     }
     if (s.ready || this.streaming || this.wantLive) this.touch();
     this.evaluate();

@@ -29,7 +29,7 @@ field() { curl -s -H "$AUTH" localhost:8080/api/status | python3 -c "import sys,
 wait_for() { for _ in $(seq 1 "${3:-60}"); do [ "$(field "$1" 2>/dev/null)" = "$2" ] && return 0; sleep 2; done; return 1; }
 probe() { timeout 15 ffprobe -v error -show_entries stream=width -of csv=p=0 "rtmp://localhost:11935/app/$1" 2>/dev/null | head -1; }
 # A destination that just (re)connected can take a few seconds to appear on the platform: retry before judging.
-width() { local w=""; for _ in 1 2 3 4 5 6; do w=$(probe "$1"); [ -n "$w" ] && break; sleep 3; done; echo "$w"; }
+width() { local w=""; for _ in 1 2 3 4 5 6; do w=$(probe "$1"); [ -n "$w" ] && [ "$w" != 0 ] && break; sleep 3; done; echo "$w"; }
 phone() { (setsid bash ../scripts/fake-phone.sh srt localhost "$1" 4000 >/dev/null 2>&1 &); }
 kill_phone() { pkill -f "[s]treamid=publish:$1&" ; }
 
