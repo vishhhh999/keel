@@ -5,8 +5,8 @@
 ```bash
 cd platform
 KEEL_PROVIDER=hetzner HCLOUD_TOKEN=... KEEL_ADMIN_TOKEN=$(openssl rand -hex 24) \
-KEEL_PLATFORM_URL=https://api.example.com KEEL_REPO=https://github.com/OWNER/keel.git \
-KEEL_IMAGE_PREFIX=ghcr.io/OWNER/keel STRIPE_WEBHOOK_SECRET=whsec_... \
+KEEL_PLATFORM_URL=https://api.example.com KEEL_REPO=https://github.com/vishhhh999/keel.git \
+KEEL_IMAGE_PREFIX=ghcr.io/vishhhh999/keel STRIPE_WEBHOOK_SECRET=whsec_... \
 npm start
 # Branded hostnames instead of <ip>.sslip.io:
 #   KEEL_DNS=cloudflare CF_API_TOKEN=... CF_ZONE_ID=... KEEL_DOMAIN=streams.example.com
