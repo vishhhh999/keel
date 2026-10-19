@@ -17,7 +17,7 @@ Website (deploys to Vercel from `web/`) has an interactive demo of the real dash
 
 > Status: **v0.3.** The original core loop (SRT in, switching, broadcast through a drop) was verified end to end with real OBS in Docker. The v0.3 reliability features (backup failover, relay, crash shield, SRT-aware switching, auto-recover, live rules, roles, alerts) are covered by 76 controller tests and by `scripts/e2e.sh`, which runs in GitHub Actions on every push with real OBS. Nothing has run on a real phone over cellular, against live Twitch/Kick/YouTube, or with real streamers yet. Read "What is not proven" before betting anything on it.
 
-**Open to acquisition, licensing or partnership.** Keel needs a funded vishhhh999 to take it to market. Contact [@vishafterdark on X](https://x.com/vishafterdark) or [work@visheshmahendru.com](mailto:work@visheshmahendru.com).
+**Open to acquisition, licensing or partnership.** Keel needs a funded owner to take it to market. Contact [@vishafterdark on X](https://x.com/vishafterdark) or [work@visheshmahendru.com](mailto:work@visheshmahendru.com).
 
 ---
 
@@ -61,10 +61,10 @@ With a backup encoder the rule runs per source and viewers see whichever source 
 
 ```bash
 git clone https://github.com/vishhhh999/keel.git keel && cd keel
-KEEL_DESTINATIONS='Twitch=rtmp://live.twitch.tv/app/live_xxx;Kick=rtmps://.../app/sk_xxx' ./deploy/install.sh
+KEEL_DESTINATIONS='Twitch=rtmp://live.twitch.tv/app/live_xxx;Kick=rtmps://.../app/sk_xxx' bash deploy/install.sh
 ```
 
-No domain needed: without `KEEL_PUBLIC_HOST` the script uses `<your-ip>.sslip.io`, which gets a real certificate. It generates every secret, opens the firewall, binds the plain HTTP port to localhost, starts the stack with Caddy, and prints the dashboard address, admin token, moderator token and both phone addresses. Optional: `KEEL_NOTIFY_WEBHOOK` (Discord/Slack alerts), `KEEL_SRTLA=1` (bonding receiver, untested), `KEEL_IMAGE_PREFIX=ghcr.io/<vishhhh999>/keel` (prebuilt images, much faster first boot).
+No domain needed: without `KEEL_PUBLIC_HOST` the script uses `<your-ip>.sslip.io`, which gets a real certificate. It generates every secret, opens the firewall, binds the plain HTTP port to localhost, starts the stack with Caddy, and prints the dashboard address, admin token, moderator token and both phone addresses. Optional: `KEEL_NOTIFY_WEBHOOK` (Discord/Slack alerts), `KEEL_SRTLA=1` (bonding receiver, untested), `KEEL_IMAGE_PREFIX=ghcr.io/<owner>/keel` (prebuilt images, much faster first boot).
 
 ## Setup: manual
 
@@ -84,7 +84,7 @@ Every setting is documented in [`stack/.env.example`](stack/.env.example). Open 
 3. Press **Go live**. Each destination shows Connecting, then Live.
 4. Airplane mode on the primary for 10 seconds. With a backup, viewers stay live on it. Without, the scene goes to BRB and every platform keeps receiving video. Turn the phone back on and Keel returns to it.
 
-No phone and no streaming account: `./scripts/e2e.sh` (Docker and ffmpeg) runs the whole stack with two fake phones, two fake platforms, a failover and an OBS crash.
+No phone and no streaming account: `bash scripts/e2e.sh` (Docker and ffmpeg) runs the whole stack with two fake phones, two fake platforms, a failover and an OBS crash.
 
 ## Dashboard and controls
 

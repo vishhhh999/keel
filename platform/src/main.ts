@@ -13,7 +13,7 @@ if (dnsKind === 'cloudflare' && (!env.CF_API_TOKEN || !env.CF_ZONE_ID || !env.KE
 const dns = dnsKind === 'cloudflare' ? cloudflareDns({ token: env.CF_API_TOKEN!, zoneId: env.CF_ZONE_ID!, domain: env.KEEL_DOMAIN! }) : sslipDns();
 const db = open(env.KEEL_PLATFORM_DB ?? './platform.db');
 const svc = service(db, provider, {
-  repo: env.KEEL_REPO ?? 'https://github.com/OWNER/keel.git', ref: env.KEEL_REF ?? 'main',
+  repo: env.KEEL_REPO ?? 'https://github.com/vishhhh999/keel.git', ref: env.KEEL_REF ?? 'main',
   baseUrl: env.KEEL_PLATFORM_URL ?? 'http://localhost:8787',
   idleMinutes: Number(env.KEEL_IDLE_MINUTES ?? 15), maxServersPerHour: Number(env.KEEL_MAX_SERVERS_PER_HOUR ?? 20),
   bootTimeoutMin: Number(env.KEEL_BOOT_TIMEOUT_MIN ?? 15), imagePrefix: env.KEEL_IMAGE_PREFIX, imageTag: env.KEEL_IMAGE_TAG,

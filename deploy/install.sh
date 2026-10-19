@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # One server, one command. Run as root on a fresh Ubuntu 22.04 or 24.04 box.
 #
-#   KEEL_PUBLIC_HOST=keel.example.com KEEL_STREAM_KEY=live_xxx ./deploy/install.sh
-#   KEEL_PUBLIC_HOST=keel.example.com KEEL_DESTINATIONS='Twitch=rtmp://live.twitch.tv/app/live_xxx;Kick=rtmps://.../app/sk_xxx' ./deploy/install.sh
+#   KEEL_PUBLIC_HOST=keel.example.com KEEL_STREAM_KEY=live_xxx bash deploy/install.sh
+#   KEEL_PUBLIC_HOST=keel.example.com KEEL_DESTINATIONS='Twitch=rtmp://live.twitch.tv/app/live_xxx;Kick=rtmps://.../app/sk_xxx' bash deploy/install.sh
 #
 # KEEL_PUBLIC_HOST can be left out: the script then uses <your-ip>.sslip.io, which gets a real HTTPS
 # certificate with no DNS setup.
