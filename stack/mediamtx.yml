@@ -30,6 +30,12 @@ authInternalUsers:
         path: ~^live/[A-Za-z0-9_-]{16,}$
       - action: read
         path: ~^live/[A-Za-z0-9_-]{16,}$
+      # Relay mode: OBS publishes the finished program to out/<key>, the controller's relay reads it.
+      # The path is as secret as the ingest key, and port 1935 should never be needed from outside for it.
+      - action: publish
+        path: ~^out/[A-Za-z0-9_-]{16,}$
+      - action: read
+        path: ~^out/[A-Za-z0-9_-]{16,}$
       - action: api
 
 paths:

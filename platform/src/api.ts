@@ -34,19 +34,30 @@ export function api(svc: Service, o: { adminToken: string; stripeSecret?: string
         const raw = await body(req, 512_000);
         if (!o.stripeSecret || !verifyStripe(raw, String(req.headers['stripe-signature'] ?? ''), o.stripeSecret)) return send(res, 400, { error: 'bad signature' });
         const ev = json(raw); const cust = ev.data?.object?.customer;
-        if (cust && ['customer.subscription.deleted', 'invoice.payment_failed'].includes(ev.type)) svc.setStatus(cust, 'suspended');
+        if (cust && ['customer.subscription.deleted', 'invoice.payment_failed'].includes(ev.type)) await svc.suspend(cust);
         if (cust && ev.type === 'invoice.paid') svc.setStatus(cust, 'active');
         return send(res, 200, { received: true });
       }
 
       if (p.startsWith('/v1/')) {
         const t = svc.byToken(bearer); if (!t) return send(res, 401, { error: 'unauthorized' });
-        if (p === '/v1/me') { const s = svc.server(t.id); return send(res, 200, { tenant: { id: t.id, name: t.name, plan: t.plan, status: t.status }, server: { state: s.state, ip: s.ip, error: s.error }, usage: svc.usage(t.id) }); }
+        if (p === '/v1/me') {
+          const s = svc.server(t.id);
+          return send(res, 200, { tenant: { id: t.id, name: t.name, plan: t.plan, status: t.status }, server: { state: s.state, ip: s.ip, host: s.host, error: s.error }, access: svc.access(t.id), usage: svc.usage(t.id) });
+        }
         if (p === '/v1/server/start' && req.method === 'POST') {
           const b = json(await body(req));
-          if (!/^rtmps?:\/\//.test(b.rtmpUrl ?? '') || !safeValue(b.rtmpUrl) || !safeValue(b.streamKey)) return send(res, 400, { error: 'rtmpUrl and streamKey required, no spaces or quotes' });
-          const s = await svc.start(t.id, { rtmpUrl: b.rtmpUrl, streamKey: b.streamKey });
-          return send(res, 200, { state: s.state, ip: s.ip, error: s.error });
+          // Either destinations: [{ name, url }] (multistream) or the single rtmpUrl + streamKey form.
+          let dests: { name: string; url: string }[] = [];
+          if (Array.isArray(b.destinations)) dests = b.destinations;
+          else if (b.rtmpUrl || b.streamKey) dests = [{ name: 'Main', url: String(b.rtmpUrl ?? '').replace(/\/+$/, '') + '/' + String(b.streamKey ?? '') }];
+          if (!dests.length || dests.length > 10) return send(res, 400, { error: 'send 1 to 10 destinations, or rtmpUrl and streamKey' });
+          for (const d of dests) {
+            if (!d || typeof d.name !== 'string' || !/^[\w .-]{1,40}$/.test(d.name)) return send(res, 400, { error: 'destination names: letters, numbers, spaces, dots and dashes, up to 40' });
+            if (!/^(rtmps?|srt):\/\/[^/]+\/?\S*[^/]$/.test(d.url ?? '') || !safeValue(d.url) || d.url.includes(';')) return send(res, 400, { error: `${d.name}: an rtmp, rtmps or srt URL including the stream key, no spaces or quotes` });
+          }
+          const s = await svc.start(t.id, { destinations: dests.map((d) => ({ name: d.name.trim(), url: d.url })) });
+          return send(res, 200, { state: s.state, ip: s.ip, host: s.host, error: s.error, access: svc.access(t.id) });
         }
         if (p === '/v1/server/stop' && req.method === 'POST') { const s = await svc.stop(t.id); return send(res, 200, { state: s.state }); }
       }

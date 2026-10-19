@@ -1,16 +1,16 @@
-# Test overlay: adds a fake "Twitch" (a second mediamtx) so the whole pipeline can be exercised
+# Test overlay: adds a fake "platform" (a second mediamtx) so the whole pipeline can be exercised
 # locally with no streaming account. Used by scripts/e2e.sh.
 #   docker compose -f docker-compose.yml -f docker-compose.test.yml up -d --build
 services:
   sink:
     image: bluenviron/mediamtx:1.21.2
     ports:
-      - "11935:1935"   # RTMP, so the test can pull frames back out of the "platform"
+      - "11935:1935"   # RTMP, so the test can pull frames back out of the "platforms"
   controller:
     depends_on: [sink]
     environment:
-      KEEL_RTMP_URL: rtmp://sink:1935/app
-      KEEL_STREAM_KEY: e2e
+      # Two destinations on the fake platform, to prove multistream and per-destination reconnects.
+      KEEL_DESTINATIONS: "Sink A=rtmp://sink:1935/app/e2ea;Sink B=rtmp://sink:1935/app/e2eb"
     build:
       context: ../controller
       secrets: [ca]

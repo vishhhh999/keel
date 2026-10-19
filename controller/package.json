@@ -1,6 +1,6 @@
 {
   "name": "keel-controller",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Keel controller: watches the phone ingest, drives OBS scene switching, serves the dashboard and Twitch chat commands.",
   "type": "module",

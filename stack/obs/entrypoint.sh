@@ -6,6 +6,12 @@ set -euo pipefail
 ENCODER="${KEEL_ENCODER:-x264}"          # x264 | nvenc
 BITRATE="${KEEL_BITRATE_KBPS:-6000}"
 FPS="${KEEL_FPS:-30}"
+case "${KEEL_RESOLUTION:-1080p}" in
+  720p) W=1280; H=720 ;;
+  1440p) W=2560; H=1440 ;;
+  *) W=1920; H=1080 ;;
+esac
+PRESET="${KEEL_X264_PRESET:-veryfast}"
 
 CFG="$HOME/.config/obs-studio"
 PROFILE="$CFG/basic/profiles/Keel"
@@ -47,7 +53,7 @@ EOF
 else
   ENC_ID="obs_x264"
   cat > "$PROFILE/streamEncoder.json" <<EOF
-{"bitrate": ${BITRATE}, "rate_control": "CBR", "preset": "veryfast", "profile": "high", "keyint_sec": 2}
+{"bitrate": ${BITRATE}, "rate_control": "CBR", "preset": "${PRESET}", "profile": "high", "keyint_sec": 2}
 EOF
 fi
 
@@ -56,10 +62,10 @@ cat > "$PROFILE/basic.ini" <<EOF
 Name=Keel
 
 [Video]
-BaseCX=1920
-BaseCY=1080
-OutputCX=1920
-OutputCY=1080
+BaseCX=${W}
+BaseCY=${H}
+OutputCX=${W}
+OutputCY=${H}
 FPSType=0
 FPSCommon=${FPS}
 ScaleType=bicubic
@@ -89,8 +95,8 @@ cat > "$CFG/basic/scenes/Keel.json" <<'JSON'
 {"name":"Keel","current_scene":"BRB","current_program_scene":"BRB","scene_order":[{"name":"BRB"}],"sources":[{"id":"scene","name":"BRB","uuid":"6f1d1f3e-0c1a-4b52-9a6e-3b7d2f0a1c01","versioned_id":"scene","settings":{"id_counter":0,"items":[]},"mixers":0,"enabled":true,"muted":false,"volume":1.0,"flags":0,"prev_ver":536870912}],"groups":[],"quick_transitions":[],"transitions":[],"saved_projectors":[],"modules":{}}
 JSON
 
-echo "starting OBS (encoder=${ENC_ID}, ${BITRATE} kbps, ${FPS} fps)"
-xvfb-run -a -s "-screen 0 1920x1080x24" \
+echo "starting OBS (encoder=${ENC_ID}, ${W}x${H}, ${BITRATE} kbps, ${FPS} fps)"
+xvfb-run -a -s "-screen 0 ${W}x${H}x24" \
   obs --disable-shutdown-check --disable-updater --minimize-to-tray \
       --profile Keel --collection Keel 2>&1 | grep --line-buffered -vE '^debug|Failed to open media'
 code=${PIPESTATUS[0]}

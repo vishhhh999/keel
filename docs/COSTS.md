@@ -4,7 +4,7 @@ These are planning estimates, not quotes. Check current cloud pricing before rel
 
 ## What costs money
 
-1. **Compute while live.** The OBS server runs only during a stream. CPU encoding at 1080p30 needs roughly 4 vCPU and 8 GB. A GPU instance is more expensive per hour but can be more consistent for 1080p60.
+1. **Compute while live.** The relay copies video without re-encoding, so multistreaming adds almost no CPU; the crash shield encodes a still image only while OBS is down. The OBS server runs only during a stream. CPU encoding at 1080p30 needs roughly 4 vCPU and 8 GB. A GPU instance is more expensive per hour but can be more consistent for 1080p60.
 2. **Egress.** The broadcast leaves the server at about 6 Mbps, which is roughly 2.7 GB per hour. Many clouds charge for this. Some hosts include generous bandwidth.
 3. **Idle time.** Keel can stop the server when unused (`KEEL_IDLE_ACTION=webhook`), so cost follows usage.
 

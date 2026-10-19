@@ -7,7 +7,7 @@ cd "$(dirname "$0")/.."
 CYCLES="${1:-10}"
 API="${KEEL_API:-http://localhost:8080}"; HOST="${KEEL_HOST:-localhost}"
 TOKEN="${KEEL_API_TOKEN:?set KEEL_API_TOKEN}"; PATH_NAME="${KEEL_INGEST_PATH:?set KEEL_INGEST_PATH}"
-streaming() { curl -fsS -H "authorization: Bearer $TOKEN" "$API/api/status" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>console.log(JSON.parse(s).obs.streaming))'; }
+streaming() { curl -fsS -H "authorization: Bearer $TOKEN" "$API/api/status" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const j=JSON.parse(s);console.log(j.broadcast?j.broadcast.onAir:j.obs.streaming)})'; }
 bad=0
 for i in $(seq 1 "$CYCLES"); do
   ./scripts/fake-phone.sh srt "$HOST" "$PATH_NAME" >/dev/null 2>&1 & PID=$!

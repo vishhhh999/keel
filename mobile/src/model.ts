@@ -2,10 +2,18 @@
 export type Signal = 'live' | 'low' | 'offline';
 export type Scene = 'live' | 'low' | 'brb';
 
+export type Pin = 'auto' | 'primary' | 'backup';
+export interface Link { rttMs: number | null; lossPct: number | null; dropPct: number | null; bufferMs?: number | null }
+export interface Destination { id: string; name: string; state: string; enabled: boolean; kbps: number; restarts: number; lastError?: string }
+export interface Source { id: 'primary' | 'backup'; label: string; state: Signal; ready: boolean; kbps: number; active: boolean; link?: Link | null }
+
 export interface Status {
+  role?: 'admin' | 'mod';
   mode: 'auto' | 'manual';
   obs: { connected: boolean; scene: string | null; streaming: boolean; reconnecting?: boolean; timecode?: string };
-  ingest: { state: Signal; kbps: number; ready: boolean; reason?: string };
+  ingest: { state: Signal; kbps: number; ready: boolean; reason?: string; link?: Link | null; active?: 'primary' | 'backup'; pin?: Pin };
+  sources?: Source[];
+  broadcast?: { output: 'relay' | 'direct'; wanted: boolean; onAir: boolean; shield: boolean; autoRestarts: number; destinations: Destination[] };
   summary?: Record<string, unknown>;
   events?: Array<{ t: number; type?: string; kind?: string; msg?: string; message?: string }>;
 }
@@ -22,6 +30,23 @@ export function describe(s: Pick<Status, 'ingest'>) {
   const w = WORDS[s.ingest.state] ?? WORDS.offline;
   return { ...w, kbps: Math.max(0, Math.round(s.ingest.kbps || 0)) };
 }
+
+/** Link quality chips for the hero card. Levels: '' ok, 'warn', 'bad'. */
+export function linkChips(l: Link | null | undefined): { label: string; value: string; level: '' | 'warn' | 'bad' }[] {
+  if (!l) return [];
+  const out: { label: string; value: string; level: '' | 'warn' | 'bad' }[] = [];
+  if (l.rttMs != null) out.push({ label: 'RTT', value: Math.round(l.rttMs) + ' ms', level: l.rttMs > 600 ? 'bad' : l.rttMs > 250 ? 'warn' : '' });
+  if (l.lossPct != null) out.push({ label: 'Loss', value: l.lossPct.toFixed(1) + '%', level: l.lossPct > 20 ? 'bad' : l.lossPct > 5 ? 'warn' : '' });
+  if (l.dropPct != null) out.push({ label: 'Dropped', value: l.dropPct.toFixed(1) + '%', level: l.dropPct > 2 ? 'bad' : l.dropPct > 0.5 ? 'warn' : '' });
+  return out;
+}
+
+/** Is the audience receiving video? Relay mode reports it directly; older servers only know OBS streaming. */
+export function onAir(s: Pick<Status, 'obs' | 'broadcast'>): boolean {
+  return s.broadcast ? s.broadcast.onAir : s.obs.streaming;
+}
+
+export const DEST_WORD: Record<string, string> = { live: 'Live', shield: 'Shield', retrying: 'Retrying', connecting: 'Connecting', off: 'Off', disabled: 'Paused' };
 
 export function formatKbps(k: number): string {
   if (k >= 1000) return (k / 1000).toFixed(1) + ' Mbps';

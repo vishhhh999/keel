@@ -19,14 +19,17 @@ class FakeIngest extends EventEmitter {
   }
 }
 
-async function setup() {
+async function setup(env: Record<string, string> = {}) {
   const mock = new MockObs({ port: 0 });
   const cfg = loadConfig({
+    KEEL_OUTPUT_MODE: 'direct',
+    KEEL_BACKUP_INGEST_PATH: 'off',
     KEEL_OBS_URL: `ws://127.0.0.1:${mock.port}`,
     KEEL_INGEST_PATH: 'live/test',
     KEEL_RTMP_URL: 'rtmp://sink/app',
     KEEL_STREAM_KEY: 'k',
     KEEL_DATA_DIR: '',
+    ...env,
   } as NodeJS.ProcessEnv);
   const obs = new ObsClient(cfg.obsUrl, '');
   const ingest = new FakeIngest();
@@ -128,6 +131,7 @@ test('stream start and stop work, and an unexpected stop is recorded', async () 
 test('startStream without a destination fails with a clear message', async () => {
   const { keel, cfg, done } = await setup();
   (cfg as any).rtmpUrl = '';
+  (cfg as any).destinations = [];
   await assert.rejects(keel.startStream(), /KEEL_RTMP_URL/);
   await done();
 });

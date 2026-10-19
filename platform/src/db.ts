@@ -1,9 +1,9 @@
 import { DatabaseSync } from 'node:sqlite';
 import { randomBytes, createHash } from 'node:crypto';
 
-export type ServerState = 'none' | 'provisioning' | 'running' | 'stopping' | 'stopped' | 'error';
+export type ServerState = 'none' | 'provisioning' | 'booting' | 'running' | 'stopping' | 'stopped' | 'error';
 export interface Tenant { id: string; name: string; email: string; plan: string; stripe_customer: string | null; status: string; created: number }
-export interface ServerRow { tenant_id: string; provider_id: string | null; ip: string | null; state: ServerState; started: number | null; updated: number; error: string | null }
+export interface ServerRow { tenant_id: string; provider_id: string | null; ip: string | null; state: ServerState; started: number | null; updated: number; error: string | null; api_token: string | null; host: string | null; ingest_path: string | null }
 
 export const sha = (s: string) => createHash('sha256').update(s).digest('hex');
 export const token = (prefix: string) => prefix + '_' + randomBytes(24).toString('base64url');
@@ -19,6 +19,9 @@ export function open(path: string) {
     CREATE INDEX IF NOT EXISTS usage_tenant ON usage(tenant_id, ended);
     CREATE TABLE IF NOT EXISTS audit (id INTEGER PRIMARY KEY AUTOINCREMENT, t INTEGER NOT NULL, tenant_id TEXT, event TEXT NOT NULL, detail TEXT);
   `);
+  // Additive migrations for databases created by earlier versions.
+  const cols = (db.prepare('PRAGMA table_info(servers)').all() as { name: string }[]).map((c) => c.name);
+  for (const [c, type] of [['host', 'TEXT'], ['ingest_path', 'TEXT']] as const) if (!cols.includes(c)) db.exec(`ALTER TABLE servers ADD COLUMN ${c} ${type}`);
   return db;
 }
 export type DB = ReturnType<typeof open>;

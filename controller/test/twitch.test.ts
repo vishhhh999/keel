@@ -40,6 +40,7 @@ async function harness() {
     status: () => 'STATUS',
     setScene: async (k) => (calls.push(`scene:${k}`), `scene ${k}`),
     setAuto: async () => (calls.push('auto'), 'auto on'),
+    setSource: async (p) => (calls.push(`source:${p}`), `source ${p}`),
     startStream: async () => (calls.push('start'), 'starting'),
     stopStream: async () => (calls.push('stop'), 'stopped'),
   };

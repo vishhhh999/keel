@@ -10,87 +10,134 @@
 <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --hull:#0E2A2F; --bone:#F3EEE4; --buoy:#FF5B1F; --foam:#BFE3D6; --kelp:#1F7A55; --lamp:#F5B83D; --rust:#8A2F12; --mint:#7BDDB0;
+  --hull:#0E2A2F; --bone:#F3EEE4; --buoy:#FF5B1F; --foam:#BFE3D6; --kelp:#1F7A55; --lamp:#F5B83D; --rust:#8A2F12; --mint:#7BDDB0; --tide:#3C7E96;
   --card:#FBF8F1; --line:#D9D1C0; --ink-60:#5B6E70; --hull-2:#14363C; --hull-3:#1B444B; --line-dark:#27505A; --on-dark-60:#9FB3B0;
   --font:'Cabinet Grotesk',system-ui,-apple-system,'Segoe UI',sans-serif;
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bone);color:var(--hull);font-family:var(--font);font-weight:500;font-size:16px;line-height:1.4;-webkit-font-smoothing:antialiased}
 body{min-height:100vh;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
-button{font:inherit;color:inherit;cursor:pointer}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
 .num{font-variant-numeric:tabular-nums}
+[hidden]{display:none!important}
 
-header{display:flex;align-items:center;gap:20px;padding:20px 32px}
+header{display:flex;align-items:center;gap:14px;padding:20px 32px;max-width:1344px;margin:0 auto}
 header img{height:34px;display:block}
 .spacer{flex:1}
-.conn{white-space:nowrap;display:flex;gap:10px;align-items:center;font-size:14px;font-weight:700;color:var(--ink-60);background:var(--card);border:2px solid var(--hull);border-radius:999px;padding:6px 16px 6px 12px}
-.pip{width:10px;height:10px;border-radius:50%;background:#9AA8A6;display:inline-block}
-.pip.ok{background:var(--kelp)} .pip.bad{background:var(--buoy)} .pip.warn{background:var(--lamp)}
+.chip{white-space:nowrap;display:inline-flex;gap:9px;align-items:center;font-size:14px;font-weight:700;color:var(--hull);background:var(--card);border:2px solid var(--hull);border-radius:999px;padding:6px 15px 6px 12px}
+.chip.role{background:var(--lamp)}
+.pip{width:10px;height:10px;border-radius:50%;background:#9AA8A6;display:inline-block;flex:none}
+.pip.ok{background:var(--kelp)} .pip.bad{background:var(--buoy)} .pip.warn{background:var(--lamp)} .pip.mint{background:var(--mint)}
 .link{background:none;border:0;color:var(--hull);padding:6px 4px;font-size:14px;font-weight:700;text-decoration:underline;text-underline-offset:4px}
 
-main{display:grid;gap:20px;padding:8px 32px 48px;max-width:1280px;margin:0 auto;grid-template-columns:repeat(12,1fr);
-  grid-template-areas:"hero hero hero hero hero hero hero hero hero hero hero hero"
-                      "trace trace trace trace trace trace trace trace ctrl ctrl ctrl ctrl"
-                      "rel rel rel rel ing ing ing ing log log log log";}
-.card{background:var(--card);border:2px solid var(--hull);border-radius:32px;padding:26px 28px}
-.card h2{margin:0 0 16px;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-60)}
+main{display:grid;gap:20px;padding:4px 32px 48px;max-width:1344px;margin:0 auto;grid-template-columns:repeat(12,minmax(0,1fr));
+  grid-template-areas:
+   "hero hero hero hero hero hero hero hero hero hero hero hero"
+   "shield shield shield shield shield shield shield shield shield shield shield shield"
+   "trace trace trace trace trace trace trace trace ctrl ctrl ctrl ctrl"
+   "dest dest dest dest dest dest src src src src src src"
+   "rel rel rel rel set set set set log log log log";}
+.card{background:var(--card);border:2px solid var(--hull);border-radius:32px;padding:26px 28px;min-width:0}
+.card h2{margin:0 0 16px;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-60);display:flex;justify-content:space-between;gap:10px;align-items:center}
+.card h2 small{font-size:12px;letter-spacing:.04em;text-transform:none;font-weight:700}
 .dark{background:var(--hull);color:var(--bone);border-color:var(--hull)}
 .dark h2,.dark .eyebrow{color:var(--on-dark-60)}
 
-#hero{grid-area:hero;display:flex;flex-wrap:wrap;gap:20px 48px;align-items:flex-end;justify-content:space-between;padding:32px 36px 34px;position:relative;overflow:hidden;border-radius:44px 44px 44px 44px}
-#hero::before{content:"";position:absolute;right:-90px;top:-120px;width:420px;height:420px;border-radius:50%;background:var(--state,var(--hull-3));opacity:.16}
+#hero{grid-area:hero;display:grid;grid-template-columns:1fr auto;gap:22px 48px;align-items:end;padding:32px 36px 30px;position:relative;overflow:hidden;border-radius:44px}
+#hero::before{content:"";position:absolute;right:-90px;top:-130px;width:440px;height:440px;border-radius:50%;background:var(--state,var(--hull-3));opacity:.16;transition:background .4s}
 #hero > *{position:relative}
-.state-word{font-weight:800;font-size:clamp(46px,8vw,112px);line-height:.92;letter-spacing:-.045em;color:var(--state,var(--bone));margin:8px 0 12px}
+.hero-top{display:flex;gap:14px;align-items:center}
+.mark{width:52px;height:62px;flex:none}
+.state-word{font-weight:800;font-size:clamp(46px,8vw,112px);line-height:.92;letter-spacing:-.045em;color:var(--state,var(--bone));margin:10px 0 12px}
 .eyebrow{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-60)}
 .reason{color:var(--on-dark-60);font-size:17px;min-height:22px}
 .bitrate{text-align:right}
 .bitrate .v{font-weight:800;font-size:clamp(40px,5vw,72px);line-height:1;letter-spacing:-.04em}
 .bitrate .u{font-size:20px;color:var(--on-dark-60);margin-left:8px;font-weight:700}
 .bitrate .src{color:var(--on-dark-60);font-size:14px;margin-top:8px}
+.linkstats{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px;border-top:2px solid var(--line-dark);padding-top:18px}
+.ls{background:var(--hull-2);border:2px solid var(--line-dark);border-radius:999px;padding:8px 16px;font-size:14px;font-weight:700;color:var(--on-dark-60);display:flex;gap:8px;align-items:center}
+.ls b{color:var(--bone);font-weight:800}
+.ls.warn b{color:var(--lamp)} .ls.bad b{color:var(--buoy)}
+
+#shield{grid-area:shield;background:var(--buoy);border-color:var(--hull);display:flex;gap:18px;align-items:center;padding:20px 28px}
+#shield strong{font-weight:800;font-size:22px;letter-spacing:-.02em}
+#shield p{margin:2px 0 0;font-weight:700}
 
 #trace{grid-area:trace}
 .strips{display:grid;gap:12px}
 .strip-label{display:flex;justify-content:space-between;font-size:13px;color:var(--on-dark-60);margin-bottom:8px;font-weight:700}
 canvas{width:100%;display:block}
-#chart{height:160px}
+#chart{height:170px}
+#rtt{height:64px}
 #bands{height:28px;border-radius:14px}
 .legend{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;font-weight:700;color:var(--on-dark-60);margin-top:16px}
 .legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:8px;vertical-align:-1px}
 
-#ctrl{grid-area:ctrl;display:flex;flex-direction:column;gap:26px}
-.seg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.btn{min-height:52px;border-radius:999px;border:2px solid var(--hull);background:transparent;font-weight:700;font-size:15px;transition:background .12s,color .12s}
+#ctrl{grid-area:ctrl;display:flex;flex-direction:column;gap:22px}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.btn{min-height:50px;border-radius:999px;border:2px solid var(--hull);background:transparent;font-weight:700;font-size:15px;transition:background .12s,color .12s;padding:0 14px}
 .btn:hover{background:var(--bone)}
 .btn:active{transform:translateY(1px)}
 .btn.on{background:var(--hull);color:var(--bone)}
 .btn:disabled{opacity:.35;cursor:not-allowed}
-.btn.go{background:var(--buoy);color:var(--hull);border-color:var(--hull);min-height:64px;font-size:19px;font-weight:800;letter-spacing:-.01em}
-.btn.stop{background:var(--hull);color:var(--bone);min-height:64px;font-size:19px;font-weight:800;letter-spacing:-.01em}
+.btn.go{background:var(--buoy);color:var(--hull);min-height:64px;font-size:19px;font-weight:800;letter-spacing:-.01em;width:100%}
+.btn.stop{background:var(--hull);color:var(--bone);min-height:64px;font-size:19px;font-weight:800;letter-spacing:-.01em;width:100%}
+.btn.small{min-height:40px;font-size:14px}
 .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .switch{position:relative;width:58px;height:34px;border-radius:17px;background:#C9C1AF;border:2px solid var(--hull);padding:0;flex:none}
 .switch::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:var(--hull);transition:transform .15s}
 .switch[aria-checked="true"]{background:var(--mint)}
 .switch[aria-checked="true"]::after{transform:translateX(24px)}
+.switch:disabled{opacity:.35}
 .help{color:var(--ink-60);font-size:14px;margin:4px 0 0}
 .air{display:flex;gap:10px;align-items:center;font-size:14px;font-weight:700;color:var(--ink-60);margin-top:12px}
 .msg{min-height:20px;font-size:14px;font-weight:700;color:var(--ink-60)}
+.lbl{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-60);margin:0 0 10px}
+
+#dest{grid-area:dest}
+.dlist{display:grid;gap:10px}
+.dest{display:grid;grid-template-columns:auto 1fr auto auto;gap:14px;align-items:center;border:2px solid var(--line);border-radius:22px;padding:12px 14px 12px 16px;background:var(--bone)}
+.dest .n{font-weight:800;font-size:18px;letter-spacing:-.01em}
+.dest .t{font-size:13px;color:var(--ink-60);font-weight:700;word-break:break-all}
+.pill{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:5px 11px;border:2px solid var(--hull);white-space:nowrap}
+.pill.live{background:var(--mint)} .pill.shield{background:var(--buoy)} .pill.retrying,.pill.connecting{background:var(--lamp)} .pill.off,.pill.disabled{background:transparent;color:var(--ink-60);border-color:var(--line)}
+.dest .k{font-size:14px;font-weight:800;text-align:right;min-width:72px}
+.dest .k small{display:block;font-size:12px;color:var(--ink-60);font-weight:700}
+
+#src{grid-area:src}
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tab{flex:1;border:2px solid var(--hull);border-radius:20px;padding:10px 14px;background:transparent;text-align:left}
+.tab.on{background:var(--hull);color:var(--bone)}
+.tab .tn{font-weight:800;font-size:16px;display:flex;justify-content:space-between;gap:8px;align-items:center}
+.tab .ts{font-size:13px;font-weight:700;opacity:.75}
+.url{margin-bottom:12px}
+.url .k{font-size:14px;font-weight:700;color:var(--ink-60);margin-bottom:6px;display:flex;justify-content:space-between;gap:8px}
+.url code{display:block;background:var(--bone);border:2px solid var(--line);border-radius:18px;padding:11px 15px;font:500 13px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--hull);word-break:break-all}
+.acts{display:flex;gap:12px}
+.copy{background:none;border:0;color:var(--hull);font-size:14px;font-weight:800;padding:0;text-decoration:underline;text-underline-offset:4px}
+#qrbox{display:flex;gap:18px;align-items:center;background:var(--bone);border:2px solid var(--line);border-radius:22px;padding:14px;margin-top:6px}
+#qrbox canvas{width:132px;height:132px;flex:none;image-rendering:pixelated;border-radius:8px}
 
 #rel{grid-area:rel}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:20px 12px}
-.stat .k{font-size:14px;color:var(--ink-60);margin-bottom:4px;font-weight:700}
-.stat .v{font-weight:800;font-size:38px;line-height:1;letter-spacing:-.035em}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:18px 12px}
+.stat .k{font-size:13px;color:var(--ink-60);margin-bottom:4px;font-weight:700}
+.stat .v{font-weight:800;font-size:34px;line-height:1;letter-spacing:-.035em}
 .stat .v.bad{color:#C23A0A}
-#ing{grid-area:ing}
-.url{margin-bottom:16px}
-.url .k{font-size:14px;font-weight:700;color:var(--ink-60);margin-bottom:6px;display:flex;justify-content:space-between}
-.url code{display:block;background:var(--bone);border:2px solid var(--line);border-radius:18px;padding:12px 16px;font:500 13px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--hull);word-break:break-all}
-.copy{background:none;border:0;color:var(--hull);font-size:14px;font-weight:800;padding:0;text-decoration:underline;text-underline-offset:4px}
+
+#set{grid-area:set}
+.field{display:grid;grid-template-columns:1fr 104px;gap:10px;align-items:center;margin-bottom:10px;font-size:14px;font-weight:700}
+.field small{display:block;color:var(--ink-60);font-weight:700;font-size:12px;margin-top:1px}
+.field input{height:42px;border-radius:999px;border:2px solid var(--hull);background:var(--bone);padding:0 14px;font-weight:800;text-align:right;width:100%}
+.field input:focus{outline:3px solid var(--buoy);outline-offset:1px}
+
 #log{grid-area:log}
-#events{list-style:none;margin:0;padding:0;max-height:280px;overflow:auto;font-size:15px}
-#events li{display:flex;gap:12px;padding:10px 0;border-bottom:2px solid var(--line)}
+#events{list-style:none;margin:0;padding:0;max-height:330px;overflow:auto;font-size:15px}
+#events li{display:flex;gap:12px;padding:9px 0;border-bottom:2px solid var(--line)}
 #events li:last-child{border-bottom:0}
 #events time{color:var(--ink-60);flex:none;width:68px;font-weight:700}
-.tag{font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;flex:none;width:72px;padding-top:1px}
+.tag{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;flex:none;width:76px;padding-top:2px}
 .empty{color:var(--ink-60);padding:10px 0}
 
 #login{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:var(--bone);z-index:10;padding:24px}
@@ -99,15 +146,21 @@ canvas{width:100%;display:block}
 .login-box img{height:44px;margin-bottom:44px;display:block}
 .login-box h1{font-weight:800;font-size:56px;margin:0 0 10px;line-height:.95;letter-spacing:-.045em}
 .login-box p{color:var(--ink-60);margin:0 0 24px;font-size:18px}
-.login-box input{width:100%;min-height:58px;background:var(--card);border:2px solid var(--hull);border-radius:999px;color:var(--hull);font:inherit;font-weight:700;padding:0 24px;margin-bottom:14px}
+.login-box input{width:100%;min-height:58px;background:var(--card);border:2px solid var(--hull);border-radius:999px;color:var(--hull);font-weight:700;padding:0 24px;margin-bottom:14px}
 .login-box input:focus{outline:3px solid var(--buoy);outline-offset:2px}
 .err{color:#C23A0A;font-weight:700;font-size:14px;min-height:20px;margin-top:10px}
 
-@media (max-width:900px){
-  header{padding:16px 18px} header img{height:28px}
-  main{padding:6px 14px 40px;grid-template-columns:1fr;grid-template-areas:"hero" "ctrl" "trace" "rel" "ing" "log";gap:14px}
-  .card{padding:22px 20px;border-radius:28px} #hero{padding:26px 22px;border-radius:34px}
+@media (max-width:1100px){
+  main{grid-template-areas:"hero hero hero hero hero hero hero hero hero hero hero hero" "shield shield shield shield shield shield shield shield shield shield shield shield" "trace trace trace trace trace trace trace ctrl ctrl ctrl ctrl ctrl" "dest dest dest dest dest dest dest dest dest dest dest dest" "src src src src src src src src src src src src" "rel rel rel rel rel rel set set set set set set" "log log log log log log log log log log log log"}
+}
+@media (max-width:760px){
+  header{padding:16px 16px;gap:10px} header img{height:28px} .chip{padding:5px 12px 5px 10px;font-size:13px}
+  main{padding:4px 12px 40px;grid-template-columns:1fr;grid-template-areas:"hero" "shield" "ctrl" "dest" "trace" "src" "rel" "set" "log";gap:14px}
+  .card{padding:22px 18px;border-radius:28px} #hero{padding:24px 20px;border-radius:34px;grid-template-columns:1fr}
   .bitrate{text-align:left}
+  .dest{grid-template-columns:1fr auto;gap:10px 12px} .dest .pill{justify-self:start;grid-column:1;grid-row:1} .dest .sw{grid-column:2;grid-row:1} .dest > div:nth-child(2){grid-column:1/-1;grid-row:2}
+  #qrbox{flex-direction:column;align-items:flex-start}
+  .hide-sm{display:none}
 }
 </style>
 </head>
@@ -117,9 +170,9 @@ canvas{width:100%;display:block}
   <form class="login-box" id="loginForm">
     <img src="/keel-lockup.svg" alt="Keel">
     <h1>Control room.</h1>
-    <p>Enter your access token to manage this server.</p>
+    <p>Enter your access token to manage this server. Moderators use their moderator token.</p>
     <input id="tokenInput" type="password" placeholder="Access token" autocomplete="current-password" autofocus>
-    <button class="btn go" style="width:100%" type="submit">Enter</button>
+    <button class="btn go" type="submit">Enter</button>
     <div class="err" id="loginErr"></div>
   </form>
 </div>
@@ -127,13 +180,17 @@ canvas{width:100%;display:block}
 <header>
   <img src="/keel-lockup.svg" alt="Keel">
   <div class="spacer"></div>
-  <div class="conn"><span class="pip" id="obsPip"></span><span id="obsLabel">Connecting</span></div>
+  <span class="chip role" id="roleChip" hidden>Moderator</span>
+  <div class="chip"><span class="pip" id="obsPip"></span><span id="obsLabel">Connecting</span></div>
   <button class="link" id="logout">Sign out</button>
 </header>
 <main>
   <section class="card dark" id="hero">
     <div>
-      <div class="eyebrow">Phone signal</div>
+      <div class="hero-top">
+        <svg class="mark" viewBox="0 0 92 110.2" aria-hidden="true"><g transform="translate(46 52.21)"><g transform="translate(0 -6.21)"><g id="tilt" transform="rotate(-18)"><path d="M-46 0A46 46 0 0 1 46 0Z" fill="#FF5B1F"/></g></g><path d="M-46 12H46A46 46 0 0 1 -46 12Z" fill="#F3EEE4"/></g></svg>
+        <div class="eyebrow" id="heroEyebrow">Phone signal</div>
+      </div>
       <div class="state-word" id="stateWord">Waiting.</div>
       <div class="reason" id="reason">Waiting for the first status update.</div>
     </div>
@@ -142,14 +199,30 @@ canvas{width:100%;display:block}
       <div><span class="v num" id="kbps">0</span><span class="u" id="kbpsUnit">kbps</span></div>
       <div class="src" id="src">No publisher</div>
     </div>
+    <div class="linkstats" id="linkstats">
+      <span class="ls" id="lsSource">Source <b>Primary</b></span>
+      <span class="ls" id="lsRtt">Round trip <b>n/a</b></span>
+      <span class="ls" id="lsLoss">Packet loss <b>n/a</b></span>
+      <span class="ls" id="lsDrop">Dropped <b>n/a</b></span>
+      <span class="ls" id="lsBuf">SRT buffer <b>n/a</b></span>
+    </div>
+  </section>
+
+  <section class="card" id="shield" hidden>
+    <svg width="44" height="53" viewBox="0 0 92 110.2" aria-hidden="true"><g transform="translate(46 52.21)"><g transform="translate(0 -6.21) rotate(-18)"><path d="M-46 0A46 46 0 0 1 46 0Z" fill="#F3EEE4"/></g><path d="M-46 12H46A46 46 0 0 1 -46 12Z" fill="#0E2A2F"/></g></svg>
+    <div><strong>Crash shield on.</strong><p>The program feed from OBS is missing. Every platform is receiving the BRB screen while OBS restarts. Your stream has not ended.</p></div>
   </section>
 
   <section class="card dark" id="trace">
     <h2 id="traceTitle">Last 5 minutes</h2>
     <div class="strips">
       <div>
-        <div class="strip-label"><span>Phone signal</span><span class="num" id="chartMax"></span></div>
+        <div class="strip-label"><span>Signal in (active source)</span><span class="num" id="chartMax"></span></div>
         <canvas id="chart"></canvas>
+      </div>
+      <div>
+        <div class="strip-label"><span>Round trip time, SRT</span><span class="num" id="rttMax"></span></div>
+        <canvas id="rtt"></canvas>
       </div>
       <div>
         <div class="strip-label"><span>What viewers see</span><span id="viewerNote"></span></div>
@@ -160,6 +233,7 @@ canvas{width:100%;display:block}
       <span><i style="background:var(--mint)"></i>Live</span>
       <span><i style="background:var(--lamp)"></i>Weak signal</span>
       <span><i style="background:var(--buoy)"></i>Holding on</span>
+      <span><i style="background:var(--tide)"></i>On backup</span>
       <span><i style="background:transparent;border:2px dashed var(--on-dark-60)"></i>Thresholds</span>
     </div>
   </section>
@@ -167,43 +241,72 @@ canvas{width:100%;display:block}
   <section class="card" id="ctrl">
     <div>
       <h2>Broadcast</h2>
-      <button class="btn go" id="broadcastBtn" style="width:100%">Go live</button>
+      <button class="btn go" id="broadcastBtn">Go live</button>
       <div class="air"><span class="pip" id="airPip"></span><span id="airText">Not broadcasting</span></div>
     </div>
     <div>
-      <h2>Scene</h2>
+      <div class="lbl">Scene</div>
       <div class="seg" id="scenes">
         <button class="btn" data-scene="live">Live</button>
         <button class="btn" data-scene="low">Weak</button>
         <button class="btn" data-scene="brb">BRB</button>
       </div>
-    </div>
-    <div>
-      <div class="row">
-        <div><strong style="font-weight:800;font-size:18px">Auto switching</strong><p class="help" style="margin:2px 0 0">Keel picks the scene from the signal.</p></div>
+      <div class="row" style="margin-top:14px">
+        <div><strong style="font-weight:800;font-size:17px">Auto switching</strong><p class="help" style="margin:2px 0 0">Keel picks the scene from the signal.</p></div>
         <button class="switch" id="auto" role="switch" aria-checked="true" aria-label="Auto switching"></button>
       </div>
     </div>
+    <div id="sourceCtl">
+      <div class="lbl">Source</div>
+      <div class="seg" id="sourcePin">
+        <button class="btn" data-pin="auto">Auto</button>
+        <button class="btn" data-pin="primary">Primary</button>
+        <button class="btn" data-pin="backup">Backup</button>
+      </div>
+      <p class="help">Auto fails over to the backup encoder when the primary drops.</p>
+    </div>
     <div class="msg" id="msg"></div>
+  </section>
+
+  <section class="card" id="dest">
+    <h2><span>Destinations</span><small id="destNote"></small></h2>
+    <div class="dlist" id="dlist"></div>
+  </section>
+
+  <section class="card" id="src">
+    <h2><span>Ingest and phone setup</span></h2>
+    <div class="tabs" id="srcTabs"></div>
+    <div id="srcUrls"></div>
+    <div id="qrbox" hidden><canvas id="qr" width="132" height="132"></canvas><div><strong style="font-weight:800" id="qrTitle">Scan with your phone</strong><p class="help" id="qrHelp">Point your streaming app's QR scanner or your camera at this code to copy the address.</p><button class="copy" id="qrClose">Hide code</button></div></div>
   </section>
 
   <section class="card" id="rel">
     <h2>Reliability record</h2>
     <div class="stats">
       <div class="stat"><div class="k">Drops held</div><div class="v num" id="sDrops">0</div></div>
+      <div class="stat"><div class="k">Failovers to backup</div><div class="v num" id="sFail">0</div></div>
       <div class="stat"><div class="k">Time on BRB</div><div class="v num" id="sOffline">0s</div></div>
       <div class="stat"><div class="k">Longest drop</div><div class="v num" id="sLongest">0s</div></div>
       <div class="stat"><div class="k">Broadcast time</div><div class="v num" id="sStream">0s</div></div>
       <div class="stat"><div class="k">Unexpected stops</div><div class="v num" id="sUnexpected">0</div></div>
-      <div class="stat"><div class="k">Skipped frames</div><div class="v num" id="sSkipped">0</div></div>
+      <div class="stat"><div class="k">Platform reconnects</div><div class="v num" id="sReconn">0</div></div>
+      <div class="stat"><div class="k">Crash shield time</div><div class="v num" id="sShield">0s</div></div>
     </div>
   </section>
 
-  <section class="card" id="ing">
-    <h2>Phone setup</h2>
-    <div class="url"><div class="k"><span>SRT (Moblin, IRL Pro, Larix)</span><button class="copy" data-copy="srt">Copy</button></div><code id="uSrt"></code></div>
-    <div class="url"><div class="k"><span>SRTLA (bonded, Moblin, Belabox)</span><button class="copy" data-copy="srtla">Copy</button></div><code id="uSrtla"></code></div>
-    <div class="url" style="margin-bottom:0"><div class="k"><span>RTMP</span><button class="copy" data-copy="rtmp">Copy</button></div><code id="uRtmp"></code></div>
+  <section class="card" id="set">
+    <h2><span>Switching rules</span><small>Change live, no restart</small></h2>
+    <form id="setForm">
+      <label class="field"><span>Weak below<small>kbps</small></span><input id="fLow" inputmode="numeric" name="lowKbps"></label>
+      <label class="field"><span>Gone below<small>kbps</small></span><input id="fOff" inputmode="numeric" name="offlineKbps"></label>
+      <label class="field"><span>BRB after<small>seconds of dead feed</small></span><input id="fDegOff" inputmode="decimal" name="degradeOfflineS"></label>
+      <label class="field"><span>Weak after<small>seconds of weak feed</small></span><input id="fDegLow" inputmode="decimal" name="degradeLowS"></label>
+      <label class="field"><span>Back live after<small>seconds healthy</small></span><input id="fRec" inputmode="decimal" name="recoverS"></label>
+      <label class="field"><span>Dropped packets over<small>% (SRT, 0 = off)</small></span><input id="fDrop" inputmode="decimal" name="maxDropPct"></label>
+      <label class="field"><span>Packet loss over<small>% (SRT, 0 = off)</small></span><input id="fLoss" inputmode="decimal" name="maxLossPct"></label>
+      <button class="btn on" type="submit" style="width:100%;margin-top:6px" id="setSave">Save rules</button>
+    </form>
+    <p class="help" id="setRo" hidden>Only the streamer can change the switching rules.</p>
   </section>
 
   <section class="card" id="log">
@@ -212,50 +315,67 @@ canvas{width:100%;display:block}
   </section>
 </main>
 
+<script src="/qrcode.js"></script>
 <script>
 (() => {
   const $ = (id) => document.getElementById(id);
   const COLORS = { live: '#7BDDB0', low: '#F5B83D', offline: '#FF5B1F' };
   const TAGC = { live: '#1F7A55', low: '#8F6200', offline: '#C23A0A' };
   const WORD = { live: 'Live.', low: 'Weak signal.', offline: 'Holding on.' };
+  const TILT = { live: 6, low: 12, offline: 18 };
+  const DEST_WORD = { live: 'Live', shield: 'Shield', retrying: 'Retrying', connecting: 'Connecting', off: 'Off', disabled: 'Paused' };
   const HIST_SECONDS = 300;
 
-  let token = localStorage.getItem('keel.token') || '';
-  const fromUrl = new URLSearchParams(location.search).get('token');
-  if (fromUrl) { token = fromUrl; localStorage.setItem('keel.token', token); history.replaceState(null, '', location.pathname); }
+  // ---- transport: the real HTTP API, or a simulator when embedded in the Keel website demo ----
+  let token = '';
+  try { token = localStorage.getItem('keel.token') || ''; } catch {}
+  const http = {
+    call(path, body) {
+      return fetch(path, {
+        method: body ? 'POST' : 'GET',
+        headers: { authorization: 'Bearer ' + token, 'content-type': 'application/json' },
+        body: body ? JSON.stringify(body) : undefined,
+      }).then(async (r) => {
+        const j = await r.json().catch(() => ({}));
+        if (r.status === 401) { showLogin('That token was not accepted.'); throw new Error('unauthorized'); }
+        if (!r.ok) throw new Error(j.error || r.statusText);
+        return j;
+      });
+    },
+    subscribe(onData, onError) {
+      let es = null, closed = false;
+      const open = () => http.call('/api/ticket', {}).then(({ ticket }) => {
+        if (closed) return;
+        es = new EventSource('/api/events?ticket=' + encodeURIComponent(ticket));
+        es.onmessage = (m) => onData(JSON.parse(m.data));
+        es.onerror = () => { onError(); es.close(); if (!closed) setTimeout(open, 2000); };
+      }).catch(() => { if (!closed) setTimeout(open, 3000); });
+      open();
+      return () => { closed = true; if (es) es.close(); };
+    },
+  };
+  const T = window.KeelDemo || http;
+  const demo = !!window.KeelDemo;
 
-  let es = null;
-  let last = null;
-  const hist = []; // {t,kbps,state,streaming}
-  let urls = {};
+  let unsub = null, last = null, sel = 'primary', qrFor = null;
+  const hist = [];
 
-  const api = (path, body) => fetch(path, {
-    method: body ? 'POST' : 'GET',
-    headers: { authorization: 'Bearer ' + token, 'content-type': 'application/json' },
-    body: body ? JSON.stringify(body) : undefined,
-  }).then(async (r) => {
-    const j = await r.json().catch(() => ({}));
-    if (r.status === 401) { showLogin('That token was not accepted.'); throw new Error('unauthorized'); }
-    if (!r.ok) throw new Error(j.error || r.statusText);
-    return j;
-  });
-
-  function showLogin(err) { $('login').classList.add('show'); $('loginErr').textContent = err || ''; if (es) es.close(); $('tokenInput').focus(); }
+  function showLogin(err) { if (demo) return; $('login').classList.add('show'); $('loginErr').textContent = err || ''; if (unsub) unsub(); $('tokenInput').focus(); }
   $('loginForm').addEventListener('submit', (e) => {
     e.preventDefault();
     token = $('tokenInput').value.trim();
-    localStorage.setItem('keel.token', token);
+    try { localStorage.setItem('keel.token', token); } catch {}
     $('login').classList.remove('show');
     connect();
   });
-  $('logout').addEventListener('click', () => { localStorage.removeItem('keel.token'); token = ''; showLogin(''); });
+  $('logout').addEventListener('click', () => { try { localStorage.removeItem('keel.token'); } catch {} token = ''; showLogin(''); });
+  if (demo) $('logout').hidden = true;
 
   function connect() {
-    if (es) es.close();
-    api('/api/history').then((h) => { hist.length = 0; hist.push(...h); return api('/api/status'); }).then(() => {
-      es = new EventSource('/api/events?token=' + encodeURIComponent(token));
-      es.onmessage = (m) => render(JSON.parse(m.data));
-      es.onerror = () => { setConn('bad', 'Reconnecting'); };
+    if (unsub) unsub();
+    T.call('/api/history').then((h) => { hist.length = 0; hist.push(...h); return T.call('/api/status'); }).then((s) => {
+      render(s);
+      unsub = T.subscribe(render, () => setConn('bad', 'Reconnecting'));
     }).catch(() => {});
   }
 
@@ -265,75 +385,157 @@ canvas{width:100%;display:block}
     if (s < 3600) return Math.floor(s / 60) + 'm ' + String(s % 60).padStart(2, '0') + 's';
     return Math.floor(s / 3600) + 'h ' + String(Math.floor((s % 3600) / 60)).padStart(2, '0') + 'm';
   };
-  const fmtBitrate = (k) => k >= 1000 ? [(k / 1000).toFixed(1), 'Mbps'] : [String(k), 'kbps'];
+  const fmtBitrate = (k) => k >= 1000 ? [(k / 1000).toFixed(1), 'Mbps'] : [String(Math.round(k)), 'kbps'];
   const clock = (t) => new Date(t).toTimeString().slice(0, 8);
+  const cap = (t) => t ? t.charAt(0).toUpperCase() + t.slice(1) : '';
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const PROTO = { srtConn: 'SRT', rtmpConn: 'RTMP', srtSource: 'SRT', rtmpSource: 'RTMP', webRTCSession: 'WebRTC' };
 
   function setConn(kind, label) { $('obsPip').className = 'pip ' + kind; $('obsLabel').textContent = label; }
+  function ls(id, label, value, level) { const e = $(id); e.className = 'ls' + (level ? ' ' + level : ''); e.textContent = label + ' '; const b = el('b', '', value); e.appendChild(b); }
 
   function render(s) {
     last = s;
-    urls = s.urls;
+    const admin = s.role !== 'mod';
     const st = s.ingest.state;
     const color = COLORS[st] || '#6B8387';
     document.documentElement.style.setProperty('--state', color);
+    $('roleChip').hidden = admin;
 
-    if (!s.obs.connected) setConn('bad', 'OBS disconnected');
+    if (!s.obs.connected) setConn(s.broadcast && s.broadcast.shield ? 'warn' : 'bad', 'OBS disconnected');
     else if (!s.obs.synced) setConn('warn', 'OBS setting up');
     else setConn('ok', 'OBS connected');
 
+    // hero
     $('stateWord').textContent = WORD[st] || '';
+    $('tilt').setAttribute('transform', 'rotate(' + -(TILT[st] || 18) + ')');
     let reason = s.ingest.reason || '';
     if (s.ingest.apiError) reason = 'Cannot reach the ingest server';
-    $('reason').textContent = reason.charAt(0).toUpperCase() + reason.slice(1);
+    $('reason').textContent = cap(reason);
     const [v, u] = fmtBitrate(s.ingest.kbps);
     $('kbps').textContent = v; $('kbpsUnit').textContent = u;
-    const proto = { srtConn: 'SRT', rtmpConn: 'RTMP', srtSource: 'SRT', rtmpSource: 'RTMP' }[s.ingest.source] || s.ingest.source;
-    $('src').textContent = s.ingest.ready ? [proto, (s.ingest.tracks || []).join(' + ')].filter(Boolean).join(' · ') : 'No publisher';
+    $('src').textContent = s.ingest.ready ? [PROTO[s.ingest.source] || s.ingest.source, (s.ingest.tracks || []).join(' + ')].filter(Boolean).join(' · ') : 'No publisher';
+    const sources = s.sources || [];
+    const act = sources.find((x) => x.active) || sources[0];
+    $('heroEyebrow').textContent = sources.length > 1 ? 'Signal in · ' + (act ? act.label.toLowerCase() : 'primary') + ' encoder' : 'Phone signal';
+    const L = s.ingest.link || {};
+    ls('lsSource', 'Source', act ? act.label : 'Primary', act && act.id === 'backup' ? 'warn' : '');
+    $('lsSource').hidden = sources.length < 2;
+    ls('lsRtt', 'Round trip', L.rttMs != null ? Math.round(L.rttMs) + ' ms' : 'n/a', L.rttMs > 600 ? 'bad' : L.rttMs > 250 ? 'warn' : '');
+    const th = s.ingest.thresholds || {};
+    ls('lsLoss', 'Packet loss', L.lossPct != null ? L.lossPct.toFixed(1) + '%' : 'n/a', th.maxLossPct && L.lossPct > th.maxLossPct ? 'bad' : L.lossPct > 5 ? 'warn' : '');
+    ls('lsDrop', 'Dropped', L.dropPct != null ? L.dropPct.toFixed(1) + '%' : 'n/a', th.maxDropPct && L.dropPct > th.maxDropPct ? 'bad' : L.dropPct > 0.5 ? 'warn' : '');
+    ls('lsBuf', 'SRT buffer', L.bufferMs != null ? Math.round(L.bufferMs) + ' ms' : 'n/a', '');
+    $('linkstats').title = s.ingest.ready && !s.ingest.link ? 'Link stats are available for SRT publishers. RTMP does not report them.' : '';
+
+    // shield
+    const b = s.broadcast || { destinations: [], onAir: s.obs.streaming };
+    $('shield').hidden = !b.shield;
 
     // controls
-    for (const b of $('scenes').children) {
-      const name = s.scenes[b.dataset.scene];
-      b.classList.toggle('on', s.obs.scene === name);
-      b.disabled = !s.obs.connected;
+    for (const btn of $('scenes').children) {
+      btn.classList.toggle('on', s.obs.scene === s.scenes[btn.dataset.scene]);
+      btn.disabled = !s.obs.connected;
     }
     $('auto').setAttribute('aria-checked', String(s.mode === 'auto'));
+    $('sourceCtl').hidden = sources.length < 2;
+    for (const btn of $('sourcePin').children) btn.classList.toggle('on', (s.ingest.pin || 'auto') === btn.dataset.pin);
     const bb = $('broadcastBtn');
-    bb.textContent = s.obs.streaming ? 'Stop broadcast' : 'Go live';
-    bb.className = 'btn ' + (s.obs.streaming ? 'stop' : 'go');
-    bb.disabled = !s.obs.connected;
-    $('airPip').className = 'pip ' + (s.obs.reconnecting ? 'warn' : s.obs.streaming ? 'ok' : '');
-    $('airText').textContent = s.obs.reconnecting ? 'Reconnecting to the platform' : s.obs.streaming ? 'On air' + (s.obs.timecode ? ' · ' + s.obs.timecode.split('.')[0] : '') : 'Not broadcasting';
+    const live = b.wanted || b.onAir || s.obs.streaming;
+    bb.textContent = live ? 'Stop broadcast' : 'Go live';
+    bb.className = 'btn ' + (live ? 'stop' : 'go');
+    bb.disabled = !admin || (!s.obs.connected && !live);
+    bb.title = admin ? '' : 'Only the streamer can start or stop the broadcast';
+    const restarting = b.wanted && !b.onAir;
+    $('airPip').className = 'pip ' + (b.shield || restarting || s.obs.reconnecting ? 'warn' : b.onAir ? 'ok' : '');
+    $('airText').textContent = b.shield ? 'On air · crash shield' : restarting ? 'Connecting to the platforms' : s.obs.reconnecting ? 'Reconnecting' : b.onAir ? 'On air' + (s.obs.timecode ? ' · ' + s.obs.timecode.split('.')[0] : '') : 'Not broadcasting';
+
+    // destinations
+    const dl = $('dlist'); dl.textContent = '';
+    const ds = b.destinations || [];
+    $('destNote').textContent = b.output === 'relay' ? (ds.length + ' via relay' + (b.autoRestarts ? ' · ' + b.autoRestarts + ' auto restarts' : '')) : 'direct from OBS';
+    if (!ds.length) dl.appendChild(el('div', 'empty', 'No destination set. Add KEEL_DESTINATIONS to the server settings.'));
+    for (const d of ds) {
+      const row = el('div', 'dest');
+      row.appendChild(el('span', 'pill ' + d.state, DEST_WORD[d.state] || d.state));
+      const info = el('div'); info.appendChild(el('div', 'n', d.name));
+      info.appendChild(el('div', 't', d.state === 'retrying' && d.lastError ? d.lastError : (d.target || '')));
+      row.appendChild(info);
+      const k = el('div', 'k num hide-sm', d.kbps ? fmtBitrate(d.kbps).join(' ') : ''); k.appendChild(el('small', '', d.restarts ? d.restarts + ' reconnect' + (d.restarts === 1 ? '' : 's') : (d.state === 'live' ? 'steady' : ''))); row.appendChild(k);
+      const sw = el('button', 'switch sw'); sw.setAttribute('role', 'switch'); sw.setAttribute('aria-checked', String(d.enabled)); sw.setAttribute('aria-label', 'Send to ' + d.name);
+      sw.disabled = !admin || b.output !== 'relay';
+      sw.onclick = () => act('/api/destination', { id: d.id, enabled: !d.enabled });
+      row.appendChild(sw);
+      dl.appendChild(row);
+    }
+
+    // sources + phone setup
+    if (!sources.find((x) => x.id === sel)) sel = sources[0] ? sources[0].id : 'primary';
+    const tabs = $('srcTabs'); tabs.textContent = '';
+    tabs.hidden = sources.length < 2;
+    for (const x of sources) {
+      const t = el('button', 'tab' + (x.id === sel ? ' on' : ''));
+      const tn = el('div', 'tn', x.label);
+      const p = el('span', 'pip ' + (x.state === 'live' ? 'mint' : x.state === 'low' ? 'warn' : x.ready ? 'bad' : '')); tn.appendChild(p);
+      t.appendChild(tn);
+      t.appendChild(el('div', 'ts', x.ready ? fmtBitrate(x.kbps).join(' ') + (x.link && x.link.rttMs != null ? ' · ' + Math.round(x.link.rttMs) + ' ms' : '') + (x.active ? ' · on air' : '') : 'No encoder connected'));
+      t.onclick = () => { sel = x.id; render(last); };
+      tabs.appendChild(t);
+    }
+    const cur = sources.find((x) => x.id === sel);
+    const urls = cur ? cur.urls : s.urls;
+    const box = $('srcUrls'); box.textContent = '';
+    const rows = [['srt', 'SRT (Moblin, IRL Pro, Larix)'], ['srtla', 'SRTLA bonded (Moblin, Belabox)'], ['rtmp', 'RTMP (any app)']];
+    for (const [key, label] of rows) {
+      const u = el('div', 'url');
+      const k = el('div', 'k'); k.appendChild(el('span', '', label));
+      const a = el('span', 'acts');
+      const c = el('button', 'copy', 'Copy'); c.onclick = () => copy(urls[key], c);
+      const q = el('button', 'copy', 'QR'); q.onclick = () => showQr(urls[key], (cur ? cur.label + ' ' : '') + label.split(' (')[0]);
+      a.append(c, q); k.appendChild(a); u.appendChild(k);
+      u.appendChild(el('code', '', urls[key]));
+      box.appendChild(u);
+    }
+    if (sources.length > 1 && sel === 'backup') box.appendChild(el('p', 'help', 'Point a second phone, a second app or a Belabox here. Keel keeps it ready and switches to it if the primary drops.'));
 
     // stats
     const m = s.summary;
     $('sDrops').textContent = m.drops;
+    $('sFail').textContent = m.failovers || 0;
     $('sOffline').textContent = fmtDur(m.offlineSeconds);
     $('sLongest').textContent = fmtDur(m.longestDropSeconds);
     $('sStream').textContent = fmtDur(m.streamSeconds);
     $('sUnexpected').textContent = m.streamUnexpectedStops;
     $('sUnexpected').classList.toggle('bad', m.streamUnexpectedStops > 0);
-    $('sSkipped').textContent = s.obs.totalFrames ? (100 * s.obs.skippedFrames / s.obs.totalFrames).toFixed(2) + '%' : '0%';
+    $('sReconn').textContent = m.destReconnects || 0;
+    $('sShield').textContent = fmtDur(m.shieldSeconds || 0);
 
-    // urls
-    $('uSrt').textContent = s.urls.srt; $('uSrtla').textContent = s.urls.srtla; $('uRtmp').textContent = s.urls.rtmp;
+    // settings (do not overwrite while the operator is typing)
+    $('setForm').hidden = !admin; $('setRo').hidden = admin;
+    if (!$('setForm').contains(document.activeElement)) {
+      $('fLow').value = th.lowKbps; $('fOff').value = th.offlineKbps; $('fDegOff').value = th.degradeOfflineS; $('fDegLow').value = th.degradeLowS;
+      $('fRec').value = th.recoverS; $('fDrop').value = th.maxDropPct ?? 0; $('fLoss').value = th.maxLossPct ?? 0;
+    }
 
     // events
     const ul = $('events'); ul.textContent = '';
     const evs = (s.events || []).filter((e) => e.type !== 'obs' || e.state === 'disconnected').slice().reverse();
-    if (!evs.length) { const li = document.createElement('li'); li.className = 'empty'; li.textContent = 'Nothing yet. Events appear when the signal changes.'; ul.appendChild(li); }
+    if (!evs.length) ul.appendChild(el('li', 'empty', 'Nothing yet. Events appear when the signal changes.'));
     for (const e of evs) {
-      const li = document.createElement('li');
-      const t = document.createElement('time'); t.className = 'num'; t.textContent = clock(e.t);
-      const tag = document.createElement('span'); tag.className = 'tag';
-      const text = document.createElement('span');
+      const li = el('li');
+      const t = el('time', 'num', clock(e.t));
+      const tag = el('span', 'tag'); const text = el('span');
       if (e.type === 'signal') { tag.textContent = e.state === 'offline' ? 'BRB' : e.state; tag.style.color = TAGC[e.state] || 'var(--hull)'; text.textContent = e.detail || ''; }
       else if (e.type === 'stream') { tag.textContent = 'Stream'; tag.style.color = e.state === 'unexpected_stop' ? 'var(--rust)' : 'var(--hull)'; text.textContent = e.state.replace('_', ' '); }
+      else if (e.type === 'source') { tag.textContent = 'Source'; tag.style.color = 'var(--tide)'; text.textContent = (e.state === 'backup' ? 'switched to backup' : 'back on primary') + (e.detail ? ', ' + e.detail : ''); }
+      else if (e.type === 'shield') { tag.textContent = 'Shield'; tag.style.color = '#C23A0A'; text.textContent = e.state === 'on' ? 'OBS feed missing, BRB on every platform' : 'OBS feed back'; }
+      else if (e.type === 'dest') { tag.textContent = e.detail || 'Platform'; tag.style.color = e.state === 'live' ? TAGC.live : TAGC.low; text.textContent = e.state === 'live' ? 'reconnected' : 'connection lost, retrying'; }
       else { tag.textContent = 'OBS'; tag.style.color = TAGC.low; text.textContent = e.state; }
       li.append(t, tag, text); ul.appendChild(li);
     }
 
     // history for the strips
-    if (!hist.length || s.t - hist[hist.length - 1].t >= 900) hist.push({ t: s.t, kbps: s.ingest.kbps, state: st, scene: s.obs.scene, streaming: s.obs.streaming });
+    if (!hist.length || s.t - hist[hist.length - 1].t >= 900) hist.push({ t: s.t, kbps: s.ingest.kbps, state: st, scene: s.obs.scene, streaming: b.onAir, source: s.ingest.active, rttMs: (s.ingest.link || {}).rttMs ?? null });
     const cutoff = s.t - HIST_SECONDS * 1000;
     while (hist.length && hist[0].t < cutoff) hist.shift();
     drawCharts();
@@ -355,7 +557,6 @@ canvas{width:100%;display:block}
     $('traceTitle').textContent = 'Last ' + (span >= 120_000 ? Math.round(span / 60_000) + ' minutes' : '60 seconds');
     const X = (t, w) => ((t - x0) / span) * w;
 
-    // bitrate trace
     const [g, w, h] = fit($('chart'));
     const th = last.ingest.thresholds;
     const peak = Math.max(th.lowKbps * 3, ...hist.map((p) => p.kbps), 1000);
@@ -367,46 +568,76 @@ canvas{width:100%;display:block}
     g.setLineDash([4, 4]); g.strokeStyle = '#6B8387';
     for (const k of [th.lowKbps, th.offlineKbps]) { const y = Math.round(Y(k)) + .5; g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); }
     g.setLineDash([]);
-    if (hist.length > 1) {
-      for (let i = 1; i < hist.length; i++) {
-        const a = hist[i - 1], b = hist[i];
-        g.strokeStyle = COLORS[b.state] || '#6B8387'; g.lineWidth = 2; g.lineJoin = 'round';
-        g.beginPath(); g.moveTo(X(a.t, w), Y(a.kbps)); g.lineTo(X(b.t, w), Y(b.kbps)); g.stroke();
-      }
+    for (let i = 1; i < hist.length; i++) {
+      const a = hist[i - 1], c = hist[i];
+      g.strokeStyle = c.source === 'backup' && c.state === 'live' ? '#3C7E96' : COLORS[c.state] || '#6B8387'; g.lineWidth = 2; g.lineJoin = 'round';
+      g.beginPath(); g.moveTo(X(a.t, w), Y(a.kbps)); g.lineTo(X(c.t, w), Y(c.kbps)); g.stroke();
     }
 
-    // viewer band: what scene was on air, and whether the broadcast was up
+    const [r, rw, rh] = fit($('rtt'));
+    const rtts = hist.map((p) => p.rttMs).filter((v) => v != null);
+    const rmax = Math.max(200, Math.ceil(Math.max(0, ...rtts) / 100) * 100);
+    $('rttMax').textContent = rtts.length ? rmax + ' ms scale' : 'SRT publishers only';
+    r.strokeStyle = '#27505A'; r.lineWidth = 1; r.beginPath(); r.moveTo(0, rh - .5); r.lineTo(rw, rh - .5); r.stroke();
+    r.strokeStyle = '#BFE3D6'; r.lineWidth = 2; r.lineJoin = 'round'; r.beginPath();
+    let pen = false;
+    for (const p of hist) {
+      if (p.rttMs == null) { pen = false; continue; }
+      const x = X(p.t, rw), y = rh - 3 - (p.rttMs / rmax) * (rh - 8);
+      if (pen) r.lineTo(x, y); else { r.moveTo(x, y); pen = true; }
+    }
+    r.stroke();
+
     const [b, bw, bh] = fit($('bands'));
     b.fillStyle = '#1B444B'; b.fillRect(0, 0, bw, bh);
     const sceneState = (p) => (p.scene === last.scenes.live ? 'live' : p.scene === last.scenes.low ? 'low' : p.scene === last.scenes.brb ? 'offline' : null);
     for (let i = 0; i < hist.length; i++) {
       const p = hist[i], nx = hist[i + 1] ? hist[i + 1].t : now;
       const sstate = sceneState(p); if (!sstate) continue;
-      b.fillStyle = COLORS[sstate]; b.globalAlpha = p.streaming ? 1 : 0.28;
+      b.fillStyle = p.source === 'backup' && sstate !== 'offline' ? '#3C7E96' : COLORS[sstate]; b.globalAlpha = p.streaming ? 1 : 0.28;
       b.fillRect(X(p.t, bw), 0, Math.max(1, X(nx, bw) - X(p.t, bw) + 0.5), bh);
     }
     b.globalAlpha = 1;
-    const last60 = hist.filter((p) => p.streaming).length;
-    $('viewerNote').textContent = hist.length ? (last60 ? 'Solid when broadcasting, faint when not' : 'Not broadcasting') : 'Collecting';
+    $('viewerNote').textContent = hist.length ? (hist.some((p) => p.streaming) ? 'Solid when broadcasting, faint when not' : 'Not broadcasting') : 'Collecting';
   }
   window.addEventListener('resize', drawCharts);
 
+  // ---- QR ----
+  function showQr(text, title) {
+    if (typeof qrcode !== 'function') return;
+    const q = qrcode(0, 'M'); q.addData(text); q.make();
+    const n = q.getModuleCount(), cv = $('qr'), g = cv.getContext('2d'), quiet = 2, cell = Math.floor(132 / (n + quiet * 2));
+    const size = cell * (n + quiet * 2); cv.width = size; cv.height = size;
+    g.fillStyle = '#FBF8F1'; g.fillRect(0, 0, size, size); g.fillStyle = '#0E2A2F';
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) g.fillRect((c + quiet) * cell, (r + quiet) * cell, cell, cell);
+    $('qrTitle').textContent = title; $('qrbox').hidden = false; qrFor = text;
+  }
+  $('qrClose').onclick = () => { $('qrbox').hidden = true; qrFor = null; };
+
   // ---- actions ----
   const say = (t, bad) => { const m = $('msg'); m.textContent = t; m.style.color = bad ? 'var(--rust)' : 'var(--ink-60)'; clearTimeout(say.t); say.t = setTimeout(() => (m.textContent = ''), 5000); };
-  const act = (path, body) => api(path, body).then((r) => say(r.message || 'Done')).catch((e) => say(e.message, true));
+  const act = (path, body) => T.call(path, body).then((r) => say(r.message || 'Saved.')).catch((e) => say(e.message, true));
+  function copy(text, btn) {
+    const done = () => { btn.textContent = 'Copied'; setTimeout(() => (btn.textContent = 'Copy'), 1500); };
+    if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, () => say('Copy failed. Select the text instead.', true)); else say('Copy is not available here.', true);
+  }
   $('scenes').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) act('/api/scene', { scene: b.dataset.scene }); });
+  $('sourcePin').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) act('/api/source', { source: b.dataset.pin }); });
   $('auto').addEventListener('click', () => act('/api/mode', { mode: last && last.mode === 'auto' ? 'manual' : 'auto' }));
   $('broadcastBtn').addEventListener('click', () => {
-    if (last && last.obs.streaming) { if (confirm('Stop the broadcast? Viewers will see the stream end.')) act('/api/stream/stop', {}); }
+    const b = last && last.broadcast;
+    const live = last && (last.obs.streaming || (b && (b.wanted || b.onAir)));
+    if (live) { if (demo || confirm('Stop the broadcast? Viewers will see the stream end.')) act('/api/stream/stop', {}); }
     else act('/api/stream/start', {});
   });
-  document.addEventListener('click', (e) => {
-    const b = e.target.closest('[data-copy]'); if (!b || !urls) return;
-    navigator.clipboard.writeText(urls[b.dataset.copy]).then(() => { b.textContent = 'Copied'; setTimeout(() => (b.textContent = 'Copy'), 1500); });
+  $('setForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const body = {};
+    for (const i of $('setForm').querySelectorAll('input')) body[i.name] = Number(i.value);
+    T.call('/api/settings', body).then(() => { say('Rules saved and applied.'); document.activeElement.blur(); }).catch((err) => say(err.message, true));
   });
 
-  if (token) connect(); else showLogin('');
-  // Expose for the local preview harness only
+  if (token || demo) connect(); else showLogin('');
   window.__keel = { render };
 })();
 </script>

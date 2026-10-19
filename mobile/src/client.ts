@@ -1,4 +1,4 @@
-import type { Scene, Status } from './model';
+import type { Pin, Scene, Status } from './model';
 
 export class KeelClient {
   readonly base: string;
@@ -13,6 +13,7 @@ export class KeelClient {
       body: init?.body === undefined ? undefined : JSON.stringify(init.body),
     });
     if (res.status === 401) throw new Error('Wrong token.');
+    if (res.status === 403) throw new Error('Only the streamer can do that.');
     if (!res.ok) throw new Error(`Server said ${res.status}.`);
     return (await res.json()) as T;
   }
@@ -21,6 +22,8 @@ export class KeelClient {
   history() { return this.call<Array<{ t: number; kbps: number; state: string }>>('/api/history'); }
   setScene(scene: Scene) { return this.call<{ message: string }>('/api/scene', { method: 'POST', body: { scene } }); }
   setMode(mode: 'auto' | 'manual') { return this.call<{ message: string }>('/api/mode', { method: 'POST', body: { mode } }); }
+  setSource(source: Pin) { return this.call<{ message: string }>('/api/source', { method: 'POST', body: { source } }); }
+  setDestination(id: string, enabled: boolean) { return this.call<{ message: string }>('/api/destination', { method: 'POST', body: { id, enabled } }); }
   startStream() { return this.call<{ message: string }>('/api/stream/start', { method: 'POST', body: {} }); }
   stopStream() { return this.call<{ message: string }>('/api/stream/stop', { method: 'POST', body: {} }); }
 }

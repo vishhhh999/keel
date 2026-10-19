@@ -1,5 +1,8 @@
 FROM node:22-slim
 
+# ffmpeg runs the multistream relay and the crash shield (copy only, plus a still-image encode during an OBS outage).
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg ca-certificates && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 COPY package.json package-lock.json ./
 # Optional: behind a TLS-intercepting proxy, pass a CA bundle at build time:

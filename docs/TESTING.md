@@ -1,60 +1,58 @@
 # Testing record
 
-Last run: 19 Oct 2026, in a Linux sandbox with Docker, OBS 30.0.2 (Ubuntu 24.04 package), mediamtx 1.21.2, ffmpeg as the fake phone.
+## Automated, every push (GitHub Actions, `.github/workflows/ci.yml`)
 
-## Verified
-
-| What | How | Result |
+| Suite | What it covers | Count |
 |---|---|---|
-| Switching logic (degrade fast, recover slow, thresholds, manual mode) | 54 unit and integration tests (`cd controller && npm test`), strict TypeScript typecheck | Pass |
-| obs-websocket v5 auth and requests | Tested against a mock and against real OBS | Pass |
-| Scene bootstrap on a real OBS (3 scenes, ingest source, screens, stream settings) | `scripts/e2e.sh` | Pass |
-| SRT ingest into mediamtx, bitrate read from its API | Fake phone at 4000 kbps via SRT | Pass, about 4100 to 4400 kbps measured |
-| OBS pulling the feed and switching to LIVE | e2e | Pass |
-| Broadcast reaching an RTMP receiver | A second mediamtx acting as the platform | Pass, 1920x1080 H.264 + AAC |
-| Phone drop: scene to BRB, broadcast continues | Killed the phone mid-broadcast | Pass, 0 unexpected stops, 1 drop recorded |
-| Phone return: scene back to LIVE | Restarted the phone | Pass |
-| Dashboard auth, SSE, history, metrics, path traversal guard | API tests | Pass |
+| Controller (`cd controller && npm test`) | Switcher incl. SRT drop/loss rules, ingest bitrate and SRT link stats, OBS websocket client, scene bootstrap incl. backup source, failover and pinning, auto-restart, OBS crash resume, relay (copy, per-destination retries, key redaction, crash shield, shield delay, start before OBS), alerts and throttling, settings validation and persistence, API auth, roles, tickets, metrics, Twitch chat | 76 tests + strict typecheck |
+| Platform (`cd platform && npm test`) | Tenants, start/stop, idle hook, rate limit, suspension stops servers, readiness and boot timeout, access info, orphan sweeper, sslip and Cloudflare DNS, cloud-init quoting and injection, input validation, Stripe signatures, DB migration, Hetzner request shape | 16 tests |
+| Mobile (`cd mobile && npm test`) | State words, link chips, on-air logic, URL and share link parsing, backoff, API client incl. 403 for moderators | 9 tests + typecheck |
+| Website | `build_site.py` output matches committed HTML | 1 check |
+| End to end (`scripts/e2e.sh`) | Real OBS, real mediamtx, the relay, two fake phones, a fake platform with two destinations. Ingest, LIVE, SRT stats read, multistream to both destinations at 1920 wide, failover to backup with no BRB and no drop, BRB with both phones dead and broadcast still up, recovery to primary, OBS killed: crash shield on, platform still receiving, OBS back, broadcast resumed by itself, shield off, stop | 22 checks |
 
-Evidence frames pulled from the broadcast output (they show the earlier placeholder screens from the first test run, before the current brand; the behaviour is the evidence, not the look) are in `docs/evidence/`: `2-brb.png` is what viewers received during the drop, `3-recovered.png` after the phone returned. `1-live.png` was taken while the feed was live.
+The end-to-end script was rewritten for v0.3 and has not yet been run: the sandbox that wrote it could start Docker but its network policy blocked Docker Hub and GitHub. It runs in CI on the first push. If a check fails there, the failure message names it.
 
-Run it yourself: `./scripts/e2e.sh`.
+## Verified by hand (v0.1, 19 Oct 2026, Linux sandbox with Docker, OBS 30.0.2, mediamtx 1.21.2)
 
-**Rerun status (19 Oct 2026, later session):** the full Docker test was not rerun after the rebrand and the fixes below. The sandbox could start Docker but its network policy blocks Docker Hub and GitHub, so no base images or mediamtx could be fetched. The evidence frames above are still from the first run. Code-level tests were rerun: 54 controller tests, 10 platform tests, typecheck clean.
+| What | Result |
+|---|---|
+| Scene bootstrap on real OBS | Pass |
+| SRT ingest, bitrate read from mediamtx | Pass, 4100 to 4400 kbps measured for a 4000 kbps fake phone |
+| OBS pulling the feed, switching to LIVE | Pass |
+| Broadcast reaching an RTMP receiver | Pass, 1920x1080 H.264 + AAC |
+| Phone drop: BRB, broadcast continues; return: LIVE | Pass, 0 unexpected stops |
 
-## Fixes since the last Docker run (code tested, not yet run in Docker)
+Evidence frames from that run are in `docs/evidence/` (they show the placeholder screens from before the current brand; the behaviour is the evidence, not the look).
 
-- Dashboard port 8080 binds to localhost when HTTPS is on (`KEEL_DASHBOARD_BIND`). Before, it was public over plain HTTP even behind Caddy, because Docker bypasses `ufw`.
-- `KEEL_FPS` now reaches the controller. Before, the controller reset OBS to 30 fps on every start, so 60 fps silently never applied.
-- An open dashboard or app now counts as activity for idle shutdown.
-- `deploy/install.sh` no longer starts the untested SRTLA image by default (`KEEL_SRTLA=1` to opt in). A failed SRTLA build used to block the whole stack from starting.
-- Platform: servers stuck in `error` can be stopped and destroyed; tenants can be linked to a Stripe customer; unsafe stream keys are refused; bad JSON is a 400.
+## Verified locally in v0.3 (no Docker)
 
-## Bugs the real-OBS test caught (all fixed)
+`npm run dev:mock` runs the real controller against a mock OBS, a fake mediamtx API (with SRT stats and a backup phone) and fake ffmpeg processes. Observed: failover from a weak primary to the backup with no BRB, return to primary, a flaky destination reconnecting alone while the others stayed live, RTT and loss on the dashboard. Dashboard checked visually on desktop and phone width.
 
-- mediamtx config used two setting names this version rejects.
-- An empty scene collection crashed OBS on start. It now starts with one scene.
-- The controller could not write its data volume as a non-root user.
-- OBS output was not visible in the container logs. It is now.
-- A stale lockfile broke `npm ci`.
+## Bugs caught by tests while building v0.3
+
+- Going live before OBS was ready showed BRB immediately instead of waiting for the program (relay test).
+- `KEEL_FPS` never reached the controller, so 60 fps was reset to 30 on every start.
+- The platform never told a customer their dashboard address or token, and nothing created DNS for the HTTPS hostname.
+- A server stuck in `error` could never be stopped, so it billed forever.
 
 ## Not verified
 
 | What | Why it matters |
 |---|---|
-| SRTLA bonding image | The Dockerfile builds BELABOX srtla from GitHub. It was written without being built or run, because GitHub was not reachable in the test environment. Treat as unproven. |
-| NVIDIA encoding (`KEEL_ENCODER=nvenc`) | No GPU in the test environment. |
-| Real Twitch, Kick, YouTube ingest | Only a local RTMP receiver was used. Platform quirks (key handling, bitrate limits, reconnect behavior) are untested. |
-| Twitch chat commands on real Twitch | Tested against a protocol-level fake only. |
-| A real phone on real cellular | The fake phone is a clean, steady stream. Real feeds have jitter and bursts, so thresholds will need tuning. |
-| Latency | Not measured. This is the metric streamers care about most and it must be measured on real networks. |
-| Duration and load | Longest continuous run was a few minutes. No soak test, no concurrent users. |
-| Software x264 at 1080p60 | Only 1080p30 was exercised, and only briefly. |
+| Real phones on real cellular | Real feeds have jitter and bursts; thresholds and SRT latency will need tuning. |
+| SRTLA bonding | Receiver image builds from GitHub; never built or run. |
+| Real Twitch, Kick, YouTube | Key handling, bitrate limits, reconnect behaviour, simultaneous streaming rules. |
+| Glass to glass latency | The metric streamers care about most. Not measured. |
+| Soak and load | Longest run was minutes. |
+| NVENC | No GPU available. |
+| Platform against Hetzner, Cloudflare, Stripe | Mocked only. |
+| Mobile app on a device | Logic and types only. |
 
 ## Suggested next tests, in order
 
-1. Real phone over SRT on 4G or 5G, 30 minute walk, with the broadcast going to a private Twitch test channel.
-2. Same with SRTLA bonding (fix the image first).
-3. Glass-to-glass latency measurement against the current provider on the same route.
-4. 4 hour soak.
-5. NVENC on a GPU instance.
+1. Push and read the CI end-to-end result.
+2. Two real phones on two carriers, 30 minute walk, private Twitch test channel plus a second platform.
+3. SRTLA with the receiver image fixed if needed.
+4. Glass to glass latency against the current provider on the same route.
+5. 8 hour soak with `scripts/chaos.sh` running.
+6. NVENC on a GPU instance.

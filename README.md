@@ -2,150 +2,150 @@
 
 **The signal moves. The stream holds.**
 
-Keel is a cloud streaming stack for IRL streamers. Your phone sends video to a server. The server runs OBS, adds your scenes, and broadcasts to Twitch, Kick or YouTube. When your phone's signal gets weak or drops, Keel switches the broadcast to a branded "weak signal" or "be right back" screen by itself. Viewers never see a dead stream, and when your signal comes back, Keel returns to your camera.
+Keel is a cloud reliability layer for IRL streamers. Your phones send video to a server. The server runs OBS, adds your scenes, and broadcasts to Twitch, Kick, YouTube or any RTMP/SRT destination at once. When something breaks, Keel handles it so viewers never watch a dead stream:
 
-> Status: **v0.2.** Reference stack, website, mobile app and a multi-tenant platform layer. The core loop is tested end to end against real OBS (see [docs/TESTING.md](docs/TESTING.md)). The platform and mobile app are tested at the logic level only. Nothing has run on a real phone over cellular, with real streamers, or at scale. Read "What is not proven" before betting anything on it.
+| What breaks | What Keel does |
+|---|---|
+| Phone loses signal | Be right back screen within 2 s, live again after 5 s of healthy signal. The broadcast never stops. |
+| Signal weak, or packets breaking up | LOW SIGNAL scene. Keel reads SRT packet loss and late packets, not only bitrate. |
+| Primary phone dies, backup is fine | Automatic failover to the backup encoder. Viewers stay live, no BRB. |
+| OBS crashes or hangs | Crash shield: the relay sends BRB to every platform until OBS is back, then Keel resumes the broadcast. |
+| One platform drops the connection | That destination reconnects on its own. The others are untouched. |
+| OBS output stops by itself | Restarted automatically with backoff, crew alerted. |
+
+Website (deploys to Vercel from `web/`) has an interactive demo of the real dashboard on a simulated server.
+
+> Status: **v0.3.** The original core loop (SRT in, switching, broadcast through a drop) was verified end to end with real OBS in Docker. The v0.3 reliability features (backup failover, relay, crash shield, SRT-aware switching, auto-recover, live rules, roles, alerts) are covered by 76 controller tests and by `scripts/e2e.sh`, which runs in GitHub Actions on every push with real OBS. Nothing has run on a real phone over cellular, against live Twitch/Kick/YouTube, or with real streamers yet. Read "What is not proven" before betting anything on it.
+
+**Open to acquisition, licensing or partnership.** Keel needs a funded owner to take it to market. Contact [@vishafterdark on X](https://x.com/vishafterdark) or [work@visheshmahendru.com](mailto:work@visheshmahendru.com).
 
 ---
 
 ## How it works
 
 ```
- Phone (Moblin, IRL Pro, Larix, Belabox)
-        | SRT / SRTLA / RTMP
-        v
- [ mediamtx ]  ingest server, only accepts your secret path
-        | RTMP (internal network)
-        v
- [ OBS Studio ]  headless, 3 scenes: LIVE / LOW SIGNAL / BRB
-        ^  obs-websocket (internal)          |
-        |                                     | RTMP
- [ Keel controller ]                          v
-   watches bitrate every second         Twitch / Kick / YouTube
-   switches scenes (degrade fast, recover slow)
-   dashboard, Twitch chat commands, reliability stats
+ Primary phone ─┐  SRT / SRTLA / RTMP
+ Backup phone  ─┤
+                v
+ [ mediamtx ]  ingest, secret paths live/<key> and live/<key>-backup, bitrate + SRT link stats
+                |
+                v
+ [ OBS Studio ]  headless, scenes LIVE / LOW SIGNAL / BRB, both feeds loaded, one visible
+        ^                         |  program (RTMP, internal)
+        |  obs-websocket          v
+ [ Keel controller ] ──────► [ relay ]  one ffmpeg per destination, copy only
+   reads both feeds every second     |   crash shield: BRB when the program is missing
+   picks the healthier source        v
+   degrade fast, recover slow    Twitch · Kick · YouTube · any RTMP/SRT
+   dashboard, API, chat, alerts
 ```
 
-**Switching rules** (all adjustable):
+**Switching rules** (defaults, all changeable live from the dashboard):
 
-| Phone signal | Scene | Reaction time |
-|---|---|---|
-| Healthy (above 800 kbps) | LIVE | back to LIVE after 5 s of healthy signal |
-| Weak (50 to 800 kbps) | LOW SIGNAL | after 3 s |
-| Gone (below 50 kbps or disconnected) | BRB | after 2 s |
+| Input | Condition | Holds for | Scene |
+|---|---|---|---|
+| Healthy | 800 kbps or more, clean packets | 5 s to recover | LIVE |
+| Weak | 50 to 800 kbps, or > 2% late packets, or > 20% loss (SRT) | 3 s | LOW SIGNAL |
+| Gone | below 50 kbps or disconnected | 2 s | BRB |
 
-The broadcast to your platform is never stopped by a signal drop. That is the main point of the product.
+With a backup encoder the rule runs per source and viewers see whichever source is healthier (primary wins ties). `KEEL_OUTPUT_MODE=direct` sends OBS straight to one destination instead of through the relay (the original v0.1 path, no crash shield or multistream).
 
 ## What you need
 
 - A Linux server with Docker and Docker Compose v2. 4 vCPU and 8 GB RAM runs a 1080p30 x264 broadcast; see [docs/COSTS.md](docs/COSTS.md). An NVIDIA GPU is optional ([docs/GPU.md](docs/GPU.md)).
-- Open ports on the server: `1935/tcp` (RTMP), `8890/udp` (SRT), `5000/udp` (SRTLA, optional), and either `80/tcp` + `443/tcp` (HTTPS dashboard, recommended) or `8080/tcp` (plain HTTP dashboard, testing only).
-- A streaming account and its stream key.
-- A phone app that can send SRT (Moblin, IRL Pro, Larix) or SRTLA bonding (Moblin, Belabox).
+- Open ports: `8890/udp` (SRT), `1935/tcp` (RTMP), `5000/udp` (SRTLA, optional), and `80/tcp` + `443/tcp` for the HTTPS dashboard (or `8080/tcp` plain HTTP for testing only).
+- A stream key for at least one platform.
+- A phone app that sends SRT (Moblin, IRL Pro, Larix) or SRTLA bonding (Moblin, IRL Pro, Belabox). A second phone or app for the backup is optional but recommended.
 
-## Setup (about 30 minutes)
+## Setup: one command (fresh Ubuntu server, HTTPS)
 
 ```bash
-git clone https://github.com/OWNER/keel.git keel && cd keel/stack   # your fork or copy
-cp .env.example .env
+git clone https://github.com/OWNER/keel.git keel && cd keel
+KEEL_DESTINATIONS='Twitch=rtmp://live.twitch.tv/app/live_xxx;Kick=rtmps://.../app/sk_xxx' ./deploy/install.sh
 ```
 
-Edit `.env`. Fill in the three secrets and your destination:
+No domain needed: without `KEEL_PUBLIC_HOST` the script uses `<your-ip>.sslip.io`, which gets a real certificate. It generates every secret, opens the firewall, binds the plain HTTP port to localhost, starts the stack with Caddy, and prints the dashboard address, admin token, moderator token and both phone addresses. Optional: `KEEL_NOTIFY_WEBHOOK` (Discord/Slack alerts), `KEEL_SRTLA=1` (bonding receiver, untested), `KEEL_IMAGE_PREFIX=ghcr.io/<owner>/keel` (prebuilt images, much faster first boot).
+
+## Setup: manual
 
 ```bash
-# generate a secret
-openssl rand -base64 24 | tr -d '/+=' | cut -c1-24
-```
-
-- `KEEL_API_TOKEN`: your dashboard password.
-- `KEEL_OBS_PASSWORD`: internal, any long random value.
-- `KEEL_INGEST_PATH`: your phone's stream key, in the form `live/` followed by 16 or more letters and numbers.
-- `KEEL_RTMP_URL` and `KEEL_STREAM_KEY`: where the broadcast goes (Twitch default is set).
-- `KEEL_PUBLIC_HOST`: the server's public IP or domain, so the dashboard prints the right phone URLs.
-
-Start it:
-
-```bash
+cd keel/stack
+cp .env.example .env      # fill in the REQUIRED secrets and your destinations
 docker compose up -d --build
 docker compose logs -f controller
 ```
 
-Open `http://<server>:8080`, sign in with `KEEL_API_TOKEN`. This is plain HTTP and fine for a first test; for anything public use the HTTPS route below. The dashboard shows the exact URLs to paste into your phone app, with copy buttons.
-
-Optional bonded cellular (SRTLA): `docker compose --profile srtla up -d --build`. The receiver image has never been built or run, see below.
-
-**One command on a fresh Ubuntu server, with HTTPS:**
-
-```bash
-KEEL_PUBLIC_HOST=keel.example.com KEEL_STREAM_KEY=live_xxx ./deploy/install.sh
-```
-
-It generates all secrets, opens the firewall, starts everything with a Caddy certificate, keeps the plain HTTP dashboard port bound to localhost, and prints your dashboard URL, token and phone SRT address. Add `KEEL_SRTLA=1` to also start the (untested) bonding receiver.
+Every setting is documented in [`stack/.env.example`](stack/.env.example). Open `http://<server>:8080` and sign in with `KEEL_API_TOKEN`. For anything public use HTTPS: set `KEEL_DASHBOARD_BIND=127.0.0.1` and `KEEL_PUBLIC_HOST` to a DNS name, then `docker compose --profile tls up -d`. Docker publishes ports past `ufw`, so the localhost binding is what actually closes 8080.
 
 ### First test
 
-1. Put the SRT URL from the dashboard into your phone app and start sending. The dashboard should flip to **LIVE** in a few seconds.
-2. Press **Start broadcast**. Check your platform's dashboard, then stop the broadcast while testing if you do not want to go public.
-3. Switch the phone to airplane mode for 10 seconds. The scene should go to **BRB**, the platform keeps receiving video, and it returns to LIVE a few seconds after the phone reconnects.
+1. Copy or scan the primary SRT address from the dashboard into your phone app and start sending. The dashboard flips to **Live.** in a few seconds and shows round trip time, loss and dropped packets.
+2. Optional: point a second phone at the backup address.
+3. Press **Go live**. Each destination shows Connecting, then Live.
+4. Airplane mode on the primary for 10 seconds. With a backup, viewers stay live on it. Without, the scene goes to BRB and every platform keeps receiving video. Turn the phone back on and Keel returns to it.
 
-To test with no phone and no streaming account, run `./scripts/e2e.sh` (needs Docker and ffmpeg). It runs the whole stack with a fake phone and a fake platform.
+No phone and no streaming account: `./scripts/e2e.sh` (Docker and ffmpeg) runs the whole stack with two fake phones, two fake platforms, a failover and an OBS crash.
 
 ## Dashboard and controls
 
-- Big state word, bitrate, 5 minute signal chart, and what viewers see.
-- Start or stop the broadcast, force a scene, toggle auto switching.
-- Reliability record: drops held, time on BRB, longest drop, unexpected stops, skipped frames.
-- Phone setup URLs and an event log.
+- Big state word with the tilting mark, bitrate, SRT round trip, packet loss, late packets, active source.
+- Signal, round trip and "what viewers see" charts for the last 5 minutes.
+- Go live and stop, scene buttons, auto switching, source pin (auto, primary, backup).
+- Destinations with live state, bitrate, reconnect count and an on/off switch per platform.
+- Ingest addresses for primary and backup with copy buttons and QR codes.
+- Reliability record: drops held, failovers, time on BRB, longest drop, broadcast time, unexpected stops, platform reconnects, crash shield time.
+- Switching rules, editable live and saved across restarts.
+- Event log.
 
-**Twitch chat commands** (set `KEEL_TWITCH_*` in `.env`): `!status`, `!live`, `!low`, `!brb`, `!auto`, `!start`, `!stop`. Broadcaster and mods can run them. Extra users go in `KEEL_TWITCH_ALLOWED`. `!stop` is limited to the broadcaster and the users in `KEEL_TWITCH_ALLOWED`.
+**Moderators:** set `KEEL_MOD_TOKEN`. Moderators can switch scenes and sources from the dashboard and app; they cannot start or stop the broadcast, toggle destinations or change rules.
 
-**Metrics:** `GET /metrics` (Prometheus format, needs the bearer token). **Health:** `GET /healthz`.
+**Twitch chat** (set `KEEL_TWITCH_*`): `!status`, `!live`, `!low`, `!brb`, `!auto`, `!source auto|primary|backup`, `!start`, `!stop`. Broadcaster and mods can run them; extra users go in `KEEL_TWITCH_ALLOWED`. `!stop` is limited to the broadcaster and `KEEL_TWITCH_ALLOWED`.
+
+**Crew alerts:** `KEEL_NOTIFY_WEBHOOK` takes a Discord or Slack webhook. Drops, recoveries, failovers, platform reconnects, crash shield and auto restarts are posted, throttled per kind.
+
+**API:** `GET /api/status`, `/api/history`, `/metrics` (Prometheus); `POST /api/scene`, `/api/mode`, `/api/source`, `/api/stream/start`, `/api/stream/stop`, `/api/destination`, `/api/settings`, `/api/ticket` (one-time ticket for `GET /api/events?ticket=`). Bearer token in the `Authorization` header. `GET /healthz` is open.
 
 ## Change the screens viewers see
 
-The BRB and weak signal screens are plain 1920x1080 PNG files in `stack/assets/` (`brb.png`, `low.png`). Replace them with your own and restart the controller. `low.png` is an overlay and can use transparency. Your channel branding goes there, not Keel's.
+`stack/assets/brb.png` and `low.png` (1920x1080 PNG). `low.png` is an overlay and can use transparency. The crash shield also uses `brb.png`. Replace them with your channel's art and restart.
 
-## Security
+## Develop without Docker
 
-- Use TLS: set `KEEL_DASHBOARD_BIND=127.0.0.1` in `.env` and run `docker compose --profile tls up -d` (Caddy, automatic certificates), or use `deploy/install.sh`, which does both. Docker publishes ports past `ufw`, so binding to localhost is what actually closes 8080. The token is sent as a bearer header, and in the URL for the live event stream, so do not expose it over plain HTTP on the open internet.
-- Only your secret `live/<key>` path can publish or read. Treat it like a password.
-- The OBS websocket and the mediamtx API are not published to the host. Keep it that way.
-- Firewall to the ports listed above. If you keep 8080 public, restrict it to your IP at the cloud firewall.
+```bash
+cd controller && npm install && npm run dev:mock
+```
 
-## Auto shutdown
-
-Cloud GPU and CPU time is the main cost, so servers should stop when unused. After `KEEL_IDLE_MINUTES` with no feed, no broadcast and no dashboard or app connected, Keel runs `KEEL_IDLE_ACTION`: `log`, `exit`, or `webhook` (POSTs to `KEEL_IDLE_WEBHOOK`, so an orchestrator can stop the machine).
+Open `http://localhost:8080` (token `dev`, moderator `mod`), press Go live. A simulated primary and backup phone cycle through healthy, weak, dropped and failover; three fake platforms (one flaky) show the relay at work.
 
 ## Repo layout
 
 | Path | What |
 |---|---|
-| `controller/` | The Keel controller (Node 22, TypeScript run natively, one dependency: `ws`). 54 tests. |
-| `stack/` | Docker Compose: mediamtx, OBS, SRTLA, controller, Caddy TLS profile. |
-| `platform/` | Multi-tenant control plane: tenants, server lifecycle, idle shutdown, usage metering, Stripe webhooks, Hetzner adapter. No dependencies. 10 tests. |
-| `mobile/` | Expo React Native app: live state, scene and broadcast controls. Logic tested, not yet run on a device. |
-| `web/` | The Keel website, static, deploys to Vercel (Root Directory `web`). |
-| `deploy/` | `install.sh`, one command server setup. |
-| `scripts/` | `fake-phone.sh`, `e2e.sh` (full test), `chaos.sh` (drop drill). |
-| `brand/` | Logo set, tokens, generators. Brand guide PDF is in `docs/`. |
-| `docs/` | Architecture, launch week plan, operations, security, roadmap, outreach drafts, testing record, costs, GPU notes. |
-
-Develop without Docker: `cd controller && npm install && npm run dev:mock`, then open `http://localhost:8080` (token `dev`). It simulates a phone that connects, weakens, drops and recovers.
+| `controller/` | Keel controller: switching, failover, relay, crash shield, dashboard, API, chat, alerts. Node 22, TypeScript run natively, one dependency (`ws`). 76 tests. |
+| `stack/` | Docker Compose: mediamtx, OBS, SRTLA (profile), controller, Caddy TLS (profile). |
+| `platform/` | Multi-tenant control plane: accounts, per-streamer servers, sslip or Cloudflare DNS, readiness checks, idle shutdown, orphan sweeper, usage metering, Stripe webhooks, Hetzner adapter. No dependencies. 16 tests. |
+| `mobile/` | Expo React Native companion app. Logic tested, not yet run on a device. |
+| `web/` | The Keel website and live demo, static, deploys to Vercel (Root Directory `web`). |
+| `deploy/` | `install.sh`, one-command server setup. |
+| `scripts/` | `e2e.sh` (full Docker test), `fake-phone.sh`, `chaos.sh` (drop drill). |
+| `.github/workflows/` | `ci.yml` (all tests, site build check, em dash check, Docker end to end), `images.yml` (prebuilt images to GHCR). |
+| `brand/` | Logo set, tokens, generators. Brand guide PDF in `docs/`. |
+| `docs/` | Architecture, launch week, operations, security, roadmap, testing record, costs, GPU, outreach. |
 
 ## What is not proven
 
 Be honest with yourself and your investors about these.
 
-- **Tested for real (last Docker run before the rebrand, see TESTING.md):** controller logic, real OBS control, ingest over SRT, scene switching on drop and recovery, broadcast continuity through a drop, output reaching an RTMP receiver. Details in [docs/TESTING.md](docs/TESTING.md).
-- **Not tested:** SRTLA bonding image (written, never built or run), NVIDIA encoding, real Twitch/Kick/YouTube ingest, Twitch chat control against live Twitch, a real phone on real cellular, many users at once, anything over hours.
-- **Built but untested against live services:** the platform layer (mock provider tested; Hetzner and Stripe paths not run live), the mobile app on a device.
-- **Not built:** invoicing and usage reporting into Stripe, orphan server sweeper, pre-built images, team accounts. See [docs/ROADMAP.md](docs/ROADMAP.md).
-- **Latency and glitches** are the pain with the incumbent. Keel's design avoids some causes, but real numbers need real tests on real networks. Measure before claiming anything.
+- **Verified with real OBS in Docker (v0.1 run):** ingest over SRT, scene switching on drop and recovery, broadcast continuity through a drop, output reaching an RTMP receiver.
+- **Covered by automated tests, Docker end to end in CI:** backup failover, relay and per-destination reconnects, crash shield with OBS killed mid-broadcast, auto-recover, SRT link stats, live rules, roles, tickets, alerts. The CI run is the proof; check the Actions tab after pushing.
+- **Not tested:** a real phone on real cellular, SRTLA bonding (image never built), NVENC, real Twitch/Kick/YouTube ingest, glass to glass latency, anything over hours, many users at once.
+- **Built but untested against live services:** Hetzner, Cloudflare and Stripe in the platform; the mobile app on a device.
+- **Not built:** reporting usage into Stripe invoices, team accounts, overlay editor in the portal, WebRTC (browser) ingest. See [docs/ROADMAP.md](docs/ROADMAP.md).
 
 ## Taking it to market
 
-Start with [docs/LAUNCH-WEEK.md](docs/LAUNCH-WEEK.md). Architecture is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), running it in [docs/OPERATIONS.md](docs/OPERATIONS.md).
+Start with [docs/LAUNCH-WEEK.md](docs/LAUNCH-WEEK.md). Architecture in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), running it in [docs/OPERATIONS.md](docs/OPERATIONS.md).
 
 ## License
 
-All rights reserved by the author until agreed otherwise. Third party components (OBS Studio, mediamtx, SRTLA, Caddy, ws) keep their own licenses. Cabinet Grotesk is used under the Fontshare license and is not included in this repo.
+All rights reserved by the author until agreed otherwise. Third party components (OBS Studio, mediamtx, SRTLA, FFmpeg, Caddy, ws, qrcode-generator) keep their own licenses. Cabinet Grotesk is used under the Fontshare license and is not included in this repo.

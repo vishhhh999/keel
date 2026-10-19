@@ -13,6 +13,8 @@ export interface MockObsOptions {
 export class MockObs {
   scenes: string[] = ['Scene'];
   inputs = new Set<string>();
+  /** scene|source -> { id, enabled } */
+  items = new Map<string, { id: number; enabled: boolean }>();
   currentScene = 'Scene';
   streaming = false;
   streamService: any = null;
@@ -35,6 +37,10 @@ export class MockObs {
   close(): Promise<void> {
     for (const s of this.sockets) s.terminate();
     return new Promise((r) => this.wss.close(() => r()));
+  }
+
+  visible(scene: string, source: string): boolean | undefined {
+    return this.items.get(`${scene}|${source}`)?.enabled;
   }
 
   dropClients(): void {
@@ -111,12 +117,28 @@ export class MockObs {
         if (this.scenes.includes(d.sceneName)) return [false, undefined, 601, 'already exists'];
         this.scenes.push(d.sceneName);
         return [true, {}, 100];
-      case 'CreateInput':
+      case 'CreateInput': {
         if (this.inputs.has(d.inputName)) return [false, undefined, 601, 'already exists'];
         this.inputs.add(d.inputName);
-        return [true, { sceneItemId: this.nextItem++ }, 100];
-      case 'CreateSceneItem':
-        return [true, { sceneItemId: this.nextItem++ }, 100];
+        const id = this.nextItem++;
+        this.items.set(`${d.sceneName}|${d.inputName}`, { id, enabled: d.sceneItemEnabled !== false });
+        return [true, { sceneItemId: id }, 100];
+      }
+      case 'CreateSceneItem': {
+        const key = `${d.sceneName}|${d.sourceName}`;
+        if (this.items.has(key)) return [false, undefined, 601, 'already exists'];
+        const id = this.nextItem++;
+        this.items.set(key, { id, enabled: d.sceneItemEnabled !== false });
+        return [true, { sceneItemId: id }, 100];
+      }
+      case 'GetSceneItemId': {
+        const it = this.items.get(`${d.sceneName}|${d.sourceName}`);
+        return it ? [true, { sceneItemId: it.id }, 100] : [false, undefined, 600, 'not found'];
+      }
+      case 'SetSceneItemEnabled': {
+        for (const [k, v] of this.items) if (k.startsWith(d.sceneName + '|') && v.id === d.sceneItemId) v.enabled = d.sceneItemEnabled;
+        return [true, {}, 100];
+      }
       case 'SetSceneItemTransform':
       case 'SetVideoSettings':
         return [true, {}, 100];

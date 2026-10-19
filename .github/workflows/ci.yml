@@ -1,0 +1,36 @@
+name: ci
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Controller
+        working-directory: controller
+        run: npm ci && npm test && npx tsc --noEmit
+      - name: Platform
+        working-directory: platform
+        run: npm test
+      - name: Mobile
+        working-directory: mobile
+        run: npm ci --legacy-peer-deps && npm test && npx tsc --noEmit
+      - name: Website builds and matches the committed HTML
+        working-directory: web
+        run: python3 build_site.py && git diff --exit-code -- .
+      - name: No em dashes
+        run: "! grep -rIl $'\\u2014' --exclude-dir=node_modules --exclude-dir=.git . | grep -v package-lock"
+
+  e2e:
+    # Full pipeline with real OBS, mediamtx, a fake phone and a fake platform. About 5 minutes.
+    runs-on: ubuntu-24.04
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: ./scripts/e2e.sh

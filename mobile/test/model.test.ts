@@ -29,3 +29,22 @@ test('client sends bearer token and maps 401', async () => {
   const bad = (async () => ({ ok: false, status: 401, json: async () => ({}) })) as any;
   await assert.rejects(new KeelClient('https://h', 'x', bad).status(), /Wrong token/);
 });
+import { linkChips, onAir } from '../src/model.ts';
+test('link chips grade RTT, loss and drops; RTMP has none', () => {
+  const c = linkChips({ rttMs: 312.4, lossPct: 1.2, dropPct: 3.1 });
+  assert.deepEqual(c.map((x) => [x.label, x.value, x.level]), [['RTT', '312 ms', 'warn'], ['Loss', '1.2%', ''], ['Dropped', '3.1%', 'bad']]);
+  assert.deepEqual(linkChips(null), []);
+});
+test('onAir prefers the relay view and falls back to OBS for older servers', () => {
+  assert.equal(onAir({ obs: { connected: true, scene: null, streaming: false }, broadcast: { output: 'relay', wanted: true, onAir: true, shield: true, autoRestarts: 0, destinations: [] } }), true);
+  assert.equal(onAir({ obs: { connected: true, scene: null, streaming: true } }), true);
+});
+test('client: source pin, destination toggle and 403 for moderators', async () => {
+  let seen: any;
+  const ok = (async (u: any, init: any) => { seen = { u, body: init.body }; return { ok: true, status: 200, json: async () => ({ message: 'ok' }) }; }) as any;
+  const c = new KeelClient('https://h', 'tok', ok);
+  await c.setSource('backup'); assert.equal(seen.u, 'https://h/api/source'); assert.equal(seen.body, '{"source":"backup"}');
+  await c.setDestination('kick', false); assert.equal(seen.body, '{"id":"kick","enabled":false}');
+  const forbidden = (async () => ({ ok: false, status: 403, json: async () => ({}) })) as any;
+  await assert.rejects(new KeelClient('https://h', 'm', forbidden).stopStream(), /Only the streamer/);
+});

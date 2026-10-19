@@ -1,8 +1,11 @@
-# Keel reference stack: ingest (mediamtx) -> OBS -> your platform, steered by the Keel controller.
+# Keel reference stack: ingest (mediamtx) -> OBS -> relay -> your platforms, steered by the Keel controller.
 #
 #   cp .env.example .env     # then fill it in
 #   docker compose up -d --build
 #   open http://<server>:8080  (log in with KEEL_API_TOKEN)
+#
+# Faster boot with prebuilt images (published by .github/workflows/images.yml):
+#   KEEL_IMAGE_PREFIX=ghcr.io/<owner>/keel KEEL_IMAGE_TAG=latest docker compose pull --ignore-pull-failures && docker compose up -d
 
 name: keel
 
@@ -20,6 +23,7 @@ services:
   srtla:
     profiles: ["srtla"]   # enable with: docker compose --profile srtla up -d
     build: ./srtla
+    image: ${KEEL_IMAGE_PREFIX:-keel}-srtla:${KEEL_IMAGE_TAG:-local}
     restart: unless-stopped
     depends_on: [mediamtx]
     ports:
@@ -27,12 +31,15 @@ services:
 
   obs:
     build: ./obs
+    image: ${KEEL_IMAGE_PREFIX:-keel}-obs:${KEEL_IMAGE_TAG:-local}
     restart: unless-stopped
     environment:
       KEEL_OBS_PASSWORD: ${KEEL_OBS_PASSWORD:?set KEEL_OBS_PASSWORD in .env}
       KEEL_ENCODER: ${KEEL_ENCODER:-x264}
       KEEL_BITRATE_KBPS: ${KEEL_BITRATE_KBPS:-6000}
       KEEL_FPS: ${KEEL_FPS:-30}
+      KEEL_RESOLUTION: ${KEEL_RESOLUTION:-1080p}
+      KEEL_X264_PRESET: ${KEEL_X264_PRESET:-veryfast}
     volumes:
       - ./assets:/assets:ro     # BRB and LOW SIGNAL screens, replace with your own PNGs
     shm_size: "512m"
@@ -40,6 +47,7 @@ services:
 
   controller:
     build: ../controller
+    image: ${KEEL_IMAGE_PREFIX:-keel}-controller:${KEEL_IMAGE_TAG:-local}
     restart: unless-stopped
     depends_on: [mediamtx, obs]
     environment:
@@ -48,10 +56,21 @@ services:
       KEEL_MEDIAMTX_API: http://mediamtx:9997
       KEEL_INGEST_PATH: ${KEEL_INGEST_PATH:?set KEEL_INGEST_PATH in .env}
       KEEL_API_TOKEN: ${KEEL_API_TOKEN:?set KEEL_API_TOKEN in .env}
+      KEEL_BACKUP_INGEST_PATH: ${KEEL_BACKUP_INGEST_PATH:-}
+      KEEL_OUTPUT_MODE: ${KEEL_OUTPUT_MODE:-relay}
+      KEEL_DESTINATIONS: ${KEEL_DESTINATIONS:-}
       KEEL_RTMP_URL: ${KEEL_RTMP_URL:-}
       KEEL_STREAM_KEY: ${KEEL_STREAM_KEY:-}
+      KEEL_SHIELD_DELAY_S: ${KEEL_SHIELD_DELAY_S:-3}
+      KEEL_AUTO_RESTART: ${KEEL_AUTO_RESTART:-true}
       KEEL_PUBLIC_HOST: ${KEEL_PUBLIC_HOST:-localhost}
       KEEL_FPS: ${KEEL_FPS:-30}
+      KEEL_RESOLUTION: ${KEEL_RESOLUTION:-1080p}
+      KEEL_INPUT_BUFFER_MB: ${KEEL_INPUT_BUFFER_MB:-1}
+      KEEL_MAX_DROP_PCT: ${KEEL_MAX_DROP_PCT:-2}
+      KEEL_MAX_LOSS_PCT: ${KEEL_MAX_LOSS_PCT:-20}
+      KEEL_MOD_TOKEN: ${KEEL_MOD_TOKEN:-}
+      KEEL_NOTIFY_WEBHOOK: ${KEEL_NOTIFY_WEBHOOK:-}
       KEEL_LOW_KBPS: ${KEEL_LOW_KBPS:-800}
       KEEL_OFFLINE_KBPS: ${KEEL_OFFLINE_KBPS:-50}
       KEEL_DEGRADE_OFFLINE_S: ${KEEL_DEGRADE_OFFLINE_S:-2}
@@ -66,6 +85,7 @@ services:
       KEEL_IDLE_WEBHOOK: ${KEEL_IDLE_WEBHOOK:-}
     volumes:
       - keel-data:/data
+      - ./assets:/assets:ro     # the crash shield encodes brb.png when OBS is down
     ports:
       # dashboard + API. Set KEEL_DASHBOARD_BIND=127.0.0.1 when Caddy (profile tls) is in front,
       # so plain HTTP is not reachable from outside. Docker-published ports bypass ufw.

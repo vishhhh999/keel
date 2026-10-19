@@ -16,11 +16,15 @@ Written for the first security pass on day 6. This is a checklist, not a certifi
 - Idle hook secrets are compared in constant time.
 - With HTTPS on (`deploy/install.sh`, platform servers), the plain HTTP dashboard port is bound to localhost. Docker-published ports bypass `ufw`, so this binding is what keeps 8080 off the internet.
 
+- Controller live event stream uses one-time tickets valid for 30 seconds. Tokens are never accepted in URLs.
+- A separate moderator token with no access to start/stop, destinations or settings.
+- Stream keys are redacted from the dashboard, API status, logs and relay error messages.
+- Dashboard pages are served with `X-Frame-Options: DENY`, `nosniff` and `no-referrer`.
+
 ## Known gaps
 
-- Token in the URL for the live event stream (SSE) on the controller. Move to short lived tickets.
 - No rate limiting on the platform API beyond the hourly provisioning cap.
-- Stream keys pass through the platform to cloud-init user data. Provider user data is readable by anyone with provider access. Consider fetching keys from the platform at boot with a one time token.
+- Stream keys and destinations pass through the platform to cloud-init user data. Provider user data is readable by anyone with provider access. Consider fetching keys from the platform at boot with a one time token.
 - No account recovery or token rotation endpoint yet.
 - Single admin token for operator actions.
 - Hetzner adapter and Stripe flows have not been exercised against the live services.

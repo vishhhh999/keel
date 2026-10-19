@@ -17,6 +17,10 @@ export interface Sample {
   ready: boolean;
   /** Smoothed inbound bitrate in kilobits per second. */
   kbps: number;
+  /** SRT only: percent of packets lost before retransmission over the window. */
+  lossPct?: number | null;
+  /** SRT only: percent of packets that arrived too late and were dropped (visible glitches). */
+  dropPct?: number | null;
 }
 
 export interface SwitcherConfig {
@@ -25,6 +29,10 @@ export interface SwitcherConfig {
   degradeLowS: number;
   degradeOfflineS: number;
   recoverS: number;
+  /** 0 disables. */
+  maxDropPct?: number;
+  /** 0 disables. */
+  maxLossPct?: number;
 }
 
 export interface Decision {
@@ -39,7 +47,18 @@ const SEVERITY: Record<SignalState, number> = { live: 0, low: 1, offline: 2 };
 export function classify(s: Sample, cfg: SwitcherConfig): SignalState {
   if (!s.ready || s.kbps < cfg.offlineKbps) return 'offline';
   if (s.kbps < cfg.lowKbps) return 'low';
+  // Bitrate alone lies on SRT: a link can carry full bitrate while packets arrive too late to show.
+  if (cfg.maxDropPct && (s.dropPct ?? 0) > cfg.maxDropPct) return 'low';
+  if (cfg.maxLossPct && (s.lossPct ?? 0) > cfg.maxLossPct) return 'low';
   return 'live';
+}
+
+/** Why a raw sample is not live, in words for the dashboard and logs. */
+export function weakReason(s: Sample, cfg: SwitcherConfig): string {
+  if (s.kbps < cfg.lowKbps) return `bitrate below ${cfg.lowKbps} kbps`;
+  if (cfg.maxDropPct && (s.dropPct ?? 0) > cfg.maxDropPct) return `${(s.dropPct ?? 0).toFixed(1)}% of packets dropped`;
+  if (cfg.maxLossPct && (s.lossPct ?? 0) > cfg.maxLossPct) return `${(s.lossPct ?? 0).toFixed(0)}% packet loss`;
+  return 'signal weak';
 }
 
 export class Switcher {
@@ -53,7 +72,16 @@ export class Switcher {
   private notOfflineSince: number | null = null; // raw is low or live
 
   constructor(cfg: SwitcherConfig) {
-    this.cfg = cfg;
+    this.cfg = { ...cfg };
+  }
+
+  /** Apply new thresholds live, without losing the current state. */
+  configure(cfg: Partial<SwitcherConfig>): void {
+    this.cfg = { ...this.cfg, ...cfg };
+  }
+
+  get config(): SwitcherConfig {
+    return { ...this.cfg };
   }
 
   /** Reset to a known state (used when OBS reconnects and we re-sync). */
@@ -86,7 +114,7 @@ export class Switcher {
     // 2. live -> low: bitrate sagging but still moving. Slightly slower than offline.
     else if (this.state === 'live' && held(this.degradedSince, this.cfg.degradeLowS)) {
       next = 'low';
-      reason = `bitrate below ${this.cfg.lowKbps} kbps`;
+      reason = weakReason(sample, this.cfg);
     }
     // 3. Recovery to live: needs a sustained healthy stretch.
     else if (this.state !== 'live' && held(this.healthySince, this.cfg.recoverS)) {

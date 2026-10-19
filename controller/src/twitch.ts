@@ -7,6 +7,7 @@ export interface BotActions {
   status(): string;
   setScene(which: 'live' | 'low' | 'brb'): Promise<string>;
   setAuto(): Promise<string>;
+  setSource(pin: 'auto' | 'primary' | 'backup'): Promise<string>;
   startStream(): Promise<string>;
   stopStream(): Promise<string>;
 }
@@ -114,8 +115,9 @@ export class TwitchBot {
   }
 
   async onCommand(chat: ParsedChat): Promise<void> {
-    const cmd = chat.text.trim().split(/\s+/)[0]!.toLowerCase();
-    const known = ['!status', '!live', '!low', '!brb', '!auto', '!start', '!stop'];
+    const [first, arg] = chat.text.trim().split(/\s+/);
+    const cmd = first!.toLowerCase();
+    const known = ['!status', '!live', '!low', '!brb', '!auto', '!start', '!stop', '!source'];
     if (!known.includes(cmd)) return;
     if (!isAuthorized(chat, this.opts.allowedUsers)) return;
     // Ending the broadcast is the one destructive action: broadcaster only.
@@ -141,6 +143,15 @@ export class TwitchBot {
         case '!auto':
           reply = await this.actions.setAuto();
           break;
+        case '!source': {
+          const pin = (arg ?? '').toLowerCase();
+          if (!['auto', 'primary', 'backup'].includes(pin)) {
+            reply = 'Usage: !source auto | primary | backup';
+            break;
+          }
+          reply = await this.actions.setSource(pin as 'auto' | 'primary' | 'backup');
+          break;
+        }
         case '!start':
           reply = await this.actions.startStream();
           break;

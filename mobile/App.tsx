@@ -4,7 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import * as Haptics from 'expo-haptics';
 import { KeelClient } from './src/client';
 import { Mark } from './src/Mark';
-import { COLORS, Scene, Status, backoffMs, describe, formatKbps, normalizeUrl, parseShareLink } from './src/model';
+import { COLORS, DEST_WORD, Pin, Scene, Status, backoffMs, describe, formatKbps, linkChips, normalizeUrl, onAir, parseShareLink } from './src/model';
 import { clearConnection, loadConnection, saveConnection } from './src/storage';
 
 const FONT = { fontWeight: '800' as const, letterSpacing: -1.5 };
@@ -73,8 +73,15 @@ function Home({ conn, onLeave }: { conn: { url: string; token: string }; onLeave
   }, []);
 
   const d = st ? describe(st) : null;
+  const admin = st?.role !== 'mod';
+  const live = st ? onAir(st) || !!st.broadcast?.wanted : false;
+  const sources = st?.sources ?? [];
+  const pin = st?.ingest.pin ?? 'auto';
   const scene = (sc: Scene, label: string) => (
-    <Pressable key={sc} style={s.pill} onPress={() => act(() => client.setScene(sc))}><Text style={s.pillText}>{label}</Text></Pressable>
+    <Pressable key={sc} style={[s.pill, st?.obs.scene === sc.toUpperCase() || (sc === 'low' && st?.obs.scene === 'LOW SIGNAL') ? s.pillOn : null]} onPress={() => act(() => client.setScene(sc))}><Text style={[s.pillText, st?.obs.scene === sc.toUpperCase() || (sc === 'low' && st?.obs.scene === 'LOW SIGNAL') ? s.pillTextOn : null]}>{label}</Text></Pressable>
+  );
+  const pinBtn = (p: Pin, label: string) => (
+    <Pressable key={p} style={[s.pill, pin === p ? s.pillOn : null]} onPress={() => act(() => client.setSource(p))}><Text style={[s.pillText, pin === p ? s.pillTextOn : null]}>{label}</Text></Pressable>
   );
 
   return (
@@ -87,20 +94,39 @@ function Home({ conn, onLeave }: { conn: { url: string; token: string }; onLeave
           {d ? <>
             <View style={s.row}><Mark size={64} tilt={d.tilt} /><View style={{ alignItems: 'flex-end' }}><Text style={s.onDark}>{formatKbps(d.kbps)} in</Text><Text style={s.onDark}>{st!.obs.streaming ? 'Broadcasting ' + (st!.obs.timecode ?? '') : 'Not broadcasting'}</Text></View></View>
             <Text style={[s.state, FONT, { color: d.color }]}>{d.word}</Text>
+            {sources.length > 1 ? <Text style={s.onDark}>Source: {st!.ingest.active === 'backup' ? 'backup encoder' : 'primary'}</Text> : null}
+            <View style={s.chips}>{linkChips(st!.ingest.link).map((c) => (
+              <View key={c.label} style={s.chip}><Text style={s.chipText}>{c.label} </Text><Text style={[s.chipText, { color: c.level === 'bad' ? COLORS.buoy : c.level === 'warn' ? COLORS.lamp : COLORS.bone, fontWeight: '800' }]}>{c.value}</Text></View>
+            ))}</View>
           </> : <ActivityIndicator color={COLORS.bone} />}
         </View>
+        {st?.broadcast?.shield ? <View style={s.shield}><Text style={[s.btnText, { fontSize: 20 }]}>Crash shield on.</Text><Text style={s.lead}>OBS is restarting. Every platform is showing your BRB screen. The stream has not ended.</Text></View> : null}
         <View style={s.card}>
           <Text style={s.eyebrow}>Broadcast</Text>
           <View style={s.row}>
-            <Pressable style={[s.btnPrimary, { flex: 1 }]} onPress={() => act(() => client.startStream())}><Text style={s.btnText}>Go live</Text></Pressable>
-            <Pressable style={[s.btnGhost, { flex: 1 }]} onPress={() => act(() => client.stopStream())}><Text style={s.btnText}>Stop</Text></Pressable>
+            <Pressable disabled={!admin} style={[s.btnPrimary, { flex: 1, opacity: admin ? 1 : 0.4 }]} onPress={() => act(() => client.startStream())}><Text style={s.btnText}>{live ? 'On air' : 'Go live'}</Text></Pressable>
+            <Pressable disabled={!admin} style={[s.btnGhost, { flex: 1, opacity: admin ? 1 : 0.4 }]} onPress={() => act(() => client.stopStream())}><Text style={s.btnText}>Stop</Text></Pressable>
           </View>
+          {!admin ? <Text style={s.muted}>Signed in as moderator. Only the streamer can start or stop.</Text> : null}
+          {(st?.broadcast?.destinations ?? []).map((x) => (
+            <View key={x.id} style={s.dest}>
+              <View style={{ flex: 1 }}><Text style={s.destName}>{x.name}</Text><Text style={s.muted}>{DEST_WORD[x.state] ?? x.state}{x.restarts ? ` · ${x.restarts} reconnect${x.restarts === 1 ? '' : 's'}` : ''}</Text></View>
+              <Pressable disabled={!admin} onPress={() => act(() => client.setDestination(x.id, !x.enabled))} style={[s.toggle, x.enabled ? s.toggleOn : null]}><Text style={s.pillText}>{x.enabled ? 'On' : 'Off'}</Text></Pressable>
+            </View>
+          ))}
         </View>
         <View style={s.card}>
           <Text style={s.eyebrow}>Scene</Text>
           <View style={s.row}>{scene('live', 'Live')}{scene('low', 'Weak')}{scene('brb', 'BRB')}</View>
           <Pressable style={[s.btnGhost, { marginTop: 12 }]} onPress={() => act(() => client.setMode(st?.mode === 'auto' ? 'manual' : 'auto'))}><Text style={s.btnText}>Auto switching: {st?.mode === 'auto' ? 'on' : 'off'}</Text></Pressable>
         </View>
+        {sources.length > 1 ? (
+          <View style={s.card}>
+            <Text style={s.eyebrow}>Source</Text>
+            <View style={s.row}>{pinBtn('auto', 'Auto')}{pinBtn('primary', 'Primary')}{pinBtn('backup', 'Backup')}</View>
+            {sources.map((x) => <Text key={x.id} style={s.muted}>{x.label}: {x.ready ? formatKbps(x.kbps) : 'not connected'}{x.active ? ' · on air' : ''}</Text>)}
+          </View>
+        ) : null}
         {msg ? <Text style={s.lead}>{msg}</Text> : null}
       </ScrollView>
     </SafeAreaView>
@@ -125,5 +151,16 @@ const s = StyleSheet.create({
   eyebrow: { fontWeight: '700', fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase', color: COLORS.muted },
   pill: { flex: 1, borderWidth: 2, borderColor: COLORS.hull, borderRadius: 999, height: 52, alignItems: 'center', justifyContent: 'center' },
   pillText: { fontWeight: '800', fontSize: 17, color: COLORS.hull },
+  pillOn: { backgroundColor: COLORS.hull },
+  pillTextOn: { color: COLORS.bone },
+  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  chip: { flexDirection: 'row', borderWidth: 2, borderColor: '#27505A', backgroundColor: '#14363C', borderRadius: 999, paddingHorizontal: 12, paddingVertical: 6 },
+  chipText: { color: COLORS.onDark, fontWeight: '700', fontSize: 14 },
+  shield: { backgroundColor: COLORS.buoy, borderRadius: 28, borderWidth: 2, borderColor: COLORS.hull, padding: 18, gap: 6 },
+  muted: { color: COLORS.muted, fontWeight: '700', fontSize: 14 },
+  dest: { flexDirection: 'row', alignItems: 'center', gap: 12, borderTopWidth: 2, borderTopColor: COLORS.line, paddingTop: 12 },
+  destName: { fontWeight: '800', fontSize: 18, color: COLORS.hull },
+  toggle: { borderWidth: 2, borderColor: COLORS.hull, borderRadius: 999, paddingHorizontal: 18, height: 40, justifyContent: 'center' },
+  toggleOn: { backgroundColor: COLORS.mint },
   link: { fontWeight: '700', fontSize: 16, color: COLORS.hull, textDecorationLine: 'underline' },
 });
