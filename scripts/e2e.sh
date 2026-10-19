@@ -19,7 +19,6 @@ KEEL_PUBLIC_HOST=localhost
 KEEL_RECOVER_S=4
 KEEL_SHIELD_DELAY_S=2
 ENV
-[ -n "${KEEL_CA_FILE:-}" ] && echo "KEEL_CA_FILE=$KEEL_CA_FILE" >> "$ENVF"
 DC="docker compose --env-file $ENVF"
 AUTH="Authorization: Bearer e2e-token-0123456789abcdef"
 fail=0
