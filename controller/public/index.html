@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B1013">
+<title>Keel</title>
+<link rel="icon" href="/keel-icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=panchang@800&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=switzer@400&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=switzer@500&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=switzer@600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0B1013; --panel:#11181D; --panel-2:#161F25; --line:#222E36; --line-2:#2D3B45;
+  --paper:#ECEAE0; --mute:#8FA2AB; --dim:#5E727C;
+  --hi:#C8F031; --amber:#FF9F1C; --red:#FF4B3A;
+  --display:'Panchang','Switzer',system-ui,sans-serif;
+  --body:'Switzer',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--body);font-size:15px;line-height:1.4;-webkit-font-smoothing:antialiased}
+body{min-height:100vh;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+button{font:inherit;color:inherit;cursor:pointer}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---- header ---- */
+header{display:flex;align-items:center;gap:20px;padding:18px 28px;border-bottom:1px solid var(--line)}
+header svg.logo{height:18px;width:auto;display:block}
+.spacer{flex:1}
+.conn{display:flex;gap:10px;align-items:center;font-size:13px;color:var(--mute)}
+.pip{width:8px;height:8px;border-radius:50%;background:var(--dim);display:inline-block}
+.pip.ok{background:var(--hi)} .pip.bad{background:var(--red)} .pip.warn{background:var(--amber)}
+.link{background:none;border:0;color:var(--mute);padding:6px 0;font-size:13px}
+.link:hover{color:var(--paper)}
+
+/* ---- layout ---- */
+main{display:grid;gap:16px;padding:20px 28px 40px;max-width:1280px;margin:0 auto;
+  grid-template-columns:repeat(12,1fr);
+  grid-template-areas:"hero hero hero hero hero hero hero hero hero hero hero hero"
+                      "trace trace trace trace trace trace trace trace ctrl ctrl ctrl ctrl"
+                      "rel rel rel rel ing ing ing ing log log log log";}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:20px}
+.card h2{margin:0 0 14px;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--mute)}
+#hero{grid-area:hero;display:flex;flex-wrap:wrap;gap:20px 48px;align-items:flex-end;justify-content:space-between;padding:26px 28px 28px;position:relative;overflow:hidden}
+#hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--state,var(--dim))}
+.state-word{font-family:var(--display);font-weight:800;font-size:clamp(40px,7vw,92px);line-height:.95;letter-spacing:-.01em;color:var(--state,var(--paper));margin:6px 0 10px}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--mute)}
+.reason{color:var(--mute);font-size:14px;min-height:20px}
+.bitrate{text-align:right}
+.bitrate .v{font-family:var(--display);font-weight:800;font-size:clamp(34px,4.6vw,64px);line-height:1}
+.bitrate .u{font-family:var(--body);font-size:16px;color:var(--mute);margin-left:6px;font-weight:500}
+.bitrate .src{color:var(--mute);font-size:13px;margin-top:8px}
+
+#trace{grid-area:trace}
+.strips{display:grid;gap:10px}
+.strip-label{display:flex;justify-content:space-between;font-size:12px;color:var(--mute);margin-bottom:6px}
+canvas{width:100%;display:block}
+#chart{height:150px}
+#bands{height:26px;border-radius:3px}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--mute);margin-top:12px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+
+#ctrl{grid-area:ctrl;display:flex;flex-direction:column;gap:22px}
+.seg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.btn{min-height:48px;border-radius:5px;border:1px solid var(--line-2);background:var(--panel-2);font-weight:600;font-size:13px;letter-spacing:.1em;transition:border-color .12s,background .12s}
+.btn:hover{border-color:var(--mute)}
+.btn:active{transform:translateY(1px)}
+.btn.on{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.go{background:var(--hi);color:var(--ink);border-color:var(--hi);font-weight:600;letter-spacing:.12em;min-height:60px;font-size:15px}
+.btn.stop{background:transparent;border-color:var(--red);color:var(--red);font-weight:600;letter-spacing:.12em;min-height:60px;font-size:15px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.switch{position:relative;width:52px;height:30px;border-radius:15px;background:var(--line-2);border:0;padding:0;flex:none}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:var(--paper);transition:transform .15s}
+.switch[aria-checked="true"]{background:var(--hi)}
+.switch[aria-checked="true"]::after{transform:translateX(22px);background:var(--ink)}
+.help{color:var(--mute);font-size:13px;margin:4px 0 0}
+.air{display:flex;gap:10px;align-items:center;font-size:13px;color:var(--mute);margin-top:10px}
+.msg{min-height:18px;font-size:13px;color:var(--mute)}
+
+#rel{grid-area:rel}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:18px 12px}
+.stat .k{font-size:12px;color:var(--mute);margin-bottom:4px}
+.stat .v{font-weight:600;font-size:30px;line-height:1.05;letter-spacing:-.01em}
+.stat .v.bad{color:var(--red)}
+#ing{grid-area:ing}
+.url{margin-bottom:14px}
+.url .k{font-size:12px;color:var(--mute);margin-bottom:5px;display:flex;justify-content:space-between}
+.url code{display:block;background:var(--ink);border:1px solid var(--line);border-radius:4px;padding:10px 12px;font:500 12.5px/1.35 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--paper);word-break:break-all;position:relative}
+.copy{background:none;border:0;color:var(--hi);font-size:12px;font-weight:600;padding:0}
+#log{grid-area:log}
+#events{list-style:none;margin:0;padding:0;max-height:260px;overflow:auto;font-size:13px}
+#events li{display:flex;gap:12px;padding:8px 0;border-bottom:1px solid var(--line)}
+#events li:last-child{border-bottom:0}
+#events time{color:var(--dim);flex:none;width:64px}
+.tag{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;flex:none;width:70px}
+.empty{color:var(--dim);padding:10px 0}
+
+/* ---- login ---- */
+#login{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:var(--ink);z-index:10;padding:24px}
+#login.show{display:flex}
+.login-box{width:100%;max-width:400px}
+.login-box svg{height:22px;margin-bottom:34px;display:block}
+.login-box h1{font-family:var(--display);font-weight:800;font-size:30px;margin:0 0 8px;line-height:1.05}
+.login-box p{color:var(--mute);margin:0 0 20px}
+.login-box input{width:100%;min-height:50px;background:var(--panel);border:1px solid var(--line-2);border-radius:5px;color:var(--paper);font:inherit;padding:0 14px;margin-bottom:12px}
+.login-box input:focus{outline:2px solid var(--hi);outline-offset:1px}
+.err{color:var(--red);font-size:13px;min-height:18px;margin-top:10px}
+
+@media (max-width:900px){
+  header{padding:14px 18px}
+  main{padding:14px 14px 40px;grid-template-columns:1fr;grid-template-areas:"hero" "ctrl" "trace" "rel" "ing" "log"}
+  #hero{padding:22px 18px}
+  .bitrate{text-align:left}
+}
+@media (prefers-reduced-motion:no-preference){ .pip.ok{animation:none} }
+</style>
+</head>
+<body>
+
+<div id="login">
+  <form class="login-box" id="loginForm">
+    <svg viewBox="0 -682 5542 682" aria-label="Keel"><path d="M310.0 0.0H40.0V-682.0H310.0V-386.0L386.0 -456.0L706.0 -682.0H1073.0L677.0 -388.0L1097.0 0.0H740.0L471.0 -250.0L310.0 -140.0Z M2089.0 0.0H1157.0V-682.0H2089.0V-472.0H1427.0V-427.0H2070.0V-257.0H1427.0V-210.0H2089.0Z M3081.0 0.0H2149.0V-682.0H3081.0V-472.0H2419.0V-427.0H3062.0V-257.0H2419.0V-210.0H3081.0Z M3411.0 -230.0H4032.0V0.0H3141.0V-682.0H3411.0Z" fill="#ECEAE0"/><rect x="4032" y="-133" width="1500" height="36" fill="#C8F031"/></svg>
+    <h1>Control room</h1>
+    <p>Enter your access token to manage this server.</p>
+    <input id="tokenInput" type="password" placeholder="Access token" autocomplete="current-password" autofocus>
+    <button class="btn go" style="width:100%" type="submit">ENTER</button>
+    <div class="err" id="loginErr"></div>
+  </form>
+</div>
+
+<header>
+  <svg class="logo" viewBox="0 -682 5542 682" aria-label="Keel"><path d="M310.0 0.0H40.0V-682.0H310.0V-386.0L386.0 -456.0L706.0 -682.0H1073.0L677.0 -388.0L1097.0 0.0H740.0L471.0 -250.0L310.0 -140.0Z M2089.0 0.0H1157.0V-682.0H2089.0V-472.0H1427.0V-427.0H2070.0V-257.0H1427.0V-210.0H2089.0Z M3081.0 0.0H2149.0V-682.0H3081.0V-472.0H2419.0V-427.0H3062.0V-257.0H2419.0V-210.0H3081.0Z M3411.0 -230.0H4032.0V0.0H3141.0V-682.0H3411.0Z" fill="#ECEAE0"/><rect x="4032" y="-133" width="1500" height="36" fill="#C8F031"/></svg>
+  <div class="spacer"></div>
+  <div class="conn"><span class="pip" id="obsPip"></span><span id="obsLabel">Connecting</span></div>
+  <button class="link" id="logout">Sign out</button>
+</header>
+
+<main>
+  <section class="card" id="hero">
+    <div>
+      <div class="eyebrow">Phone signal</div>
+      <div class="state-word" id="stateWord">WAITING</div>
+      <div class="reason" id="reason">Waiting for the first status update</div>
+    </div>
+    <div class="bitrate">
+      <div class="eyebrow">Bitrate in</div>
+      <div><span class="v num" id="kbps">0</span><span class="u" id="kbpsUnit">kbps</span></div>
+      <div class="src" id="src">No publisher</div>
+    </div>
+  </section>
+
+  <section class="card" id="trace">
+    <h2 id="traceTitle">Last 5 minutes</h2>
+    <div class="strips">
+      <div>
+        <div class="strip-label"><span>Phone signal</span><span class="num" id="chartMax"></span></div>
+        <canvas id="chart"></canvas>
+      </div>
+      <div>
+        <div class="strip-label"><span>What viewers see</span><span id="viewerNote"></span></div>
+        <canvas id="bands"></canvas>
+      </div>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--hi)"></i>Live</span>
+      <span><i style="background:var(--amber)"></i>Weak signal</span>
+      <span><i style="background:var(--red)"></i>BRB</span>
+      <span><i style="background:transparent;border:1px dashed var(--mute)"></i>Thresholds</span>
+    </div>
+  </section>
+
+  <section class="card" id="ctrl">
+    <div>
+      <h2>Broadcast</h2>
+      <button class="btn go" id="broadcastBtn" style="width:100%">GO LIVE</button>
+      <div class="air"><span class="pip" id="airPip"></span><span id="airText">Not broadcasting</span></div>
+    </div>
+    <div>
+      <h2>Scene</h2>
+      <div class="seg" id="scenes">
+        <button class="btn" data-scene="live">LIVE</button>
+        <button class="btn" data-scene="low">LOW</button>
+        <button class="btn" data-scene="brb">BRB</button>
+      </div>
+    </div>
+    <div>
+      <div class="row">
+        <div><strong style="font-weight:600">Auto switching</strong><p class="help" style="margin:2px 0 0">Keel picks the scene from the signal.</p></div>
+        <button class="switch" id="auto" role="switch" aria-checked="true" aria-label="Auto switching"></button>
+      </div>
+    </div>
+    <div class="msg" id="msg"></div>
+  </section>
+
+  <section class="card" id="rel">
+    <h2>Reliability record</h2>
+    <div class="stats">
+      <div class="stat"><div class="k">Drops held</div><div class="v num" id="sDrops">0</div></div>
+      <div class="stat"><div class="k">Time on BRB</div><div class="v num" id="sOffline">0s</div></div>
+      <div class="stat"><div class="k">Longest drop</div><div class="v num" id="sLongest">0s</div></div>
+      <div class="stat"><div class="k">Broadcast time</div><div class="v num" id="sStream">0s</div></div>
+      <div class="stat"><div class="k">Unexpected stops</div><div class="v num" id="sUnexpected">0</div></div>
+      <div class="stat"><div class="k">Skipped frames</div><div class="v num" id="sSkipped">0</div></div>
+    </div>
+  </section>
+
+  <section class="card" id="ing">
+    <h2>Phone setup</h2>
+    <div class="url"><div class="k"><span>SRT (Moblin, IRL Pro, Larix)</span><button class="copy" data-copy="srt">Copy</button></div><code id="uSrt"></code></div>
+    <div class="url"><div class="k"><span>SRTLA (bonded, Moblin, Belabox)</span><button class="copy" data-copy="srtla">Copy</button></div><code id="uSrtla"></code></div>
+    <div class="url" style="margin-bottom:0"><div class="k"><span>RTMP</span><button class="copy" data-copy="rtmp">Copy</button></div><code id="uRtmp"></code></div>
+  </section>
+
+  <section class="card" id="log">
+    <h2>Event log</h2>
+    <ul id="events"></ul>
+  </section>
+</main>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const COLORS = { live: '#C8F031', low: '#FF9F1C', offline: '#FF4B3A' };
+  const WORD = { live: 'LIVE', low: 'LOW SIGNAL', offline: 'BRB' };
+  const HIST_SECONDS = 300;
+
+  let token = localStorage.getItem('keel.token') || '';
+  const fromUrl = new URLSearchParams(location.search).get('token');
+  if (fromUrl) { token = fromUrl; localStorage.setItem('keel.token', token); history.replaceState(null, '', location.pathname); }
+
+  let es = null;
+  let last = null;
+  const hist = []; // {t,kbps,state,streaming}
+  let urls = {};
+
+  const api = (path, body) => fetch(path, {
+    method: body ? 'POST' : 'GET',
+    headers: { authorization: 'Bearer ' + token, 'content-type': 'application/json' },
+    body: body ? JSON.stringify(body) : undefined,
+  }).then(async (r) => {
+    const j = await r.json().catch(() => ({}));
+    if (r.status === 401) { showLogin('That token was not accepted.'); throw new Error('unauthorized'); }
+    if (!r.ok) throw new Error(j.error || r.statusText);
+    return j;
+  });
+
+  function showLogin(err) { $('login').classList.add('show'); $('loginErr').textContent = err || ''; if (es) es.close(); $('tokenInput').focus(); }
+  $('loginForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    token = $('tokenInput').value.trim();
+    localStorage.setItem('keel.token', token);
+    $('login').classList.remove('show');
+    connect();
+  });
+  $('logout').addEventListener('click', () => { localStorage.removeItem('keel.token'); token = ''; showLogin(''); });
+
+  function connect() {
+    if (es) es.close();
+    api('/api/history').then((h) => { hist.length = 0; hist.push(...h); return api('/api/status'); }).then(() => {
+      es = new EventSource('/api/events?token=' + encodeURIComponent(token));
+      es.onmessage = (m) => render(JSON.parse(m.data));
+      es.onerror = () => { setConn('bad', 'Reconnecting to controller'); };
+    }).catch(() => {});
+  }
+
+  const fmtDur = (s) => {
+    s = Math.round(s);
+    if (s < 60) return s + 's';
+    if (s < 3600) return Math.floor(s / 60) + 'm ' + String(s % 60).padStart(2, '0') + 's';
+    return Math.floor(s / 3600) + 'h ' + String(Math.floor((s % 3600) / 60)).padStart(2, '0') + 'm';
+  };
+  const fmtBitrate = (k) => k >= 1000 ? [(k / 1000).toFixed(1), 'Mbps'] : [String(k), 'kbps'];
+  const clock = (t) => new Date(t).toTimeString().slice(0, 8);
+
+  function setConn(kind, label) { $('obsPip').className = 'pip ' + kind; $('obsLabel').textContent = label; }
+
+  function render(s) {
+    last = s;
+    urls = s.urls;
+    const st = s.ingest.state;
+    const color = COLORS[st] || '#5E727C';
+    document.documentElement.style.setProperty('--state', color);
+
+    if (!s.obs.connected) setConn('bad', 'OBS disconnected');
+    else if (!s.obs.synced) setConn('warn', 'OBS setting up');
+    else setConn('ok', 'OBS connected');
+
+    $('stateWord').textContent = WORD[st] || '';
+    let reason = s.ingest.reason || '';
+    if (s.ingest.apiError) reason = 'Cannot reach the ingest server';
+    $('reason').textContent = reason.charAt(0).toUpperCase() + reason.slice(1);
+    const [v, u] = fmtBitrate(s.ingest.kbps);
+    $('kbps').textContent = v; $('kbpsUnit').textContent = u;
+    const proto = { srtConn: 'SRT', rtmpConn: 'RTMP', srtSource: 'SRT', rtmpSource: 'RTMP' }[s.ingest.source] || s.ingest.source;
+    $('src').textContent = s.ingest.ready ? [proto, (s.ingest.tracks || []).join(' + ')].filter(Boolean).join(' · ') : 'No publisher';
+
+    // controls
+    for (const b of $('scenes').children) {
+      const name = s.scenes[b.dataset.scene];
+      b.classList.toggle('on', s.obs.scene === name);
+      b.disabled = !s.obs.connected;
+    }
+    $('auto').setAttribute('aria-checked', String(s.mode === 'auto'));
+    const bb = $('broadcastBtn');
+    bb.textContent = s.obs.streaming ? 'STOP BROADCAST' : 'GO LIVE';
+    bb.className = 'btn ' + (s.obs.streaming ? 'stop' : 'go');
+    bb.disabled = !s.obs.connected;
+    $('airPip').className = 'pip ' + (s.obs.reconnecting ? 'warn' : s.obs.streaming ? 'ok' : '');
+    $('airText').textContent = s.obs.reconnecting ? 'Reconnecting to the platform' : s.obs.streaming ? 'On air' + (s.obs.timecode ? ' · ' + s.obs.timecode.split('.')[0] : '') : 'Not broadcasting';
+
+    // stats
+    const m = s.summary;
+    $('sDrops').textContent = m.drops;
+    $('sOffline').textContent = fmtDur(m.offlineSeconds);
+    $('sLongest').textContent = fmtDur(m.longestDropSeconds);
+    $('sStream').textContent = fmtDur(m.streamSeconds);
+    $('sUnexpected').textContent = m.streamUnexpectedStops;
+    $('sUnexpected').classList.toggle('bad', m.streamUnexpectedStops > 0);
+    $('sSkipped').textContent = s.obs.totalFrames ? (100 * s.obs.skippedFrames / s.obs.totalFrames).toFixed(2) + '%' : '0%';
+
+    // urls
+    $('uSrt').textContent = s.urls.srt; $('uSrtla').textContent = s.urls.srtla; $('uRtmp').textContent = s.urls.rtmp;
+
+    // events
+    const ul = $('events'); ul.textContent = '';
+    const evs = (s.events || []).filter((e) => e.type !== 'obs' || e.state === 'disconnected').slice().reverse();
+    if (!evs.length) { const li = document.createElement('li'); li.className = 'empty'; li.textContent = 'Nothing yet. Events appear when the signal changes.'; ul.appendChild(li); }
+    for (const e of evs) {
+      const li = document.createElement('li');
+      const t = document.createElement('time'); t.className = 'num'; t.textContent = clock(e.t);
+      const tag = document.createElement('span'); tag.className = 'tag';
+      const text = document.createElement('span');
+      if (e.type === 'signal') { tag.textContent = e.state === 'offline' ? 'BRB' : e.state; tag.style.color = COLORS[e.state]; text.textContent = e.detail || ''; }
+      else if (e.type === 'stream') { tag.textContent = 'Stream'; tag.style.color = e.state === 'unexpected_stop' ? COLORS.offline : 'var(--paper)'; text.textContent = e.state.replace('_', ' '); }
+      else { tag.textContent = 'OBS'; tag.style.color = COLORS.low; text.textContent = e.state; }
+      li.append(t, tag, text); ul.appendChild(li);
+    }
+
+    // history for the strips
+    if (!hist.length || s.t - hist[hist.length - 1].t >= 900) hist.push({ t: s.t, kbps: s.ingest.kbps, state: st, scene: s.obs.scene, streaming: s.obs.streaming });
+    const cutoff = s.t - HIST_SECONDS * 1000;
+    while (hist.length && hist[0].t < cutoff) hist.shift();
+    drawCharts();
+  }
+
+  // ---- charts ----
+  function fit(c) {
+    const dpr = window.devicePixelRatio || 1;
+    const w = c.clientWidth, h = c.clientHeight;
+    if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
+    const g = c.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
+    return [g, w, h];
+  }
+  function drawCharts() {
+    if (!last) return;
+    const now = last.t;
+    const have = hist.length ? now - hist[0].t : 0;
+    const span = Math.max(60_000, Math.min(HIST_SECONDS * 1000, have + 5000)), x0 = now - span;
+    $('traceTitle').textContent = 'Last ' + (span >= 120_000 ? Math.round(span / 60_000) + ' minutes' : '60 seconds');
+    const X = (t, w) => ((t - x0) / span) * w;
+
+    // bitrate trace
+    const [g, w, h] = fit($('chart'));
+    const th = last.ingest.thresholds;
+    const peak = Math.max(th.lowKbps * 3, ...hist.map((p) => p.kbps), 1000);
+    const max = Math.ceil(peak / 1000) * 1000;
+    const Y = (k) => h - 4 - (k / max) * (h - 12);
+    $('chartMax').textContent = (max / 1000) + ' Mbps scale';
+    g.strokeStyle = '#222E36'; g.lineWidth = 1; g.setLineDash([]);
+    for (let i = 1; i <= 3; i++) { const y = Math.round(Y((max / 4) * i)) + .5; g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); }
+    g.setLineDash([4, 4]); g.strokeStyle = '#5E727C';
+    for (const k of [th.lowKbps, th.offlineKbps]) { const y = Math.round(Y(k)) + .5; g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); }
+    g.setLineDash([]);
+    if (hist.length > 1) {
+      for (let i = 1; i < hist.length; i++) {
+        const a = hist[i - 1], b = hist[i];
+        g.strokeStyle = COLORS[b.state] || '#5E727C'; g.lineWidth = 2; g.lineJoin = 'round';
+        g.beginPath(); g.moveTo(X(a.t, w), Y(a.kbps)); g.lineTo(X(b.t, w), Y(b.kbps)); g.stroke();
+      }
+    }
+
+    // viewer band: what scene was on air, and whether the broadcast was up
+    const [b, bw, bh] = fit($('bands'));
+    b.fillStyle = '#161F25'; b.fillRect(0, 0, bw, bh);
+    const sceneState = (p) => (p.scene === last.scenes.live ? 'live' : p.scene === last.scenes.low ? 'low' : p.scene === last.scenes.brb ? 'offline' : null);
+    for (let i = 0; i < hist.length; i++) {
+      const p = hist[i], nx = hist[i + 1] ? hist[i + 1].t : now;
+      const sstate = sceneState(p); if (!sstate) continue;
+      b.fillStyle = COLORS[sstate]; b.globalAlpha = p.streaming ? 1 : 0.28;
+      b.fillRect(X(p.t, bw), 0, Math.max(1, X(nx, bw) - X(p.t, bw) + 0.5), bh);
+    }
+    b.globalAlpha = 1;
+    const last60 = hist.filter((p) => p.streaming).length;
+    $('viewerNote').textContent = hist.length ? (last60 ? 'Solid when broadcasting, faint when not' : 'Not broadcasting') : 'Collecting';
+  }
+  window.addEventListener('resize', drawCharts);
+
+  // ---- actions ----
+  const say = (t, bad) => { const m = $('msg'); m.textContent = t; m.style.color = bad ? 'var(--red)' : 'var(--mute)'; clearTimeout(say.t); say.t = setTimeout(() => (m.textContent = ''), 5000); };
+  const act = (path, body) => api(path, body).then((r) => say(r.message || 'Done')).catch((e) => say(e.message, true));
+  $('scenes').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) act('/api/scene', { scene: b.dataset.scene }); });
+  $('auto').addEventListener('click', () => act('/api/mode', { mode: last && last.mode === 'auto' ? 'manual' : 'auto' }));
+  $('broadcastBtn').addEventListener('click', () => {
+    if (last && last.obs.streaming) { if (confirm('Stop the broadcast? Viewers will see the stream end.')) act('/api/stream/stop', {}); }
+    else act('/api/stream/start', {});
+  });
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-copy]'); if (!b || !urls) return;
+    navigator.clipboard.writeText(urls[b.dataset.copy]).then(() => { b.textContent = 'Copied'; setTimeout(() => (b.textContent = 'Copy'), 1500); });
+  });
+
+  if (token) connect(); else showLogin('');
+  // Expose for the local preview harness only
+  window.__keel = { render };
+})();
+</script>
+</body>
+</html>

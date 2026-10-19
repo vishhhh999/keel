@@ -1,0 +1,72 @@
+# Keel reference stack: ingest (mediamtx) -> OBS -> your platform, steered by the Keel controller.
+#
+#   cp .env.example .env     # then fill it in
+#   docker compose up -d --build
+#   open http://<server>:8080  (log in with KEEL_API_TOKEN)
+
+name: keel
+
+services:
+  mediamtx:
+    image: bluenviron/mediamtx:1.21.2
+    restart: unless-stopped
+    volumes:
+      - ./mediamtx.yml:/mediamtx.yml:ro
+    ports:
+      - "1935:1935"       # RTMP ingest
+      - "8890:8890/udp"   # SRT ingest
+    # 9997 (control API) is intentionally not published.
+
+  srtla:
+    profiles: ["srtla"]   # enable with: docker compose --profile srtla up -d
+    build: ./srtla
+    restart: unless-stopped
+    depends_on: [mediamtx]
+    ports:
+      - "5000:5000/udp"   # SRTLA bonded ingest
+
+  obs:
+    build: ./obs
+    restart: unless-stopped
+    environment:
+      KEEL_OBS_PASSWORD: ${KEEL_OBS_PASSWORD:?set KEEL_OBS_PASSWORD in .env}
+      KEEL_ENCODER: ${KEEL_ENCODER:-x264}
+      KEEL_BITRATE_KBPS: ${KEEL_BITRATE_KBPS:-6000}
+      KEEL_FPS: ${KEEL_FPS:-30}
+    volumes:
+      - ./assets:/assets:ro     # BRB and LOW SIGNAL screens, replace with your own PNGs
+    shm_size: "512m"
+    # 4455 (obs-websocket) is intentionally not published.
+
+  controller:
+    build: ../controller
+    restart: unless-stopped
+    depends_on: [mediamtx, obs]
+    environment:
+      KEEL_OBS_URL: ws://obs:4455
+      KEEL_OBS_PASSWORD: ${KEEL_OBS_PASSWORD}
+      KEEL_MEDIAMTX_API: http://mediamtx:9997
+      KEEL_INGEST_PATH: ${KEEL_INGEST_PATH:?set KEEL_INGEST_PATH in .env}
+      KEEL_API_TOKEN: ${KEEL_API_TOKEN:?set KEEL_API_TOKEN in .env}
+      KEEL_RTMP_URL: ${KEEL_RTMP_URL:-}
+      KEEL_STREAM_KEY: ${KEEL_STREAM_KEY:-}
+      KEEL_PUBLIC_HOST: ${KEEL_PUBLIC_HOST:-localhost}
+      KEEL_LOW_KBPS: ${KEEL_LOW_KBPS:-800}
+      KEEL_OFFLINE_KBPS: ${KEEL_OFFLINE_KBPS:-50}
+      KEEL_DEGRADE_OFFLINE_S: ${KEEL_DEGRADE_OFFLINE_S:-2}
+      KEEL_DEGRADE_LOW_S: ${KEEL_DEGRADE_LOW_S:-3}
+      KEEL_RECOVER_S: ${KEEL_RECOVER_S:-5}
+      KEEL_TWITCH_CHANNEL: ${KEEL_TWITCH_CHANNEL:-}
+      KEEL_TWITCH_BOT_NAME: ${KEEL_TWITCH_BOT_NAME:-}
+      KEEL_TWITCH_TOKEN: ${KEEL_TWITCH_TOKEN:-}
+      KEEL_TWITCH_ALLOWED: ${KEEL_TWITCH_ALLOWED:-}
+      KEEL_IDLE_MINUTES: ${KEEL_IDLE_MINUTES:-15}
+      KEEL_IDLE_ACTION: ${KEEL_IDLE_ACTION:-log}
+      KEEL_IDLE_WEBHOOK: ${KEEL_IDLE_WEBHOOK:-}
+    volumes:
+      - keel-data:/data
+    ports:
+      - "8080:8080"       # dashboard + API (put TLS in front of this, see README)
+
+volumes:
+  keel-data:

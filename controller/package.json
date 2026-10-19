@@ -1,0 +1,24 @@
+{
+  "name": "keel-controller",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Keel controller: watches the phone ingest, drives OBS scene switching, serves the dashboard and Twitch chat commands.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "start": "node src/main.ts",
+    "dev:mock": "node tools/dev-mock.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test --test-reporter=spec test/*.test.ts"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/ws": "^8.5.0",
+    "typescript": "^5.8.0"
+  }
+}

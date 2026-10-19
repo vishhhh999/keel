@@ -1,0 +1,36 @@
+# Ingest server (mediamtx). Phones publish here over SRT or RTMP, OBS reads from here.
+# Only the paths below are accepted, so an unguessable KEEL_INGEST_PATH is your stream key.
+
+logLevel: info
+
+api: yes
+apiAddress: :9997   # NOT published to the host in docker-compose.yml; internal network only.
+
+rtmp: yes
+rtmpAddress: :1935
+
+srt: yes
+srtAddress: :8890
+
+# Everything we do not use is off.
+rtsp: no
+hls: no
+webrtc: no
+metrics: no
+pprof: no
+playback: no
+
+authInternalUsers:
+  - user: any
+    pass:
+    ips: []
+    permissions:
+      # Publishing needs a path of the form live/<16+ url-safe characters>.
+      - action: publish
+        path: ~^live/[A-Za-z0-9_-]{16,}$
+      - action: read
+        path: ~^live/[A-Za-z0-9_-]{16,}$
+      - action: api
+
+paths:
+  all_others:

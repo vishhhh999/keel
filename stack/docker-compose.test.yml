@@ -1,0 +1,19 @@
+# Test overlay: adds a fake "Twitch" (a second mediamtx) so the whole pipeline can be exercised
+# locally with no streaming account. Used by scripts/e2e.sh.
+#   docker compose -f docker-compose.yml -f docker-compose.test.yml up -d --build
+services:
+  sink:
+    image: bluenviron/mediamtx:1.21.2
+    ports:
+      - "11935:1935"   # RTMP, so the test can pull frames back out of the "platform"
+  controller:
+    depends_on: [sink]
+    environment:
+      KEEL_RTMP_URL: rtmp://sink:1935/app
+      KEEL_STREAM_KEY: e2e
+    build:
+      context: ../controller
+      secrets: [ca]
+secrets:
+  ca:
+    file: ${KEEL_CA_FILE:-/dev/null}
