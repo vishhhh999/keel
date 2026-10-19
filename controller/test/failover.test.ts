@@ -222,3 +222,18 @@ test('RTMP publishers have no link stats and that is fine', async () => {
   const s = await m.poll(0);
   assert.equal(s.link, null);
 });
+
+test('the primary disconnecting with a healthy backup fails over on the very next sample, no frozen or black seconds', async () => {
+  const { keel, mock, feed, done } = await setup();
+  await feed(0, 8, 4000, 3000);
+  assert.equal(keel.activeSource, 'primary');
+  await feed(9, 0, null, 3000); // one sample: primary publisher gone
+  assert.equal(keel.activeSource, 'backup');
+  assert.equal(mock.visible('LIVE', 'Keel Backup Ingest'), true);
+  // the primary reconnecting does not pull viewers back until it has been healthy for the recovery time
+  await feed(10, 2, 4000, 3000);
+  assert.equal(keel.activeSource, 'backup');
+  await feed(13, 6, 4000, 3000);
+  assert.equal(keel.activeSource, 'primary');
+  await done();
+});
