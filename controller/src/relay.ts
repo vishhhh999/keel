@@ -47,6 +47,8 @@ export interface RelayOptions {
   ffmpeg?: string;
   spawn?: SpawnFn;
   now?: () => number;
+  /** Patience right after Go live, while OBS starts its output. Default 10 s. */
+  startGraceS?: number;
   /** Override backoff for tests. */
   backoffMs?: (attempt: number) => number;
 }
@@ -134,8 +136,9 @@ export class Relay extends EventEmitter {
 
   start(): void {
     this.wanted = true;
-    // If the program is not there yet (OBS still starting), wait the shield delay before covering with BRB.
-    if (!this.inputReady) this.armShield();
+    // Right after Go live OBS is still starting its output and the platforms have seen nothing yet,
+    // so wait the longer start grace before covering with BRB (avoids a BRB flash and an extra reconnect).
+    if (!this.inputReady) this.armShield(Math.max(this.o.shieldDelayS, this.o.startGraceS ?? 10));
     for (const x of this.dests.values()) this.ensure(x);
     this.emit('change');
   }
@@ -167,14 +170,14 @@ export class Relay extends EventEmitter {
     }
   }
 
-  private armShield(): void {
+  private armShield(delayS = this.o.shieldDelayS): void {
     if (this.shieldTimer) return;
     this.shieldTimer = setTimeout(() => {
       this.shieldTimer = null;
       if (!this.wanted || this.inputReady) return;
       for (const x of this.dests.values()) if (x.enabled && x.mode !== 'shield') this.restart(x);
       this.emit('shield', true);
-    }, this.o.shieldDelayS * 1000);
+    }, delayS * 1000);
     this.shieldTimer.unref?.();
   }
 
