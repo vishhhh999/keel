@@ -1,0 +1,7 @@
+# Automatic HTTPS for the dashboard and API. Needs a DNS A record for KEEL_PUBLIC_HOST pointing at this server.
+{$KEEL_PUBLIC_HOST} {
+	encode gzip
+	reverse_proxy controller:8080 {
+		flush_interval -1   # keeps the live event stream (SSE) flowing
+	}
+}

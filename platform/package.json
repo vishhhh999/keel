@@ -1,0 +1,12 @@
+{
+  "name": "keel-platform",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.5" },
+  "scripts": {
+    "start": "node --experimental-sqlite --no-warnings src/main.ts",
+    "dev": "KEEL_PROVIDER=mock node --experimental-sqlite --no-warnings src/main.ts",
+    "test": "node --experimental-sqlite --no-warnings --test test/*.test.ts"
+  }
+}

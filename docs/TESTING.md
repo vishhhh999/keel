@@ -16,7 +16,7 @@ Last run: 19 Oct 2026, in a Linux sandbox with Docker, OBS 30.0.2 (Ubuntu 24.04 
 | Phone return: scene back to LIVE | Restarted the phone | Pass |
 | Dashboard auth, SSE, history, metrics, path traversal guard | API tests | Pass |
 
-Evidence frames pulled from the broadcast output are in `docs/evidence/`: `2-brb.png` is what viewers received during the drop, `3-recovered.png` after the phone returned. `1-live.png` was taken while the feed was live.
+Evidence frames pulled from the broadcast output (they show the earlier placeholder screens from the first test run, before the current brand; the behaviour is the evidence, not the look) are in `docs/evidence/`: `2-brb.png` is what viewers received during the drop, `3-recovered.png` after the phone returned. `1-live.png` was taken while the feed was live.
 
 Run it yourself: `./scripts/e2e.sh`.
 

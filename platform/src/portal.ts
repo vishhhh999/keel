@@ -1,0 +1,9 @@
+/** Minimal single page portal. Paste a tenant token, see server state, start and stop. Not a finished product UI. */
+export const portalHtml = () => `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Keel</title>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap">
+<style>body{margin:0;background:#F3EEE4;color:#0E2A2F;font:500 18px 'Cabinet Grotesk',system-ui,sans-serif;padding:24px}main{max-width:560px;margin:40px auto}h1{font-weight:800;font-size:56px;letter-spacing:-.045em;line-height:.95;margin:0 0 18px}
+input{width:100%;box-sizing:border-box;border:2px solid #0E2A2F;border-radius:999px;height:52px;padding:0 20px;font:inherit;margin:6px 0;background:#FBF8F1}button{font:inherit;font-weight:800;border:2px solid #0E2A2F;border-radius:999px;height:52px;padding:0 26px;background:#FF5B1F;cursor:pointer;margin:6px 6px 6px 0}button.g{background:none}
+pre{background:#0E2A2F;color:#F3EEE4;border-radius:24px;padding:18px;overflow:auto;font:inherit;font-size:15px}</style>
+<main><h1>Your Keel server.</h1><input id=t type=password placeholder="Account token"><input id=u placeholder="rtmp://live.twitch.tv/app"><input id=k type=password placeholder="Stream key">
+<button onclick="go('/v1/server/start','POST',{rtmpUrl:u.value,streamKey:k.value})">Start</button><button class=g onclick="go('/v1/server/stop','POST')">Stop</button><button class=g onclick="go('/v1/me')">Refresh</button><pre id=o>Paste your token and press Refresh.</pre></main>
+<script>async function go(p,m='GET',b){const r=await fetch(p,{method:m,headers:{authorization:'Bearer '+t.value,'content-type':'application/json'},body:b?JSON.stringify(b):undefined});o.textContent=JSON.stringify(await r.json(),null,2)}</script></html>`;

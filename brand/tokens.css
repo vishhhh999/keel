@@ -1,0 +1,8 @@
+/* Keel design tokens. One family (Cabinet Grotesk, Fontshare), one loud colour (Buoy). */
+:root{
+  --hull:#0E2A2F; --bone:#F3EEE4; --buoy:#FF5B1F; --foam:#BFE3D6; --mint:#7BDDB0;
+  --kelp:#1F7A55; --lamp:#F5B83D; --tide:#3C7E96; --sand:#E6D6B8; --rust:#8A2F12;
+  --hull-2:#14363C; --hull-3:#1B444B; --line-dark:#27505A; --line-light:#D9D1C0; --ink-60:#5B6E70;
+  --font:'Cabinet Grotesk',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --r-card:36px; --r-pill:999px;
+}

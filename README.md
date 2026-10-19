@@ -4,9 +4,7 @@
 
 Keel is a cloud streaming stack for IRL streamers. Your phone sends video to a server. The server runs OBS, adds your scenes, and broadcasts to Twitch, Kick or YouTube. When your phone's signal gets weak or drops, Keel switches the broadcast to a branded "weak signal" or "be right back" screen by itself. Viewers never see a dead stream, and when your signal comes back, Keel returns to your camera.
 
-Concept, brand and product design: Vish, www.visheshmahendru.com
-
-> Status: **v0.1 reference prototype.** The core loop is tested end to end against real OBS (see [docs/TESTING.md](docs/TESTING.md)). Several pieces are not yet tested, and it has not been run with real streamers or at scale. Read "What is not proven" before betting anything on it.
+> Status: **v0.2.** Reference stack, website, mobile app and a multi-tenant platform layer. The core loop is tested end to end against real OBS (see [docs/TESTING.md](docs/TESTING.md)). The platform and mobile app are tested at the logic level only. The core loop is tested end to end against real OBS (see [docs/TESTING.md](docs/TESTING.md)). Several pieces are not yet tested, and it has not been run with real streamers or at scale. Read "What is not proven" before betting anything on it.
 
 ---
 
@@ -76,6 +74,14 @@ Open `http://<server>:8080`, sign in with `KEEL_API_TOKEN`. The dashboard shows 
 
 Optional bonded cellular (SRTLA): `docker compose --profile srtla up -d`. Not yet tested, see below.
 
+**One command on a fresh Ubuntu server, with HTTPS:**
+
+```bash
+KEEL_PUBLIC_HOST=keel.example.com KEEL_STREAM_KEY=live_xxx ./deploy/install.sh
+```
+
+It generates all secrets, opens the firewall, starts everything with a Caddy certificate, and prints your dashboard URL, token and phone SRT address.
+
 ### First test
 
 1. Put the SRT URL from the dashboard into your phone app and start sending. The dashboard should flip to **LIVE** in a few seconds.
@@ -101,7 +107,7 @@ The BRB and weak signal screens are plain 1920x1080 PNG files in `stack/assets/`
 
 ## Security
 
-- Put TLS in front of port 8080 (Caddy or nginx with a certificate). The token is sent as a bearer header, and in the URL for the live event stream, so do not expose it over plain HTTP on the open internet.
+- Use TLS: `docker compose --profile tls up -d` (Caddy, automatic certificates) or `deploy/install.sh`. The token is sent as a bearer header, and in the URL for the live event stream, so do not expose it over plain HTTP on the open internet.
 - Only your secret `live/<key>` path can publish or read. Treat it like a password.
 - The OBS websocket and the mediamtx API are not published to the host. Keep it that way.
 - Firewall to the ports listed above. Restrict 8080 to your IP if you can.
@@ -115,10 +121,14 @@ Cloud GPU and CPU time is the main cost, so servers should stop when unused. Aft
 | Path | What |
 |---|---|
 | `controller/` | The Keel controller (Node 22, TypeScript run natively, one dependency: `ws`). 52 tests. |
-| `stack/` | Docker Compose for mediamtx, OBS, SRTLA and the controller. |
-| `scripts/` | `fake-phone.sh` (simulated phone), `e2e.sh` (full test). |
-| `brand/` | Logo, wordmark, icon. |
-| `docs/` | Testing record, costs, GPU notes, evidence frames. |
+| `stack/` | Docker Compose: mediamtx, OBS, SRTLA, controller, Caddy TLS profile. |
+| `platform/` | Multi-tenant control plane: tenants, server lifecycle, idle shutdown, usage metering, Stripe webhooks, Hetzner adapter. No dependencies. 8 tests. |
+| `mobile/` | Expo React Native app: live state, scene and broadcast controls. Logic tested, not yet run on a device. |
+| `web/` | The Keel website, static, deploys to Vercel (Root Directory `web`). |
+| `deploy/` | `install.sh`, one command server setup. |
+| `scripts/` | `fake-phone.sh`, `e2e.sh` (full test), `chaos.sh` (drop drill). |
+| `brand/` | Logo set, tokens, generators. Brand guide PDF is in `docs/`. |
+| `docs/` | Architecture, launch week plan, operations, security, roadmap, outreach drafts, testing record, costs, GPU notes. |
 
 Develop without Docker: `cd controller && npm install && npm run dev:mock`, then open `http://localhost:8080` (token `dev`). It simulates a phone that connects, weakens, drops and recovers.
 
@@ -128,9 +138,14 @@ Be honest with yourself and your investors about these.
 
 - **Tested for real:** controller logic, real OBS control, ingest over SRT, scene switching on drop and recovery, broadcast continuity through a drop, output reaching an RTMP receiver. Details in [docs/TESTING.md](docs/TESTING.md).
 - **Not tested:** SRTLA bonding image (written, never built or run), NVIDIA encoding, real Twitch/Kick/YouTube ingest, Twitch chat control against live Twitch, a real phone on real cellular, many users at once, anything over hours.
-- **Not built:** accounts, billing, multi-tenant orchestration (spinning servers up and down per customer), a hosted control plane, mobile app. This repo is one streamer's server. A business needs the layer above it.
+- **Built but untested against live services:** the platform layer (mock provider tested; Hetzner and Stripe paths not run live), the mobile app on a device.
+- **Not built:** invoicing and usage reporting into Stripe, orphan server sweeper, pre-built images, team accounts. See [docs/ROADMAP.md](docs/ROADMAP.md).
 - **Latency and glitches** are the pain with the incumbent. Keel's design avoids some causes, but real numbers need real tests on real networks. Measure before claiming anything.
+
+## Taking it to market
+
+Start with [docs/LAUNCH-WEEK.md](docs/LAUNCH-WEEK.md). Architecture is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), running it in [docs/OPERATIONS.md](docs/OPERATIONS.md).
 
 ## License
 
-All rights reserved by the author until agreed otherwise. Third party components (OBS Studio, mediamtx, SRTLA, ws) keep their own licenses. The Panchang and Switzer typefaces are used under the Fontshare license and are not included in this repo.
+All rights reserved by the author until agreed otherwise. Third party components (OBS Studio, mediamtx, SRTLA, Caddy, ws) keep their own licenses. Cabinet Grotesk is used under the Fontshare license and is not included in this repo.

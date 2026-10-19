@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "name": "Keel",
+    "slug": "keel",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#F3EEE4",
+    "ios": { "bundleIdentifier": "app.keel.mobile", "supportsTablet": false },
+    "android": { "package": "app.keel.mobile" }
+  }
+}

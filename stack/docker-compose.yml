@@ -68,5 +68,20 @@ services:
     ports:
       - "8080:8080"       # dashboard + API (put TLS in front of this, see README)
 
+  caddy:
+    profiles: ["tls"]     # enable with: docker compose --profile tls up -d
+    image: caddy:2.8
+    restart: unless-stopped
+    depends_on: [controller]
+    environment:
+      KEEL_PUBLIC_HOST: ${KEEL_PUBLIC_HOST:?set KEEL_PUBLIC_HOST to a DNS name pointing at this server}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+    ports:
+      - "80:80"
+      - "443:443"
+
 volumes:
   keel-data:
+  caddy-data:
