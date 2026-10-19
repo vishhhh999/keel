@@ -35,6 +35,7 @@ const relay = relayMode
         height: cfg.height,
         shieldDelayS: cfg.shieldDelayS,
         ffmpeg: cfg.ffmpegPath,
+        checkInput: () => program!.poll().then((s) => s.ready || s.apiError),
       },
       cfg.destinations,
     )

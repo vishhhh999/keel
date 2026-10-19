@@ -30,11 +30,11 @@ class FakeChild extends EventEmitter implements ChildLike {
 
 const tick = (ms = 15) => new Promise((r) => setTimeout(r, ms));
 
-function setup(shieldDelayS = 0.05, startGraceS = 0) {
+function setup(shieldDelayS = 0.05, startGraceS = 0, extra: { returnStableS?: number; checkInput?: () => Promise<boolean> } = { returnStableS: 0 }) {
   const children: FakeChild[] = [];
   const dests = parseDestinations('Twitch=rtmp://live.twitch.tv/app/live_secret1234;Kick=rtmps://kick.example/app/sk_abcd9876');
   const relay = new Relay(
-    { inputUrl: 'rtmp://mediamtx:1935/out/k', brbImage: '/assets/brb.png', fps: 30, width: 1920, height: 1080, shieldDelayS, startGraceS, spawn: (_c, a) => { const ch = new FakeChild(a); children.push(ch); return ch; }, backoffMs: () => 20 },
+    { inputUrl: 'rtmp://mediamtx:1935/out/k', brbImage: '/assets/brb.png', fps: 30, width: 1920, height: 1080, shieldDelayS, startGraceS, ...extra, spawn: (_c, a) => { const ch = new FakeChild(a); children.push(ch); return ch; }, backoffMs: () => 20 },
     dests,
   );
   const live = (id: string) => relay.status().find((d) => d.id === id)!;
@@ -170,5 +170,56 @@ test('right after Go live the relay waits the start grace for OBS instead of fla
   relay.setInputReady(true);
   assert.equal(children.length, 2);
   assert.ok(children.every((c) => c.args.includes('copy')), 'went straight to the program, no BRB flash');
+  relay.stop();
+});
+
+test('copy dies because OBS is gone: shield starts immediately, no retry wait', async () => {
+  let programUp = true;
+  const { relay, children, live } = setup(5, 0, { returnStableS: 0, checkInput: async () => programUp });
+  const shield: boolean[] = [];
+  relay.on('shield', (on) => shield.push(on));
+  relay.setInputReady(true);
+  relay.start();
+  children.forEach((c) => c.progress(1));
+  await tick();
+  programUp = false;
+  children[0]!.crash('Input/output error');
+  await tick(20);
+  assert.equal(children.length, 3, 'shield spawned right away, long before the 5 s shield delay');
+  assert.ok(children[2]!.args.includes('/assets/brb.png'));
+  assert.deepEqual(shield, [true]);
+  assert.equal(live('twitch').restarts, 0, 'an OBS crash is not counted as a platform reconnect');
+  relay.stop();
+});
+
+test('copy dies but the program is fine: it is the platform, retry with backoff', async () => {
+  const { relay, children, live } = setup(5, 0, { returnStableS: 0, checkInput: async () => true });
+  relay.setInputReady(true);
+  relay.start();
+  children.forEach((c) => c.progress(1));
+  await tick();
+  children[1]!.crash('Server returned 403 Forbidden');
+  await tick(15);
+  assert.equal(live('kick').state, 'retrying');
+  assert.equal(children.length, 2, 'no shield for a platform problem');
+  relay.stop();
+});
+
+test('leaving the shield waits for OBS to stay back, a flap does not cause extra reconnects', async () => {
+  const { relay, children } = setup(0.03, 0, { returnStableS: 0.12 });
+  relay.setInputReady(true);
+  relay.start();
+  relay.setInputReady(false);
+  await tick(60); // shield on
+  const afterShield = children.length;
+  relay.setInputReady(true);
+  await tick(50);
+  relay.setInputReady(false); // OBS flapped
+  relay.setInputReady(true);
+  await tick(50);
+  assert.equal(children.length, afterShield, 'still on the shield while OBS proves itself');
+  await tick(120);
+  assert.equal(children.length, afterShield + 2, 'back to the program once stable');
+  assert.ok(children.slice(-2).every((c) => c.args.includes('copy')));
   relay.stop();
 });
