@@ -6,9 +6,16 @@
 // The simulated phone cycles: connect -> healthy -> weak -> drop -> recover. Set SPEED=4 to run faster.
 
 import { createServer } from 'node:http';
+import { chmodSync } from 'node:fs';
 import { MockObs } from './mock-obs.ts';
 
 const SPEED = Number(process.env.SPEED ?? 1);
+// Uploading through the GitHub website or unzipping on Windows drops the executable bit; restore it.
+function fakeFfmpeg(): string {
+  const p = new URL('./fake-ffmpeg.sh', import.meta.url).pathname;
+  try { chmodSync(p, 0o755); } catch { /* read-only checkout: run it anyway */ }
+  return p;
+}
 const PATH_NAME = 'live/devmockkey0123456789';
 
 const obs = new MockObs({ port: 4455, password: 'dev-obs' });
@@ -99,7 +106,7 @@ Object.assign(process.env, {
   KEEL_INGEST_PATH: PATH_NAME,
   KEEL_API_TOKEN: 'dev',
   KEEL_DESTINATIONS: 'Twitch=rtmp://live.twitch.example/app/live_dev1234;Kick=rtmps://flaky.kick.example/app/sk_dev5678;YouTube=rtmp://a.rtmp.youtube.example/live2/dev-9012',
-  KEEL_FFMPEG: new URL('./fake-ffmpeg.sh', import.meta.url).pathname,
+  KEEL_FFMPEG: fakeFfmpeg(),
   KEEL_MOD_TOKEN: 'mod',
   KEEL_DATA_DIR: process.env.KEEL_DATA_DIR ?? './data-dev',
   KEEL_RECOVER_S: String(Math.max(2, Math.round(5 / SPEED))),

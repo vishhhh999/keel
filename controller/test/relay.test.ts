@@ -30,11 +30,11 @@ class FakeChild extends EventEmitter implements ChildLike {
 
 const tick = (ms = 15) => new Promise((r) => setTimeout(r, ms));
 
-function setup(shieldDelayS = 0.05) {
+function setup(shieldDelayS = 0.05, startGraceS = 0) {
   const children: FakeChild[] = [];
   const dests = parseDestinations('Twitch=rtmp://live.twitch.tv/app/live_secret1234;Kick=rtmps://kick.example/app/sk_abcd9876');
   const relay = new Relay(
-    { inputUrl: 'rtmp://mediamtx:1935/out/k', brbImage: '/assets/brb.png', fps: 30, width: 1920, height: 1080, shieldDelayS, spawn: (_c, a) => { const ch = new FakeChild(a); children.push(ch); return ch; }, backoffMs: () => 20 },
+    { inputUrl: 'rtmp://mediamtx:1935/out/k', brbImage: '/assets/brb.png', fps: 30, width: 1920, height: 1080, shieldDelayS, startGraceS, spawn: (_c, a) => { const ch = new FakeChild(a); children.push(ch); return ch; }, backoffMs: () => 20 },
     dests,
   );
   const live = (id: string) => relay.status().find((d) => d.id === id)!;
@@ -159,5 +159,16 @@ test('destinations can be switched off and on while live', async () => {
   relay.setEnabled('kick', true);
   assert.equal(children.length, 3);
   assert.equal(relay.setEnabled('nope', true), false);
+  relay.stop();
+});
+
+test('right after Go live the relay waits the start grace for OBS instead of flashing BRB', async () => {
+  const { relay, children } = setup(0.03, 0.15);
+  relay.start();
+  await tick(80);
+  assert.equal(children.length, 0, 'still waiting for the program inside the grace period');
+  relay.setInputReady(true);
+  assert.equal(children.length, 2);
+  assert.ok(children.every((c) => c.args.includes('copy')), 'went straight to the program, no BRB flash');
   relay.stop();
 });

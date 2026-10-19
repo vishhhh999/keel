@@ -11,9 +11,3 @@ services:
     environment:
       # Two destinations on the fake platform, to prove multistream and per-destination reconnects.
       KEEL_DESTINATIONS: "Sink A=rtmp://sink:1935/app/e2ea;Sink B=rtmp://sink:1935/app/e2eb"
-    build:
-      context: ../controller
-      secrets: [ca]
-secrets:
-  ca:
-    file: ${KEEL_CA_FILE:-/dev/null}

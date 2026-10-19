@@ -4,8 +4,8 @@ Assumes one funded owner, one engineer who can read Node and Docker, and one anc
 
 | Day | Do | Done when |
 |---|---|---|
-| 1 | Push the repo to GitHub (CI runs every test and the Docker end to end, `images.yml` publishes images). Create a cloud account (Hetzner is wired in). Run `deploy/install.sh` on a test server, no domain needed. | CI green. Dashboard loads over HTTPS with a valid certificate. |
-| 2 | Two real phones on two carriers, a moving car. Primary on SRT, backup on the backup address. Then SRTLA bonding. Run `scripts/chaos.sh 20`. | Ten minute drive, broadcast down count 0, at least one failover seen. |
+| 1 | Push the repo to GitHub (CI runs every test and the Docker end to end, `images.yml` publishes images). Create a cloud account (Hetzner is wired in). Run `bash deploy/install.sh` on a test server, no domain needed. | CI green. Dashboard loads over HTTPS with a valid certificate. |
+| 2 | Two real phones on two carriers, a moving car. Primary on SRT, backup on the backup address. Then SRTLA bonding. Run `bash scripts/chaos.sh 20`. | Ten minute drive, broadcast down count 0, at least one failover seen. |
 | 3 | Real Twitch, Kick and YouTube at once through the relay. Measure glass to glass latency with a visible clock. Kill OBS mid-stream and watch the crash shield on all three. Try NVENC or stay on CPU. | Latency written down, crash shield seen live, encoder decision made. |
 | 4 | Deploy `platform/` with `KEEL_PROVIDER=hetzner`, `KEEL_IMAGE_PREFIX` set, sslip or Cloudflare DNS. Create two test tenants. Start and stop from the portal. | Two tenants each get a working HTTPS server (state `running`), and it deletes itself when idle. |
 | 5 | Stripe: products, webhook to `/v1/stripe`, suspend on failed payment. Report metered hours. Build the mobile app with EAS and put it in TestFlight and Play internal testing. | One test payment clears. App connects to a real server. |

@@ -19,20 +19,25 @@ KEEL_PUBLIC_HOST=localhost
 KEEL_RECOVER_S=4
 KEEL_SHIELD_DELAY_S=2
 ENV
-[ -n "${KEEL_CA_FILE:-}" ] && echo "KEEL_CA_FILE=$KEEL_CA_FILE" >> "$ENVF"
 DC="docker compose --env-file $ENVF"
 AUTH="Authorization: Bearer e2e-token-0123456789abcdef"
 fail=0
-check() { if [ "$2" = "$3" ]; then echo "PASS  $1"; else echo "FAIL  $1 (wanted $3, got $2)"; fail=1; fi; }
+# In GitHub Actions, failures also become annotations so they are readable from the run page and the API.
+annot() { [ -n "${GITHUB_ACTIONS:-}" ] || return 0; local t="$1" m; m=$(printf '%s' "$2" | tail -c 3500 | sed 's/%/%25/g' | sed ':a;N;$!ba;s/\r/%0D/g;s/\n/%0A/g'); echo "::error title=$t::$m"; }
+check() { if [ "$2" = "$3" ]; then echo "PASS  $1"; else echo "FAIL  $1 (wanted $3, got $2)"; annot "e2e check failed" "$1: wanted $3, got $2"; fail=1; fi; }
 field() { curl -s -H "$AUTH" localhost:8080/api/status | python3 -c "import sys,json;d=json.load(sys.stdin);print($1)"; }
 wait_for() { for _ in $(seq 1 "${3:-60}"); do [ "$(field "$1" 2>/dev/null)" = "$2" ] && return 0; sleep 2; done; return 1; }
-width() { timeout 20 ffprobe -v error -show_entries stream=width -of csv=p=0 "rtmp://localhost:11935/app/$1" 2>/dev/null | head -1; }
-phone() { (setsid ../scripts/fake-phone.sh srt localhost "$1" 4000 >/dev/null 2>&1 &); }
+probe() { timeout 15 ffprobe -v error -show_entries stream=width -of csv=p=0 "rtmp://localhost:11935/app/$1" 2>/dev/null | head -1; }
+# A destination that just (re)connected can take a few seconds to appear on the platform: retry before judging.
+width() { local w=""; for _ in 1 2 3 4 5 6; do w=$(probe "$1"); [ -n "$w" ] && break; sleep 3; done; echo "$w"; }
+phone() { (setsid bash ../scripts/fake-phone.sh srt localhost "$1" 4000 >/dev/null 2>&1 &); }
 kill_phone() { pkill -f "[s]treamid=publish:$1&" ; }
 
 cleanup() { pkill -x ffmpeg 2>/dev/null; $DC down -v >/dev/null 2>&1; rm -f "$ENVF"; }
 trap cleanup EXIT
-$DC up -d --build || exit 1
+if ! $DC up -d --build > /tmp/keel-up.log 2>&1; then
+  cat /tmp/keel-up.log; annot "docker compose up failed" "$(tail -40 /tmp/keel-up.log)"; exit 1
+fi
 
 wait_for 'd["obs"]["synced"]' True 120;               check "controller synced with real OBS" "$(field 'd["obs"]["synced"]')" True
 check "idle scene is BRB" "$(field 'd["obs"]["scene"]')" BRB
@@ -77,5 +82,9 @@ curl -s -XPOST -H "$AUTH" localhost:8080/api/stream/stop -d '{}' >/dev/null
 wait_for 'd["broadcast"]["onAir"]' False 20;          check "broadcast stops on request" "$(field 'd["broadcast"]["onAir"]')" False
 
 echo; field 'd["summary"]'
+if [ $fail != 0 ]; then
+  echo; echo "---- container logs (last 60 lines each) ----"
+  for s in controller obs mediamtx; do echo "== $s"; $DC logs --no-color --tail 60 "$s" 2>&1; annot "logs: $s" "$($DC logs --no-color --tail 25 "$s" 2>&1)"; done
+fi
 [ $fail = 0 ] && echo "ALL PASSED" || echo "SOME FAILED"
 exit $fail

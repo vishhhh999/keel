@@ -10,7 +10,7 @@ TOKEN="${KEEL_API_TOKEN:?set KEEL_API_TOKEN}"; PATH_NAME="${KEEL_INGEST_PATH:?se
 streaming() { curl -fsS -H "authorization: Bearer $TOKEN" "$API/api/status" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const j=JSON.parse(s);console.log(j.broadcast?j.broadcast.onAir:j.obs.streaming)})'; }
 bad=0
 for i in $(seq 1 "$CYCLES"); do
-  ./scripts/fake-phone.sh srt "$HOST" "$PATH_NAME" >/dev/null 2>&1 & PID=$!
+  bash ./scripts/fake-phone.sh srt "$HOST" "$PATH_NAME" >/dev/null 2>&1 & PID=$!
   sleep $((8 + RANDOM % 6)); kill "$PID" 2>/dev/null || true; wait "$PID" 2>/dev/null || true
   sleep $((3 + RANDOM % 4))
   S=$(streaming); echo "cycle $i: broadcast streaming=$S"; [ "$S" = "true" ] || bad=$((bad+1))
