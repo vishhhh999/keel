@@ -18,6 +18,7 @@ jobs:
       - run: pip install --break-system-packages playwright && python3 -m playwright install --with-deps chromium
       - run: bash scripts/proof.sh
       - name: Publish footage to the proof-assets branch
+        if: always()
         run: |
           cd proof
           git init -q && git checkout -q -b proof-assets

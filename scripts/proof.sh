@@ -22,14 +22,14 @@ ENV
 DC="docker compose --env-file $ENVF"
 AUTH="Authorization: Bearer $TOKEN"
 field() { curl -s -H "$AUTH" localhost:8080/api/status | python3 -c "import sys,json;d=json.load(sys.stdin);print($1)"; }
-wait_for() { for _ in $(seq 1 "${3:-60}"); do [ "$(field "$1" 2>/dev/null)" = "$2" ] && return 0; sleep 1; done; echo "timeout waiting for $1 == $2"; return 1; }
+wait_for() { for _ in $(seq 1 "${3:-60}"); do [ "$(field "$1" 2>/dev/null)" = "$2" ] && return 0; sleep 1; done; echo "timeout waiting for $1 == $2"; [ -n "${GITHUB_ACTIONS:-}" ] && echo "::error title=proof wait timed out::$1 == $2 (got $(field "$1" 2>/dev/null))"; return 1; }
 phone() { (LABEL="$2" COLOR="$3" setsid bash ../scripts/fake-phone.sh srt localhost "$1" 4500 >/dev/null 2>&1 &); }
 kill_phone() { pkill -f "[s]treamid=publish:$1&"; }
 mark() { echo "{\"t\":$(date +%s%3N),\"mark\":\"$1\"}" >> "$OUT/timeline.jsonl"; echo "== $1"; }
 
-cleanup() { pkill -f "[r]ecord_dashboard.py"; pkill -x ffmpeg 2>/dev/null; kill "${LOGGER:-0}" "${REC:-0}" 2>/dev/null; $DC down -v >/dev/null 2>&1; rm -f "$ENVF"; }
+cleanup() { $DC logs --no-color --tail 200 > "$OUT/containers.log" 2>&1; pkill -f "[r]ecord_dashboard.py"; pkill -x ffmpeg 2>/dev/null; kill "${LOGGER:-0}" "${REC:-0}" 2>/dev/null; $DC down -v >/dev/null 2>&1; rm -f "$ENVF"; }
 trap cleanup EXIT
-$DC up -d --build >/dev/null 2>&1 || { echo "compose up failed"; exit 1; }
+$DC up -d --build > "$OUT/compose-up.log" 2>&1 || { echo "::error title=proof compose up failed::$(tail -5 "$OUT/compose-up.log" | tr "\n" " ")"; exit 1; }
 wait_for 'd["obs"]["synced"]' True 180 || exit 1
 
 # Status timeline, one line per second.
