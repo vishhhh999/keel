@@ -1,0 +1,98 @@
+{"t": 1792413629999, "state": "offline", "active": "primary", "scene": "BRB", "kbps": 0, "onAir": false, "shield": false, "obs": true, "dests": ["off", "off"], "errors": ["", ""]}
+{"t": 1792413631058, "state": "offline", "active": "primary", "scene": "BRB", "kbps": 0, "onAir": false, "shield": false, "obs": true, "dests": ["off", "off"], "errors": ["", ""]}
+{"t": 1792413632115, "state": "offline", "active": "primary", "scene": "BRB", "kbps": 4711, "onAir": false, "shield": false, "obs": true, "dests": ["off", "off"], "errors": ["", ""]}
+{"t": 1792413633175, "state": "offline", "active": "primary", "scene": "BRB", "kbps": 4934, "onAir": false, "shield": false, "obs": true, "dests": ["off", "off"], "errors": ["", ""]}
+{"t": 1792413634224, "state": "offline", "active": "primary", "scene": "BRB", "kbps": 4702, "onAir": false, "shield": false, "obs": true, "dests": ["off", "off"], "errors": ["", ""]}
+{"t": 1792413635274, "state": "offline", "active": "primary", "scene": "BRB", "kbps": 4935, "onAir": false, "shield": false, "obs": true, "dests": ["off", "off"], "errors": ["", ""]}
+{"t": 1792413636343, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4917, "onAir": false, "shield": false, "obs": true, "dests": ["connecting", "connecting"], "errors": ["", ""]}
+{"t": 1792413637413, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4874, "onAir": false, "shield": false, "obs": true, "dests": ["connecting", "connecting"], "errors": ["", ""]}
+{"t": 1792413638464, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4974, "onAir": false, "shield": false, "obs": true, "dests": ["connecting", "connecting"], "errors": ["", ""]}
+{"t": 1792413639529, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 5132, "onAir": false, "shield": false, "obs": true, "dests": ["connecting", "connecting"], "errors": ["", ""]}
+{"t": 1792413640588, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4906, "onAir": false, "shield": false, "obs": true, "dests": ["connecting", "connecting"], "errors": ["", ""]}
+{"t": 1792413641646, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4883, "onAir": false, "shield": false, "obs": true, "dests": ["connecting", "connecting"], "errors": ["", ""]}
+{"t": 1792413642762, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4848, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413643811, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4805, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413644884, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4669, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413646028, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4858, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413647214, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4546, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413648403, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4429, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413649479, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4824, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413650535, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4865, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t":1792413651599,"mark":"live on the primary phone"}
+{"t": 1792413651613, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4647, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413652663, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4845, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413653724, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4840, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413654780, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4615, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413655844, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4677, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413656897, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4610, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413657950, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4530, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413659015, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4907, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413660090, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4643, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413661196, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4688, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t":1792413661605,"mark":"backup phone connects"}
+{"t": 1792413662309, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4485, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413663408, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4630, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413664475, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4859, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413665575, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4802, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413666633, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4754, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413667723, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4534, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413668890, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4457, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413670011, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4810, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t":1792413670617,"mark":"primary phone dies"}
+{"t": 1792413671079, "state": "live", "active": "backup", "scene": "LIVE", "kbps": 4855, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413672145, "state": "live", "active": "backup", "scene": "LIVE", "kbps": 4819, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413673235, "state": "live", "active": "backup", "scene": "LIVE", "kbps": 4820, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413674283, "state": "live", "active": "backup", "scene": "LIVE", "kbps": 4945, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413675335, "state": "live", "active": "backup", "scene": "LIVE", "kbps": 4964, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413676407, "state": "live", "active": "backup", "scene": "LIVE", "kbps": 4779, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413677459, "state": "live", "active": "backup", "scene": "LIVE", "kbps": 4659, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413678513, "state": "live", "active": "backup", "scene": "LIVE", "kbps": 4604, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413679585, "state": "live", "active": "backup", "scene": "LIVE", "kbps": 4661, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413680638, "state": "live", "active": "backup", "scene": "LIVE", "kbps": 4800, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413681692, "state": "live", "active": "backup", "scene": "LIVE", "kbps": 4847, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413682743, "state": "live", "active": "backup", "scene": "LIVE", "kbps": 4886, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t":1792413682784,"mark":"backup phone dies too"}
+{"t": 1792413683787, "state": "offline", "active": "primary", "scene": "BRB", "kbps": 0, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413684830, "state": "offline", "active": "primary", "scene": "BRB", "kbps": 0, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413685870, "state": "offline", "active": "primary", "scene": "BRB", "kbps": 0, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413686913, "state": "offline", "active": "primary", "scene": "BRB", "kbps": 0, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413687957, "state": "offline", "active": "primary", "scene": "BRB", "kbps": 0, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413689011, "state": "offline", "active": "primary", "scene": "BRB", "kbps": 0, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413690056, "state": "offline", "active": "primary", "scene": "BRB", "kbps": 0, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413691113, "state": "offline", "active": "primary", "scene": "BRB", "kbps": 0, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413692156, "state": "offline", "active": "primary", "scene": "BRB", "kbps": 0, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t":1792413692890,"mark":"primary phone is back"}
+{"t": 1792413693233, "state": "offline", "active": "primary", "scene": "BRB", "kbps": 0, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413694297, "state": "offline", "active": "primary", "scene": "BRB", "kbps": 0, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413695360, "state": "offline", "active": "primary", "scene": "BRB", "kbps": 5790, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413696422, "state": "offline", "active": "primary", "scene": "BRB", "kbps": 5004, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413697476, "state": "offline", "active": "primary", "scene": "BRB", "kbps": 4835, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413698528, "state": "offline", "active": "primary", "scene": "BRB", "kbps": 4950, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413699600, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4922, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413700656, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4853, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413701706, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4897, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413702758, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4960, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413703828, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4856, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413704907, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4770, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413705960, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4789, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t": 1792413707038, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4679, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["", ""]}
+{"t":1792413707317,"mark":"OBS crashes"}
+{"t": 1792413708134, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4902, "onAir": false, "shield": true, "obs": false, "dests": ["connecting", "connecting"], "errors": ["rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error", "rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error"]}
+{"t": 1792413709223, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4686, "onAir": true, "shield": true, "obs": false, "dests": ["shield", "shield"], "errors": ["rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error", "rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error"]}
+{"t": 1792413710302, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4666, "onAir": true, "shield": true, "obs": false, "dests": ["shield", "shield"], "errors": ["rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error", "rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error"]}
+{"t": 1792413711394, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4699, "onAir": true, "shield": true, "obs": true, "dests": ["shield", "shield"], "errors": ["rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error", "rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error"]}
+{"t": 1792413712480, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4666, "onAir": true, "shield": true, "obs": true, "dests": ["shield", "shield"], "errors": ["rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error", "rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error"]}
+{"t": 1792413713546, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4759, "onAir": true, "shield": true, "obs": true, "dests": ["shield", "shield"], "errors": ["rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error", "rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error"]}
+{"t": 1792413714638, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4675, "onAir": true, "shield": true, "obs": true, "dests": ["shield", "shield"], "errors": ["rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error", "rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error"]}
+{"t": 1792413715716, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4766, "onAir": true, "shield": true, "obs": true, "dests": ["shield", "shield"], "errors": ["rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error", "rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error"]}
+{"t": 1792413716780, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4699, "onAir": false, "shield": false, "obs": true, "dests": ["connecting", "connecting"], "errors": ["rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error", "rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error"]}
+{"t": 1792413717842, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4637, "onAir": false, "shield": false, "obs": true, "dests": ["connecting", "connecting"], "errors": ["rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error", "rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error"]}
+{"t": 1792413718904, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4676, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error", "rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error"]}
+{"t": 1792413719966, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4667, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error", "rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error"]}
+{"t": 1792413721016, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4762, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error", "rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error"]}
+{"t": 1792413722074, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4734, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error", "rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error"]}
+{"t": 1792413723125, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4721, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error", "rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error"]}
+{"t": 1792413724196, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4772, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error", "rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error"]}
+{"t": 1792413725305, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4804, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error", "rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error"]}
+{"t":1792413726362,"mark":"end"}
+{"t": 1792413726371, "state": "live", "active": "primary", "scene": "LIVE", "kbps": 4566, "onAir": true, "shield": false, "obs": true, "dests": ["live", "live"], "errors": ["rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error", "rtmp://mediamtx:1935/out/e2eTestKey0123456789: Input/output error"]}

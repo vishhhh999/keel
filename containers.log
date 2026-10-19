@@ -1,0 +1,479 @@
+controller-1  | 2026-10-19T12:40:27.908Z sources: primary=live/e2eTestKey0123456789, backup=live/e2eTestKey0123456789-backup
+controller-1  | 2026-10-19T12:40:27.909Z output: relay to Sink A, Sink B
+controller-1  | 2026-10-19T12:40:27.927Z Keel controller listening on :8080
+controller-1  | 2026-10-19T12:40:28.936Z OBS connected
+controller-1  | 2026-10-19T12:40:35.935Z primary offline -> live (healthy for 4s)
+controller-1  | 2026-10-19T12:40:35.936Z signal offline -> live (healthy for 4s)
+controller-1  | 2026-10-19T12:41:08.052Z backup offline -> live (healthy for 4s)
+controller-1  | 2026-10-19T12:41:11.022Z primary live -> offline (publisher disconnected, healthy backup available)
+controller-1  | 2026-10-19T12:41:11.023Z source primary -> backup
+controller-1  | 2026-10-19T12:41:23.052Z source backup -> primary
+controller-1  | 2026-10-19T12:41:23.052Z signal live -> offline (publisher disconnected)
+controller-1  | 2026-10-19T12:41:25.055Z backup live -> offline (publisher disconnected)
+controller-1  | 2026-10-19T12:41:39.070Z primary offline -> live (healthy for 4s)
+controller-1  | 2026-10-19T12:41:39.070Z signal offline -> live (healthy for 4s)
+controller-1  | 2026-10-19T12:41:47.660Z OBS disconnected, retrying
+controller-1  | 2026-10-19T12:41:47.672Z crash shield on: program feed missing, destinations show BRB
+controller-1  | 2026-10-19T12:41:50.722Z OBS connected
+controller-1  | 2026-10-19T12:41:51.199Z OBS back, broadcast resumed
+controller-1  | 2026-10-19T12:41:56.323Z crash shield off: program feed back
+controller-1  | 2026-10-19T12:42:09.129Z primary live -> offline (publisher disconnected)
+controller-1  | 2026-10-19T12:42:09.130Z signal live -> offline (publisher disconnected)
+mediamtx-1    | 2026/10/19 12:41:44 INF [RTMP] [conn 172.18.0.3:44096] opened
+mediamtx-1    | 2026/10/19 12:41:44 INF [RTMP] [conn 172.18.0.3:44096] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:41:45 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:41:45 INF [RTMP] [conn 172.18.0.3:44110] opened
+mediamtx-1    | 2026/10/19 12:41:46 INF [RTMP] [conn 172.18.0.3:44110] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:41:46 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:41:47 INF [RTMP] [conn 172.18.0.3:44114] opened
+mediamtx-1    | 2026/10/19 12:41:47 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:41:47 INF [RTMP] [conn 172.18.0.3:44114] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:41:47 INF [RTMP] [conn 172.18.0.3:45284] closed: read tcp 172.18.0.4:1935->172.18.0.3:45284: read: connection reset by peer
+mediamtx-1    | 2026/10/19 12:41:47 INF [RTMP] [conn 172.18.0.3:49392] closed: EOF
+mediamtx-1    | 2026/10/19 12:41:47 INF [RTMP] [conn 172.18.0.5:59070] closed: terminated
+mediamtx-1    | 2026/10/19 12:41:47 INF [RTMP] [conn 172.18.0.5:59074] closed: terminated
+mediamtx-1    | 2026/10/19 12:41:47 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:41:47 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:41:48 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:41:48 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:41:49 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:41:49 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:41:50 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:41:50 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:41:50 INF [RTMP] [conn 172.18.0.3:34332] opened
+mediamtx-1    | 2026/10/19 12:41:50 INF [RTMP] [conn 172.18.0.3:34342] opened
+mediamtx-1    | 2026/10/19 12:41:50 INF [RTMP] [conn 172.18.0.3:34332] is reading from path 'live/e2eTestKey0123456789', 2 tracks (H264, MPEG-4 Audio)
+mediamtx-1    | 2026/10/19 12:41:51 INF [RTMP] [conn 172.18.0.3:34342] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:41:51 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:41:51 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:41:51 INF [RTMP] [conn 172.18.0.3:34356] opened
+mediamtx-1    | 2026/10/19 12:41:52 INF [RTMP] [conn 172.18.0.3:34366] opened
+mediamtx-1    | 2026/10/19 12:41:52 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:41:52 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:41:52 INF [RTMP] [conn 172.18.0.3:34366] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:41:53 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:41:53 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:41:53 INF [RTMP] [conn 172.18.0.3:34374] opened
+mediamtx-1    | 2026/10/19 12:41:53 INF [RTMP] [conn 172.18.0.3:34374] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:41:54 INF [path out/e2eTestKey0123456789] stream is available and online, 2 tracks (H264, MPEG-4 Audio)
+mediamtx-1    | 2026/10/19 12:41:54 INF [RTMP] [conn 172.18.0.3:34356] is publishing to path 'out/e2eTestKey0123456789'
+mediamtx-1    | 2026/10/19 12:41:54 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:41:54 INF [RTMP] [conn 172.18.0.3:34384] opened
+mediamtx-1    | 2026/10/19 12:41:54 INF [RTMP] [conn 172.18.0.3:34384] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:41:55 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:41:55 INF [RTMP] [conn 172.18.0.3:34394] opened
+mediamtx-1    | 2026/10/19 12:41:55 INF [RTMP] [conn 172.18.0.3:34394] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:41:56 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:41:56 INF [RTMP] [conn 172.18.0.5:46506] opened
+mediamtx-1    | 2026/10/19 12:41:56 INF [RTMP] [conn 172.18.0.5:46516] opened
+mediamtx-1    | 2026/10/19 12:41:56 INF [RTMP] [conn 172.18.0.5:46506] is reading from path 'out/e2eTestKey0123456789', 2 tracks (H264, MPEG-4 Audio)
+mediamtx-1    | 2026/10/19 12:41:56 INF [RTMP] [conn 172.18.0.5:46516] is reading from path 'out/e2eTestKey0123456789', 2 tracks (MPEG-4 Audio, H264)
+mediamtx-1    | 2026/10/19 12:41:56 INF [RTMP] [conn 172.18.0.3:34396] opened
+mediamtx-1    | 2026/10/19 12:41:56 INF [RTMP] [conn 172.18.0.3:34396] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:41:57 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:41:57 INF [RTMP] [conn 172.18.0.3:34408] opened
+mediamtx-1    | 2026/10/19 12:41:58 INF [RTMP] [conn 172.18.0.3:34408] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:41:58 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:41:59 INF [RTMP] [conn 172.18.0.3:34414] opened
+mediamtx-1    | 2026/10/19 12:41:59 INF [RTMP] [conn 172.18.0.3:34414] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:41:59 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:00 INF [RTMP] [conn 172.18.0.3:33628] opened
+mediamtx-1    | 2026/10/19 12:42:00 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:00 INF [RTMP] [conn 172.18.0.3:33628] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:42:01 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:01 INF [RTMP] [conn 172.18.0.3:33634] opened
+mediamtx-1    | 2026/10/19 12:42:01 INF [RTMP] [conn 172.18.0.3:33634] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:42:02 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:02 INF [RTMP] [conn 172.18.0.3:33646] opened
+mediamtx-1    | 2026/10/19 12:42:02 INF [RTMP] [conn 172.18.0.3:33646] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:42:03 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:03 INF [RTMP] [conn 172.18.0.3:33652] opened
+mediamtx-1    | 2026/10/19 12:42:04 INF [RTMP] [conn 172.18.0.3:33652] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:42:04 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:05 INF [RTMP] [conn 172.18.0.3:33660] opened
+mediamtx-1    | 2026/10/19 12:42:05 INF [RTMP] [conn 172.18.0.3:33660] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:42:05 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:06 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:06 INF [RTMP] [conn 172.18.0.3:33662] opened
+mediamtx-1    | 2026/10/19 12:42:06 INF [SRT] [conn 172.18.0.1:60534] closed: EOF
+mediamtx-1    | 2026/10/19 12:42:06 INF [RTMP] [conn 172.18.0.3:34332] closed: terminated
+mediamtx-1    | 2026/10/19 12:42:06 INF [RTMP] [conn 172.18.0.3:33662] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:42:07 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:07 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:07 INF [RTMP] [conn 172.18.0.3:33674] opened
+mediamtx-1    | 2026/10/19 12:42:07 INF [RTMP] [conn 172.18.0.3:33674] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:42:08 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:08 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:08 INF [RTMP] [conn 172.18.0.3:33676] opened
+mediamtx-1    | 2026/10/19 12:42:08 INF [RTMP] [conn 172.18.0.3:33678] opened
+mediamtx-1    | 2026/10/19 12:42:09 INF [RTMP] [conn 172.18.0.3:33678] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:42:09 INF [RTMP] [conn 172.18.0.3:33676] closed: no stream is available on path 'live/e2eTestKey0123456789'
+mediamtx-1    | 2026/10/19 12:42:09 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:09 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:10 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:10 INF [RTMP] [conn 172.18.0.3:37728] opened
+mediamtx-1    | 2026/10/19 12:42:10 INF [RTMP] [conn 172.18.0.3:37732] opened
+mediamtx-1    | 2026/10/19 12:42:10 INF [RTMP] [conn 172.18.0.3:37728] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:42:10 INF [RTMP] [conn 172.18.0.3:37732] closed: no stream is available on path 'live/e2eTestKey0123456789'
+mediamtx-1    | 2026/10/19 12:42:10 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:11 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:11 INF [RTMP] [conn 172.18.0.3:37744] opened
+mediamtx-1    | 2026/10/19 12:42:11 INF [RTMP] [conn 172.18.0.3:37760] opened
+mediamtx-1    | 2026/10/19 12:42:11 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:11 INF [RTMP] [conn 172.18.0.3:37760] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:42:11 INF [RTMP] [conn 172.18.0.3:37744] closed: no stream is available on path 'live/e2eTestKey0123456789'
+mediamtx-1    | 2026/10/19 12:42:12 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:12 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:12 INF [RTMP] [conn 172.18.0.3:37774] opened
+mediamtx-1    | 2026/10/19 12:42:12 INF [RTMP] [conn 172.18.0.3:37784] opened
+mediamtx-1    | 2026/10/19 12:42:12 INF [RTMP] [conn 172.18.0.3:37774] closed: no stream is available on path 'live/e2eTestKey0123456789'
+mediamtx-1    | 2026/10/19 12:42:12 INF [RTMP] [conn 172.18.0.3:37784] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:42:13 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:13 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:13 INF [RTMP] [conn 172.18.0.3:37798] opened
+mediamtx-1    | 2026/10/19 12:42:13 INF [RTMP] [conn 172.18.0.3:37802] opened
+mediamtx-1    | 2026/10/19 12:42:13 INF [RTMP] [conn 172.18.0.3:37802] closed: no stream is available on path 'live/e2eTestKey0123456789'
+mediamtx-1    | 2026/10/19 12:42:13 INF [RTMP] [conn 172.18.0.3:37798] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:42:14 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:14 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:14 INF [RTMP] [conn 172.18.0.3:37812] opened
+mediamtx-1    | 2026/10/19 12:42:14 INF [RTMP] [conn 172.18.0.3:37824] opened
+mediamtx-1    | 2026/10/19 12:42:15 INF [RTMP] [conn 172.18.0.3:37824] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:42:15 INF [RTMP] [conn 172.18.0.3:37812] closed: no stream is available on path 'live/e2eTestKey0123456789'
+mediamtx-1    | 2026/10/19 12:42:15 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:15 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:16 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:16 INF [RTMP] [conn 172.18.0.3:37854] opened
+mediamtx-1    | 2026/10/19 12:42:16 INF [RTMP] [conn 172.18.0.3:37840] opened
+mediamtx-1    | 2026/10/19 12:42:16 INF [RTMP] [conn 172.18.0.3:37854] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:42:16 INF [RTMP] [conn 172.18.0.3:37840] closed: no stream is available on path 'live/e2eTestKey0123456789'
+mediamtx-1    | 2026/10/19 12:42:16 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:17 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:17 INF [RTMP] [conn 172.18.0.3:37862] opened
+mediamtx-1    | 2026/10/19 12:42:17 INF [RTMP] [conn 172.18.0.3:37864] opened
+mediamtx-1    | 2026/10/19 12:42:17 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:17 INF [RTMP] [conn 172.18.0.3:37862] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:42:17 INF [RTMP] [conn 172.18.0.3:37864] closed: no stream is available on path 'live/e2eTestKey0123456789'
+mediamtx-1    | 2026/10/19 12:42:18 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:18 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:18 INF [RTMP] [conn 172.18.0.3:37866] opened
+mediamtx-1    | 2026/10/19 12:42:18 INF [RTMP] [conn 172.18.0.3:37872] opened
+mediamtx-1    | 2026/10/19 12:42:18 INF [RTMP] [conn 172.18.0.3:37866] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:42:18 INF [RTMP] [conn 172.18.0.3:37872] closed: no stream is available on path 'live/e2eTestKey0123456789'
+mediamtx-1    | 2026/10/19 12:42:19 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:19 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:19 INF [RTMP] [conn 172.18.0.3:41560] opened
+mediamtx-1    | 2026/10/19 12:42:19 INF [RTMP] [conn 172.18.0.3:41576] opened
+mediamtx-1    | 2026/10/19 12:42:19 INF [RTMP] [conn 172.18.0.3:41560] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:42:19 INF [RTMP] [conn 172.18.0.3:41576] closed: no stream is available on path 'live/e2eTestKey0123456789'
+mediamtx-1    | 2026/10/19 12:42:20 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:20 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:20 INF [RTMP] [conn 172.18.0.3:41588] opened
+mediamtx-1    | 2026/10/19 12:42:20 INF [RTMP] [conn 172.18.0.3:41604] opened
+mediamtx-1    | 2026/10/19 12:42:20 INF [RTMP] [conn 172.18.0.3:41588] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:42:21 INF [RTMP] [conn 172.18.0.3:41604] closed: no stream is available on path 'live/e2eTestKey0123456789'
+mediamtx-1    | 2026/10/19 12:42:21 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:21 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:22 INF [RTMP] [conn 172.18.0.3:41614] opened
+mediamtx-1    | 2026/10/19 12:42:22 INF [RTMP] [conn 172.18.0.3:41628] opened
+mediamtx-1    | 2026/10/19 12:42:22 INF [RTMP] [conn 172.18.0.3:41614] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:42:22 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:22 INF [RTMP] [conn 172.18.0.3:41628] closed: no stream is available on path 'live/e2eTestKey0123456789'
+mediamtx-1    | 2026/10/19 12:42:22 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:23 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:23 INF [RTMP] [conn 172.18.0.3:41630] opened
+mediamtx-1    | 2026/10/19 12:42:23 INF [RTMP] [conn 172.18.0.3:41636] opened
+mediamtx-1    | 2026/10/19 12:42:23 INF [RTMP] [conn 172.18.0.3:41630] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:42:23 INF [RTMP] [conn 172.18.0.3:41636] closed: no stream is available on path 'live/e2eTestKey0123456789'
+mediamtx-1    | 2026/10/19 12:42:23 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:24 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:24 INF [RTMP] [conn 172.18.0.3:41652] opened
+mediamtx-1    | 2026/10/19 12:42:24 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:24 INF [RTMP] [conn 172.18.0.3:41666] opened
+mediamtx-1    | 2026/10/19 12:42:24 INF [RTMP] [conn 172.18.0.3:41652] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:42:24 INF [RTMP] [conn 172.18.0.3:41666] closed: no stream is available on path 'live/e2eTestKey0123456789'
+mediamtx-1    | 2026/10/19 12:42:25 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:25 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:25 INF [RTMP] [conn 172.18.0.3:41672] opened
+mediamtx-1    | 2026/10/19 12:42:25 INF [RTMP] [conn 172.18.0.3:41680] opened
+mediamtx-1    | 2026/10/19 12:42:25 INF [RTMP] [conn 172.18.0.3:41672] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:42:25 INF [RTMP] [conn 172.18.0.3:41680] closed: no stream is available on path 'live/e2eTestKey0123456789'
+mediamtx-1    | 2026/10/19 12:42:26 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:26 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:26 INF [RTMP] [conn 172.18.0.3:41682] opened
+mediamtx-1    | 2026/10/19 12:42:26 INF [RTMP] [conn 172.18.0.3:41690] opened
+mediamtx-1    | 2026/10/19 12:42:26 INF [RTMP] [conn 172.18.0.3:41682] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:42:26 INF [RTMP] [conn 172.18.0.3:41690] closed: no stream is available on path 'live/e2eTestKey0123456789'
+mediamtx-1    | 2026/10/19 12:42:27 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:27 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:27 INF [RTMP] [conn 172.18.0.3:41704] opened
+mediamtx-1    | 2026/10/19 12:42:27 INF [RTMP] [conn 172.18.0.3:41716] opened
+mediamtx-1    | 2026/10/19 12:42:27 INF [RTMP] [conn 172.18.0.3:41704] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:42:28 INF [RTMP] [conn 172.18.0.3:41716] closed: no stream is available on path 'live/e2eTestKey0123456789'
+mediamtx-1    | 2026/10/19 12:42:28 ERR [API] path not found
+sink-1        | 2026/10/19 12:40:27 INF MediaMTX v1.21.2, linux, amd64
+sink-1        | 2026/10/19 12:40:27 INF configuration loaded from /mediamtx.yml
+sink-1        | 2026/10/19 12:40:27 INF [RTSP] started with listeners on :8554 (TCP/RTSP), :8000 (UDP/RTP), :8001 (UDP/RTCP)
+sink-1        | 2026/10/19 12:40:27 INF [RTMP] started with listener on :1935 (TCP/RTMP)
+sink-1        | 2026/10/19 12:40:27 INF [HLS] started with listener on :8888 (TCP/HTTP)
+sink-1        | 2026/10/19 12:40:27 INF [WebRTC] started with listeners on :8889 (TCP/HTTP), :8189 (UDP/ICE)
+sink-1        | 2026/10/19 12:40:27 INF [SRT] started with listener on :8890 (UDP/SRT)
+sink-1        | 2026/10/19 12:40:27 WAR [MoQ] certificate auto.key not found, generating it from scratch
+sink-1        | 2026/10/19 12:40:27 INF [MoQ] started with listeners on :8892 (TCP/HTTP2), :8892 (UDP/HTTP3), :8893 (UDP/QUIC)
+sink-1        | 2026/10/19 12:40:42 INF [RTMP] [conn 172.18.0.5:40300] opened
+sink-1        | 2026/10/19 12:40:42 INF [RTMP] [conn 172.18.0.5:40304] opened
+sink-1        | 2026/10/19 12:40:42 INF [path app/e2eb] stream is available and online, 2 tracks (H264, MPEG-4 Audio)
+sink-1        | 2026/10/19 12:40:42 INF [RTMP] [conn 172.18.0.5:40300] is publishing to path 'app/e2eb'
+sink-1        | 2026/10/19 12:40:42 INF [path app/e2ea] stream is available and online, 2 tracks (H264, MPEG-4 Audio)
+sink-1        | 2026/10/19 12:40:42 INF [RTMP] [conn 172.18.0.5:40304] is publishing to path 'app/e2ea'
+sink-1        | 2026/10/19 12:40:45 INF [RTMP] [conn 172.18.0.1:34242] opened
+sink-1        | 2026/10/19 12:40:45 INF [RTMP] [conn 172.18.0.1:34242] is reading from path 'app/e2ea', 2 tracks (H264, MPEG-4 Audio)
+sink-1        | 2026/10/19 12:41:47 INF [RTMP] [conn 172.18.0.5:40304] closed: EOF
+sink-1        | 2026/10/19 12:41:47 INF [RTMP] [conn 172.18.0.1:34242] closed: terminated
+sink-1        | 2026/10/19 12:41:47 INF [RTMP] [conn 172.18.0.5:40300] closed: EOF
+sink-1        | 2026/10/19 12:41:47 INF [RTMP] [conn 172.18.0.5:33402] opened
+sink-1        | 2026/10/19 12:41:47 INF [RTMP] [conn 172.18.0.5:33412] opened
+sink-1        | 2026/10/19 12:41:48 INF [RTMP] [conn 172.18.0.1:35984] opened
+sink-1        | 2026/10/19 12:41:48 INF [RTMP] [conn 172.18.0.1:35984] closed: no stream is available on path 'app/e2ea'
+sink-1        | 2026/10/19 12:41:48 INF [RTMP] [conn 172.18.0.1:35988] opened
+sink-1        | 2026/10/19 12:41:48 INF [RTMP] [conn 172.18.0.1:35988] closed: no stream is available on path 'app/e2ea'
+sink-1        | 2026/10/19 12:41:49 INF [RTMP] [conn 172.18.0.1:35998] opened
+sink-1        | 2026/10/19 12:41:49 INF [RTMP] [conn 172.18.0.1:35998] closed: no stream is available on path 'app/e2ea'
+sink-1        | 2026/10/19 12:41:49 INF [RTMP] [conn 172.18.0.1:53150] opened
+sink-1        | 2026/10/19 12:41:49 INF [RTMP] [conn 172.18.0.1:53150] closed: no stream is available on path 'app/e2ea'
+sink-1        | 2026/10/19 12:41:50 INF [RTMP] [conn 172.18.0.1:53154] opened
+sink-1        | 2026/10/19 12:41:50 INF [RTMP] [conn 172.18.0.1:53154] closed: no stream is available on path 'app/e2ea'
+sink-1        | 2026/10/19 12:41:50 INF [RTMP] [conn 172.18.0.1:53158] opened
+sink-1        | 2026/10/19 12:41:50 INF [path app/e2ea] stream is available and online, 2 tracks (H264, MPEG-4 Audio)
+sink-1        | 2026/10/19 12:41:50 INF [RTMP] [conn 172.18.0.5:33402] is publishing to path 'app/e2ea'
+sink-1        | 2026/10/19 12:41:50 INF [path app/e2eb] stream is available and online, 2 tracks (H264, MPEG-4 Audio)
+sink-1        | 2026/10/19 12:41:50 INF [RTMP] [conn 172.18.0.5:33412] is publishing to path 'app/e2eb'
+sink-1        | 2026/10/19 12:41:50 INF [RTMP] [conn 172.18.0.1:53158] is reading from path 'app/e2ea', 2 tracks (H264, MPEG-4 Audio)
+sink-1        | 2026/10/19 12:41:56 INF [RTMP] [conn 172.18.0.5:33412] closed: EOF
+sink-1        | 2026/10/19 12:41:56 INF [RTMP] [conn 172.18.0.5:33402] closed: EOF
+sink-1        | 2026/10/19 12:41:56 INF [RTMP] [conn 172.18.0.1:53158] closed: terminated
+sink-1        | 2026/10/19 12:41:56 INF [RTMP] [conn 172.18.0.1:53160] opened
+sink-1        | 2026/10/19 12:41:57 INF [RTMP] [conn 172.18.0.1:53160] closed: no stream is available on path 'app/e2ea'
+sink-1        | 2026/10/19 12:41:57 INF [RTMP] [conn 172.18.0.1:53172] opened
+sink-1        | 2026/10/19 12:41:57 INF [RTMP] [conn 172.18.0.1:53172] closed: no stream is available on path 'app/e2ea'
+sink-1        | 2026/10/19 12:41:57 INF [RTMP] [conn 172.18.0.1:53176] opened
+sink-1        | 2026/10/19 12:41:58 INF [RTMP] [conn 172.18.0.1:53176] closed: no stream is available on path 'app/e2ea'
+sink-1        | 2026/10/19 12:41:58 INF [RTMP] [conn 172.18.0.5:47484] opened
+sink-1        | 2026/10/19 12:41:58 INF [RTMP] [conn 172.18.0.5:47488] opened
+sink-1        | 2026/10/19 12:41:58 INF [RTMP] [conn 172.18.0.1:53192] opened
+sink-1        | 2026/10/19 12:41:58 INF [RTMP] [conn 172.18.0.1:53192] closed: no stream is available on path 'app/e2ea'
+sink-1        | 2026/10/19 12:41:58 INF [path app/e2eb] stream is available and online, 2 tracks (H264, MPEG-4 Audio)
+sink-1        | 2026/10/19 12:41:58 INF [RTMP] [conn 172.18.0.5:47484] is publishing to path 'app/e2eb'
+sink-1        | 2026/10/19 12:41:58 INF [path app/e2ea] stream is available and online, 2 tracks (H264, MPEG-4 Audio)
+sink-1        | 2026/10/19 12:41:58 INF [RTMP] [conn 172.18.0.5:47488] is publishing to path 'app/e2ea'
+sink-1        | 2026/10/19 12:41:58 INF [RTMP] [conn 172.18.0.1:53206] opened
+sink-1        | 2026/10/19 12:41:59 INF [RTMP] [conn 172.18.0.1:53206] is reading from path 'app/e2ea', 2 tracks (MPEG-4 Audio, H264)
+sink-1        | 2026/10/19 12:42:06 INF [RTMP] [conn 172.18.0.1:53206] closed: EOF
+mediamtx-1    | 2026/10/19 12:42:28 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:29 INF [RTMP] [conn 172.18.0.3:41730] opened
+mediamtx-1    | 2026/10/19 12:42:29 INF [RTMP] [conn 172.18.0.3:41740] opened
+mediamtx-1    | 2026/10/19 12:42:29 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:29 INF [RTMP] [conn 172.18.0.3:41730] closed: no stream is available on path 'live/e2eTestKey0123456789-backup'
+mediamtx-1    | 2026/10/19 12:42:29 INF [RTMP] [conn 172.18.0.3:41740] closed: no stream is available on path 'live/e2eTestKey0123456789'
+mediamtx-1    | 2026/10/19 12:42:29 ERR [API] path not found
+mediamtx-1    | 2026/10/19 12:42:30 ERR [API] path not found
+obs-1         | 	close_when_inactive:     no
+obs-1         | 	full_decode:             no
+obs-1         | 	ffmpeg_options:          
+obs-1         | info: User added source 'Keel Backup Ingest' (ffmpeg_source) to scene 'LIVE'
+obs-1         | info: User added source 'Keel Backup Ingest' (ffmpeg_source) to scene 'LOW SIGNAL'
+obs-1         | info: User added source 'Keel Low Signal Banner' (image_source) to scene 'LOW SIGNAL'
+obs-1         | info: User added source 'Keel BRB Screen' (image_source) to scene 'BRB'
+obs-1         | info: User switched to scene 'BRB'
+obs-1         | warning: [Media Source 'Keel Ingest']: Disconnected. Reconnecting...
+obs-1         | warning: [Media Source 'Keel Backup Ingest']: Disconnected. Reconnecting...
+obs-1         | info: [Media Source 'Keel Ingest']: Reconnected.
+obs-1         | info: User switched to scene 'LIVE'
+obs-1         | warning: User is ignoring service settings.
+obs-1         | info: ---------------------------------
+obs-1         | info: [x264 encoder: 'advanced_video_stream'] preset: veryfast
+obs-1         | info: [x264 encoder: 'advanced_video_stream'] profile: high
+obs-1         | info: [x264 encoder: 'advanced_video_stream'] settings:
+obs-1         | 	rate_control: CBR
+obs-1         | 	bitrate:      6000
+obs-1         | 	buffer size:  6000
+obs-1         | 	crf:          23
+obs-1         | 	fps_num:      30
+obs-1         | 	fps_den:      1
+obs-1         | 	width:        1920
+obs-1         | 	height:       1080
+obs-1         | 	keyint:       60
+obs-1         | 
+obs-1         | info: ---------------------------------
+obs-1         | info: [FFmpeg aac encoder: 'adv_stream_audio'] bitrate: 160, channels: 2, channel_layout: stereo
+obs-1         | 
+obs-1         | info: [rtmp stream: 'adv_stream'] Connecting to RTMP URL rtmp://mediamtx:1935/out...
+obs-1         | info: HandShake: client signature does not match!
+obs-1         | info: [rtmp stream: 'adv_stream'] Connection to rtmp://mediamtx:1935/out (172.18.0.4) successful
+obs-1         | info: ==== Streaming Start ===============================================
+obs-1         | info: adding 21 milliseconds of audio buffering, total audio buffering is now 21 milliseconds (source: Keel Ingest)
+obs-1         | 
+obs-1         | info: [Media Source 'Keel Backup Ingest']: Reconnected.
+obs-1         | warning: Failed to create xdg-screensaver: 2
+obs-1         | warning: MP: av_read_frame failed: Broken pipe (-32)
+obs-1         | warning: [Media Source 'Keel Ingest']: Disconnected. Reconnecting...
+obs-1         | info: adding 42 milliseconds of audio buffering, total audio buffering is now 64 milliseconds (source: Keel Backup Ingest)
+obs-1         | 
+obs-1         | info: User switched to scene 'BRB'
+obs-1         | warning: MP: av_read_frame failed: Input/output error (-5)
+obs-1         | warning: [Media Source 'Keel Backup Ingest']: Disconnected. Reconnecting...
+obs-1         | info: [Media Source 'Keel Ingest']: Reconnected.
+obs-1         | warning: Failed to create xdg-screensaver: 2
+obs-1         | info: User switched to scene 'LIVE'
+obs-1         | Killed
+obs-1         | starting OBS (encoder=obs_x264, 1920x1080, 6000 kbps, 30 fps)
+obs-1         | QStandardPaths: XDG_RUNTIME_DIR not set, defaulting to '/tmp/runtime-obs'
+obs-1         | error: Could not create dbus connection: Cannot spawn a message bus without a machine-id: Invalid machine ID in /var/lib/dbus/machine-id or /etc/machine-id
+obs-1         | error: Could not create dbus connection: Cannot spawn a message bus without a machine-id: Invalid machine ID in /var/lib/dbus/machine-id or /etc/machine-id
+obs-1         | info: Command Line Arguments: --disable-shutdown-check --disable-updater --minimize-to-tray --profile Keel --collection Keel
+obs-1         | info: Using EGL/X11
+obs-1         | info: CPU Name: AMD EPYC 7763 64-Core Processor
+obs-1         | info: CPU Speed: 3241.960MHz
+obs-1         | info: Physical Cores: 2, Logical Cores: 4
+obs-1         | info: Physical Memory: 15989MB Total, 8563MB Free
+obs-1         | info: Kernel Version: Linux 6.17.0-1022-azure
+obs-1         | info: Distribution: "Ubuntu" "24.04"
+obs-1         | info: Window System: X11.0, Vendor: The X.Org Foundation, Version: 1.21.1
+obs-1         | info: Qt Version: 6.4.2 (runtime), 6.4.2 (compiled)
+obs-1         | info: Portable mode: false
+obs-1         | info: OBS 30.0.2.1-3build1 (linux)
+obs-1         | info: ---------------------------------
+obs-1         | info: ---------------------------------
+obs-1         | info: audio settings reset:
+obs-1         | 	samples per sec: 48000
+obs-1         | 	speakers:        2
+obs-1         | 	max buffering:   960 milliseconds
+obs-1         | 	buffering type:  dynamically increasing
+obs-1         | info: ---------------------------------
+obs-1         | info: Initializing OpenGL...
+obs-1         | info: Loading up OpenGL on adapter Mesa llvmpipe (LLVM 20.1.2, 256 bits)
+obs-1         | info: OpenGL loaded successfully, version 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4, shading language 4.50
+obs-1         | info: ---------------------------------
+obs-1         | info: video settings reset:
+obs-1         | 	base resolution:   1920x1080
+obs-1         | 	output resolution: 1920x1080
+obs-1         | 	downscale filter:  Bicubic
+obs-1         | 	fps:               30/1
+obs-1         | 	format:            NV12
+obs-1         | 	YUV mode:          Rec. 709/Partial
+obs-1         | info: NV12 texture support not available
+obs-1         | info: P010 texture support not available
+obs-1         | info: Audio monitoring device:
+obs-1         | 	name: Default
+obs-1         | 	id: default
+obs-1         | info: ---------------------------------
+obs-1         | error: window manager does not support Extended Window Manager Hints (EWMH).
+obs-1         | XComposite capture disabled.
+obs-1         | warning: v4l2loopback not installed, virtual camera disabled
+obs-1         | info: FFmpeg VAAPI H264 encoding not supported
+obs-1         | info: FFmpeg VAAPI HEVC encoding not supported
+obs-1         | info: [obs-websocket] [obs_module_load] you can haz websockets (Version: 5.3.4 | RPC Version: 1)
+obs-1         | info: [obs-websocket] [obs_module_load] Qt version (compile-time): 6.4.2 | Qt version (run-time): 6.4.2
+obs-1         | info: [obs-websocket] [obs_module_load] Linked ASIO Version: 102801
+obs-1         | info: [obs-websocket] [obs_module_load] Module loaded.
+obs-1         | info: ---------------------------------
+obs-1         | info:   Loaded Modules:
+obs-1         | info:     text-freetype2.so
+obs-1         | info:     rtmp-services.so
+obs-1         | info:     obs-x264.so
+obs-1         | info:     obs-websocket.so
+obs-1         | info:     obs-transitions.so
+obs-1         | info:     obs-outputs.so
+obs-1         | info:     obs-filters.so
+obs-1         | info:     obs-ffmpeg.so
+obs-1         | info:     linux-v4l2.so
+obs-1         | info:     linux-pulseaudio.so
+obs-1         | info:     linux-capture.so
+obs-1         | info:     image-source.so
+obs-1         | info:     frontend-tools.so
+obs-1         | info: ---------------------------------
+obs-1         | info: [obs-websocket] [obs_module_post_load] WebSocket server is enabled, starting...
+obs-1         | info: [obs-websocket] [WebSocketServer::Start] Not locked to IPv4 bindings
+obs-1         | info: [obs-websocket] [WebSocketServer::ServerRunner] IO thread started.
+obs-1         | info: [obs-websocket] [WebSocketServer::Start] Server started successfully on port 4455. Possible connect address: 172.18.0.3
+obs-1         | info: ==== Startup complete ===============================================
+obs-1         | info: All scene data cleared
+obs-1         | info: ------------------------------------------------
+obs-1         | info: Switched to scene 'BRB'
+obs-1         | info: ------------------------------------------------
+obs-1         | info: Loaded scenes:
+obs-1         | info: - scene 'BRB':
+obs-1         | info: ------------------------------------------------
+obs-1         | info: [obs-websocket] [WebSocketServer::onOpen] New WebSocket client has connected from [::ffff:172.18.0.5]:39532
+obs-1         | warning: Number of remaining views: 1
+obs-1         | info: ---------------------------------
+obs-1         | info: video settings reset:
+obs-1         | 	base resolution:   1920x1080
+obs-1         | 	output resolution: 1920x1080
+obs-1         | 	downscale filter:  Bicubic
+obs-1         | 	fps:               30/1
+obs-1         | 	format:            NV12
+obs-1         | 	YUV mode:          Rec. 709/Partial
+obs-1         | info: NV12 texture support not available
+obs-1         | info: P010 texture support not available
+obs-1         | info: User added scene 'LIVE'
+obs-1         | info: User added scene 'LOW SIGNAL'
+obs-1         | info: [Media Source 'Keel Ingest']: settings:
+obs-1         | 	input:                   rtmp://mediamtx:1935/live/e2eTestKey0123456789
+obs-1         | 	input_format:            
+obs-1         | 	speed:                   100
+obs-1         | 	is_looping:              no
+obs-1         | 	is_linear_alpha:         no
+obs-1         | 	is_hw_decoding:          no
+obs-1         | 	is_clear_on_media_end:   no
+obs-1         | 	restart_on_activate:     no
+obs-1         | 	close_when_inactive:     no
+obs-1         | 	full_decode:             no
+obs-1         | 	ffmpeg_options:          
+obs-1         | info: User added source 'Keel Ingest' (ffmpeg_source) to scene 'LIVE'
+obs-1         | info: User added source 'Keel Ingest' (ffmpeg_source) to scene 'LOW SIGNAL'
+obs-1         | info: [Media Source 'Keel Backup Ingest']: settings:
+obs-1         | 	input:                   rtmp://mediamtx:1935/live/e2eTestKey0123456789-backup
+obs-1         | 	input_format:            
+obs-1         | 	speed:                   100
+obs-1         | 	is_looping:              no
+obs-1         | 	is_linear_alpha:         no
+obs-1         | 	is_hw_decoding:          no
+obs-1         | 	is_clear_on_media_end:   no
+obs-1         | 	restart_on_activate:     no
+obs-1         | 	close_when_inactive:     no
+obs-1         | 	full_decode:             no
+obs-1         | 	ffmpeg_options:          
+obs-1         | info: User added source 'Keel Backup Ingest' (ffmpeg_source) to scene 'LIVE'
+obs-1         | info: User added source 'Keel Backup Ingest' (ffmpeg_source) to scene 'LOW SIGNAL'
+obs-1         | info: User added source 'Keel Low Signal Banner' (image_source) to scene 'LOW SIGNAL'
+obs-1         | warning: [Media Source 'Keel Backup Ingest']: Disconnected. Reconnecting...
+obs-1         | info: User added source 'Keel BRB Screen' (image_source) to scene 'BRB'
+obs-1         | info: User switched to scene 'BRB'
+obs-1         | info: User switched to scene 'LIVE'
+obs-1         | warning: User is ignoring service settings.
+obs-1         | info: ---------------------------------
+obs-1         | info: [x264 encoder: 'advanced_video_stream'] preset: veryfast
+obs-1         | info: [x264 encoder: 'advanced_video_stream'] profile: high
+obs-1         | info: [x264 encoder: 'advanced_video_stream'] settings:
+obs-1         | 	rate_control: CBR
+obs-1         | 	bitrate:      6000
+obs-1         | 	buffer size:  6000
+obs-1         | 	crf:          23
+obs-1         | 	fps_num:      30
+obs-1         | 	fps_den:      1
+obs-1         | 	width:        1920
+obs-1         | 	height:       1080
+obs-1         | 	keyint:       60
+obs-1         | 
+obs-1         | info: ---------------------------------
+obs-1         | info: [FFmpeg aac encoder: 'adv_stream_audio'] bitrate: 160, channels: 2, channel_layout: stereo
+obs-1         | 
+obs-1         | info: [rtmp stream: 'adv_stream'] Connecting to RTMP URL rtmp://mediamtx:1935/out...
+obs-1         | info: HandShake: client signature does not match!
+obs-1         | info: [rtmp stream: 'adv_stream'] Connection to rtmp://mediamtx:1935/out (172.18.0.4) successful
+obs-1         | info: ==== Streaming Start ===============================================
+obs-1         | warning: MP: av_read_frame failed: Broken pipe (-32)
+obs-1         | warning: [Media Source 'Keel Ingest']: Disconnected. Reconnecting...
+obs-1         | info: User switched to scene 'BRB'
+obs-1         | warning: Failed to create xdg-screensaver: 2
