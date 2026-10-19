@@ -1,0 +1,26 @@
+name: proof
+# Records a proof reel of the real Keel stack (simulated phones and platform) and publishes the raw
+# footage to the `proof-assets` branch. Run it from the Actions tab (Run workflow).
+on:
+  workflow_dispatch:
+  push:
+    branches: [proof-and-og]
+
+permissions:
+  contents: write
+
+jobs:
+  record:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-dejavu-core
+      - run: pip install --break-system-packages playwright && python3 -m playwright install --with-deps chromium
+      - run: bash scripts/proof.sh
+      - name: Publish footage to the proof-assets branch
+        run: |
+          cd proof
+          git init -q && git checkout -q -b proof-assets
+          git -c user.name="keel-proof" -c user.email="actions@users.noreply.github.com" add -A
+          git -c user.name="keel-proof" -c user.email="actions@users.noreply.github.com" commit -q -m "proof reel footage from run ${{ github.run_id }}"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" proof-assets

@@ -10,6 +10,8 @@ W = Path(__file__).parent
 ROOT = W.parent
 MARK = re.sub(r"<metadata>.*?</metadata>", "", (ROOT / "brand" / "mark_inline.txt").read_text(), flags=re.S).strip()
 FONT = '<link rel="preconnect" href="https://api.fontshare.com"><link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap">'
+# Public address of the site. Link previews on X and Discord need absolute image URLs.
+SITE = "https://keel-web-eta.vercel.app"
 X_URL, X_HANDLE, EMAIL = "https://x.com/vishafterdark", "@vishafterdark", "work@visheshmahendru.com"
 
 NAV = [("/features", "Features"), ("/how-it-works", "How it works"), ("/demo", "Live demo"), ("/setup", "Phone setup"), ("/investors", "Investors"), ("/status", "Status")]
@@ -27,7 +29,7 @@ def page(name, title, desc, body, scripts="", active=""):
 <div><div class="eyebrow" style="color:#9FB3B0">Business</div><a href="/investors">Model and costs</a><a href="/investors#week">Launch in a week</a><a href="/status">What is tested</a><a href="/start">Self-host guide</a></div>
 <div><div class="eyebrow" style="color:#9FB3B0">Take it forward</div><a href="/take-it-forward">Acquire or partner</a><a href="{X_URL}" rel="noopener">{X_HANDLE} on X</a><a href="mailto:{EMAIL}">{EMAIL}</a></div></div>
 <p class="small">Keel is an independent project. It is not affiliated with Twitch, Kick, YouTube, OBS, or any existing streaming toolkit. Product and company names belong to their owners. Figures on this site are labelled assumptions unless marked tested.</p></div></footer>'''
-    html = f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{title}</title><meta name="description" content="{desc}"><meta property="og:title" content="{title}"><meta property="og:description" content="{desc}"><meta property="og:type" content="website"><meta name="twitter:card" content="summary"><meta name="theme-color" content="#0E2A2F"><link rel="icon" href="/assets/keel-favicon.svg" type="image/svg+xml">{FONT}<link rel="stylesheet" href="/css/site.css"></head><body>{nav}<main>{body}</main>{foot}{scripts}</body></html>'''
+    html = f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{title}</title><meta name="description" content="{desc}"><meta property="og:title" content="{title}"><meta property="og:description" content="{desc}"><meta property="og:type" content="website"><meta property="og:image" content="{SITE}/assets/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:url" content="{SITE}/{name.replace('.html','').replace('index','')}"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="{SITE}/assets/og.png"><meta name="twitter:creator" content="{X_HANDLE}"><meta name="theme-color" content="#0E2A2F"><link rel="icon" href="/assets/keel-favicon.svg" type="image/svg+xml">{FONT}<link rel="stylesheet" href="/css/site.css"></head><body>{nav}<main>{body}</main>{foot}{scripts}</body></html>'''
     (W / name).write_text(html)
 
 
@@ -306,7 +308,7 @@ page("404.html", "Lost signal. Keel", "Page not found.", '''<section class="hero
 
 # ---------------------------------------------------------------- DEMO (real dashboard + simulator)
 dash = (ROOT / "controller" / "public" / "index.html").read_text()
-for a, b in [('href="/keel-favicon.svg"', 'href="/assets/keel-favicon.svg"'), ('src="/keel-lockup.svg"', 'src="/assets/keel-lockup.svg"'), ('src="/qrcode.js"', 'src="/js/qrcode.js"'), ("<title>Keel control room</title>", "<title>Keel live demo</title><meta name=\"description\" content=\"The real Keel dashboard on a simulated server. Trigger tunnels, failovers, platform drops and OBS crashes.\">")]:
+for a, b in [('href="/keel-favicon.svg"', 'href="/assets/keel-favicon.svg"'), ('src="/keel-lockup.svg"', 'src="/assets/keel-lockup.svg"'), ('src="/qrcode.js"', 'src="/js/qrcode.js"'), ("<title>Keel control room</title>", "<title>Keel live demo</title><meta name=\"description\" content=\"The real Keel dashboard on a simulated server. Trigger tunnels, failovers, platform drops and OBS crashes.\">" + f'<meta property="og:title" content="Keel live demo"><meta property="og:description" content="The real Keel dashboard on a simulated server. Trigger tunnels, failovers, platform drops and OBS crashes."><meta property="og:image" content="{SITE}/assets/og.png"><meta property="og:url" content="{SITE}/demo"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="{SITE}/assets/og.png">')]:
     assert a in dash, a
     dash = dash.replace(a, b)
 BAR = '''<style>
