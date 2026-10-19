@@ -15,6 +15,7 @@ runcmd:
     KEEL_OBS_PASSWORD=${o.obsPassword}
     KEEL_INGEST_PATH=${o.ingestPath}
     KEEL_PUBLIC_HOST=${o.publicHost}
+    KEEL_DASHBOARD_BIND=127.0.0.1
     KEEL_RTMP_URL=${o.rtmpUrl}
     KEEL_STREAM_KEY=${o.streamKey}
     KEEL_IDLE_MINUTES=${o.idleMinutes}
@@ -22,7 +23,7 @@ runcmd:
     KEEL_IDLE_WEBHOOK=${o.idleWebhook}
     ENVEOF
   - chmod 600 /opt/keel/stack/.env
-  - ufw allow 22/tcp && ufw allow 80/tcp && ufw allow 443/tcp && ufw allow 8890/udp && ufw allow 1935/tcp && ufw allow 5000/udp && ufw --force enable
+  - ufw allow 22/tcp && ufw allow 80/tcp && ufw allow 443/tcp && ufw allow 8890/udp && ufw allow 1935/tcp && ufw --force enable
   - cd /opt/keel/stack && docker compose --profile tls up -d --build
 `;
 }

@@ -1,12 +1,13 @@
 """Generates the static site into web/. Run: python3 build_site.py  (no dependencies)."""
 from pathlib import Path
 W = Path(__file__).parent
-MARK = (W.parent / "brand" / "mark_inline.txt").read_text().strip()
+import re
+MARK = re.sub(r"<metadata>.*?</metadata>", "", (W.parent / "brand" / "mark_inline.txt").read_text(), flags=re.S).strip()
 FONT = '<link rel="preconnect" href="https://api.fontshare.com"><link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap">'
 
 def page(name, title, desc, body, scripts=""):
     nav = '''<header class="nav"><div class="wrap"><a href="/"><img src="/assets/keel-lockup.svg" alt="keel"></a><nav class="links"><a href="/how-it-works">How it works</a><a href="/#states">States</a><a href="/investors">Investors</a><a href="/status">Status</a></nav><span class="sp"></span><a class="btn small solid" href="/start">Get it running</a></div></header>'''
-    foot = '''<footer><div class="wrap"><div class="grid"><div><img src="/assets/keel-lockup-on-dark.svg" alt="keel" style="height:38px"><p style="margin-top:18px;max-width:300px;color:#9FB3B0">The signal moves. The stream holds.</p></div><div><div class="eyebrow" style="color:#9FB3B0">Product</div><a href="/how-it-works">How it works</a><a href="/start">Get it running</a><a href="/status">What is tested</a></div><div><div class="eyebrow" style="color:#9FB3B0">Investors</div><a href="/investors">Model and costs</a><a href="/investors#week">Launch in a week</a></div><div><div class="eyebrow" style="color:#9FB3B0">Open</div><a href="https://github.com/">Source on GitHub</a></div></div><p class="small">Keel is an independent project and is not affiliated with any streaming platform or existing toolkit. Figures on this site are labelled assumptions unless marked tested.</p></div></footer>'''
+    foot = '''<footer><div class="wrap"><div class="grid"><div><img src="/assets/keel-lockup-on-dark.svg" alt="keel" style="height:38px"><p style="margin-top:18px;max-width:300px;color:#9FB3B0">The signal moves. The stream holds.</p></div><div><div class="eyebrow" style="color:#9FB3B0">Product</div><a href="/how-it-works">How it works</a><a href="/start">Get it running</a><a href="/status">What is tested</a></div><div><div class="eyebrow" style="color:#9FB3B0">Investors</div><a href="/investors">Model and costs</a><a href="/investors#week">Launch in a week</a></div><div><div class="eyebrow" style="color:#9FB3B0">Run it</div><a href="/start">Self-host guide</a><a href="/status">Status</a></div></div><p class="small">Keel is an independent project and is not affiliated with any streaming platform or existing toolkit. Figures on this site are labelled assumptions unless marked tested.</p></div></footer>'''
     html = f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{title}</title><meta name="description" content="{desc}"><meta property="og:title" content="{title}"><meta property="og:description" content="{desc}"><meta name="theme-color" content="#0E2A2F"><link rel="icon" href="/assets/keel-favicon.svg" type="image/svg+xml">{FONT}<link rel="stylesheet" href="/css/site.css"></head><body>{nav}{body}{foot}{scripts}</body></html>'''
     (W / name).write_text(html)
 
@@ -15,9 +16,9 @@ home = f'''
 <section class="hero"><div class="wrap"><div class="grid"><div>
 <div class="eyebrow" style="margin-bottom:22px">Cloud streaming for people who stream from the street</div>
 <h1>The signal moves. <em>The stream holds.</em></h1>
-<p class="lead">Keel is a cloud stack that sits between your phone and Twitch, Kick or YouTube. When your signal drops, viewers see a clean Be right back screen. When it returns, you are live again. The broadcast never stops.</p>
+<p class="lead">Keel is a cloud stack that sits between your phone and Twitch, Kick or YouTube. When your signal drops, viewers see a clean Be right back screen. When it returns, you are live again. The broadcast to the platform keeps running.</p>
 <div class="cta"><a class="btn primary" href="/start">Get it running</a><a class="btn" href="/how-it-works">How it works</a></div>
-<div class="proof"><span class="pill">SRT and SRTLA in</span><span class="pill">Headless OBS</span><span class="pill">Open source</span></div>
+<div class="proof"><span class="pill">SRT and SRTLA in</span><span class="pill">Headless OBS</span><span class="pill">Self-hostable</span></div>
 </div>
 <div class="sim" aria-label="Interactive signal simulator">
 <div class="top"><span class="eyebrow">Try it. Drag the signal.</span><span class="pill" style="font-size:13px;padding:3px 12px;color:#9FB3B0">simulation</span></div>
@@ -48,7 +49,7 @@ home = f'''
 <details><summary>Which apps can send to it?</summary><p>Anything that speaks SRT or RTMP, which includes the common IRL streaming apps. Bonded cellular (SRTLA) is supported through a receiver in the stack, still to be field tested.</p></details>
 <details><summary>What does it cost to run?</summary><p>A CPU server with x264 is the cheapest start. A GPU server is for heavier scenes. The <a href="/investors">investor page</a> has a cost model with every assumption visible and editable.</p></details>
 <details><summary>Can I self host?</summary><p>Yes. One docker compose file brings up the whole stack on any Linux server with a public IP. The guide takes about thirty minutes.</p></details>
-<details><summary>Who is behind it?</summary><p>It is an open project, designed so a funded team can take it to launch in about a week. See the <a href="/investors#week">launch plan</a>.</p></details>
+<details><summary>Who is behind it?</summary><p>An independent project, designed so a funded team can take it to launch in about a week. See the <a href="/investors#week">launch plan</a>.</p></details>
 </div></section>
 
 <section class="section buoy"><div class="wrap" style="text-align:left"><h2>Hold the line.</h2><div style="margin-top:32px;display:flex;gap:14px;flex-wrap:wrap"><a class="btn solid" href="/start">Get it running</a><a class="btn" href="/investors">For investors</a></div></div></section>
@@ -86,7 +87,7 @@ inv = '''
 <section class="hero" style="padding-bottom:30px"><div class="wrap"><div class="eyebrow">For investors and operators</div><h1 style="font-size:clamp(48px,7vw,104px);margin-top:16px">Hosted streaming reliability is a subscription business.</h1><p class="lead" style="margin-top:26px;max-width:760px">Streamers pay monthly to avoid failing in front of their audience. The product is built and the core path is tested. What remains is field testing, a billing layer and distribution. A funded team can run that in a week.</p></div></section>
 
 <section class="section" style="padding-top:20px"><div class="wrap"><div class="grid g3">
-<div class="card"><div class="stat">1</div><p class="muted" style="margin-top:10px">Customer problem: streams that fail live.</p></div>
+<div class="card"><div class="stat">2s</div><p class="muted" style="margin-top:10px">From a dead feed to the Be right back screen, by default. Tested in containers.</p></div>
 <div class="card"><div class="stat">0</div><p class="muted" style="margin-top:10px">Unexpected broadcast stops in the tested path.</p></div>
 <div class="card"><div class="stat">7d</div><p class="muted" style="margin-top:10px">Planned time from funding to a paid pilot.</p></div></div></div></section>
 
@@ -118,7 +119,7 @@ start = '''
 cd keel/stack
 cp .env.example .env</pre></div>
 <div class="card"><span class="disc">2</span><h3 style="margin:16px 0 8px">Fill in .env.</h3><p class="muted">Set your admin token, your platform stream key, and your public hostname.</p></div>
-<div class="card"><span class="disc">3</span><h3 style="margin:16px 0 8px">Start it.</h3><pre style="background:#0E2A2F;color:#F3EEE4;padding:18px;border-radius:20px;overflow:auto;font-size:15px">docker compose up -d</pre></div>
+<div class="card"><span class="disc">3</span><h3 style="margin:16px 0 8px">Start it.</h3><pre style="background:#0E2A2F;color:#F3EEE4;padding:18px;border-radius:20px;overflow:auto;font-size:15px">docker compose up -d --build</pre></div>
 <div class="card"><span class="disc">4</span><h3 style="margin:16px 0 8px">Point your phone at it.</h3><p class="muted">In your IRL streaming app set the output to <code>srt://your-host:8890</code> with the stream id from the README. Open the dashboard to watch the state.</p></div>
 </div><p class="muted" style="margin-top:28px">Full guide with firewall ports, TLS and troubleshooting: <code>README.md</code> and <code>docs/</code> in the repo.</p></div></section>
 '''
@@ -133,7 +134,7 @@ rows = "".join([
  row("State switching LIVE, LOW SIGNAL, BRB", "Tested", "Including recovery after a killed feed"),
  row("Broadcast continues during phone drop", "Tested", "Verified against a stand-in RTMP sink"),
  row("Dashboard, API, SSE, metrics", "Tested", "Unit tests and screenshots on desktop and phone"),
- row("SRTLA bonded cellular", "Not tested", "Image builds the receiver, no field test"),
+ row("SRTLA bonded cellular", "Not tested", "Receiver image written, never built or run"),
  row("NVENC GPU encoding", "Not tested", "CPU x264 is the verified path"),
  row("Real Twitch, Kick, YouTube outputs", "Not tested", "Only a stand-in sink so far"),
  row("Real phone over cellular", "Not tested", "Day 2 of the launch plan"),

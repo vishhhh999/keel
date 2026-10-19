@@ -3,6 +3,7 @@
 #   KEEL_API_TOKEN=... KEEL_INGEST_PATH=live/... scripts/chaos.sh [cycles]
 # Needs ffmpeg and a stack that is already broadcasting (press Start broadcast first, or use scripts/e2e.sh's compose files).
 set -euo pipefail
+cd "$(dirname "$0")/.."
 CYCLES="${1:-10}"
 API="${KEEL_API:-http://localhost:8080}"; HOST="${KEEL_HOST:-localhost}"
 TOKEN="${KEEL_API_TOKEN:?set KEEL_API_TOKEN}"; PATH_NAME="${KEEL_INGEST_PATH:?set KEEL_INGEST_PATH}"

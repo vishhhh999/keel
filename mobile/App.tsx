@@ -59,11 +59,12 @@ function Home({ conn, onLeave }: { conn: { url: string; token: string }; onLeave
   useEffect(() => {
     let stop = false; let timer: ReturnType<typeof setTimeout>;
     const loop = async () => {
-      try { setSt(await client.status()); setOffline(false); attempt.current = 0; timer = setTimeout(loop, 1000); }
-      catch { setOffline(true); timer = setTimeout(loop, backoffMs(attempt.current++)); }
+      // `stop` guards against a request that resolves after the screen was left.
+      try { const next = await client.status(); if (stop) return; setSt(next); setOffline(false); attempt.current = 0; timer = setTimeout(loop, 1000); }
+      catch { if (stop) return; setOffline(true); timer = setTimeout(loop, backoffMs(attempt.current++)); }
     };
     loop();
-    return () => { stop = true; clearTimeout(timer); void stop; };
+    return () => { stop = true; clearTimeout(timer); };
   }, [client]);
 
   const act = useCallback(async (fn: () => Promise<{ message: string }>) => {

@@ -48,7 +48,7 @@ export async function bootstrapObs(obs: ObsLike, cfg: Config): Promise<void> {
       baseHeight: H,
       outputWidth: W,
       outputHeight: H,
-      fpsNumerator: 30,
+      fpsNumerator: cfg.fps,
       fpsDenominator: 1,
     });
   } catch {

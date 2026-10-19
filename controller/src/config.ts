@@ -10,6 +10,8 @@ export interface Config {
   /** URL OBS uses to pull the phone feed from the ingest server. */
   readUrl: string;
   pollMs: number;
+  /** Output frame rate. Must match the OBS profile (KEEL_FPS is read by both). */
+  fps: number;
 
   scenes: { live: string; low: string; brb: string };
   thresholds: {
@@ -64,6 +66,11 @@ function num(env: NodeJS.ProcessEnv, key: string, fallback: number): number {
   return n;
 }
 
+function idleAction(v: string): 'log' | 'exit' | 'webhook' {
+  if (v === 'log' || v === 'exit' || v === 'webhook') return v;
+  throw new Error(`KEEL_IDLE_ACTION must be log, exit or webhook, got "${v}"`);
+}
+
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   const ingestPath = str(env, 'KEEL_INGEST_PATH', 'live/change-me');
   const readUrl = str(env, 'KEEL_READ_URL', `rtmp://mediamtx:1935/${ingestPath}`);
@@ -78,6 +85,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     ingestPath,
     readUrl,
     pollMs: num(env, 'KEEL_POLL_MS', 1000),
+    fps: num(env, 'KEEL_FPS', 30),
 
     scenes: {
       live: str(env, 'KEEL_SCENE_LIVE', 'LIVE'),
@@ -115,7 +123,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
 
     idle: {
       minutes: num(env, 'KEEL_IDLE_MINUTES', 15),
-      action: str(env, 'KEEL_IDLE_ACTION', 'log') as 'log' | 'exit' | 'webhook',
+      action: idleAction(str(env, 'KEEL_IDLE_ACTION', 'log')),
       webhook: str(env, 'KEEL_IDLE_WEBHOOK', ''),
     },
 

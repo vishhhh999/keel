@@ -4,7 +4,7 @@
 
 Keel is a cloud streaming stack for IRL streamers. Your phone sends video to a server. The server runs OBS, adds your scenes, and broadcasts to Twitch, Kick or YouTube. When your phone's signal gets weak or drops, Keel switches the broadcast to a branded "weak signal" or "be right back" screen by itself. Viewers never see a dead stream, and when your signal comes back, Keel returns to your camera.
 
-> Status: **v0.2.** Reference stack, website, mobile app and a multi-tenant platform layer. The core loop is tested end to end against real OBS (see [docs/TESTING.md](docs/TESTING.md)). The platform and mobile app are tested at the logic level only. The core loop is tested end to end against real OBS (see [docs/TESTING.md](docs/TESTING.md)). Several pieces are not yet tested, and it has not been run with real streamers or at scale. Read "What is not proven" before betting anything on it.
+> Status: **v0.2.** Reference stack, website, mobile app and a multi-tenant platform layer. The core loop is tested end to end against real OBS (see [docs/TESTING.md](docs/TESTING.md)). The platform and mobile app are tested at the logic level only. Nothing has run on a real phone over cellular, with real streamers, or at scale. Read "What is not proven" before betting anything on it.
 
 ---
 
@@ -39,14 +39,14 @@ The broadcast to your platform is never stopped by a signal drop. That is the ma
 ## What you need
 
 - A Linux server with Docker and Docker Compose v2. 4 vCPU and 8 GB RAM runs a 1080p30 x264 broadcast; see [docs/COSTS.md](docs/COSTS.md). An NVIDIA GPU is optional ([docs/GPU.md](docs/GPU.md)).
-- Open ports on the server: `1935/tcp` (RTMP), `8890/udp` (SRT), `5000/udp` (SRTLA, optional), `8080/tcp` (dashboard).
+- Open ports on the server: `1935/tcp` (RTMP), `8890/udp` (SRT), `5000/udp` (SRTLA, optional), and either `80/tcp` + `443/tcp` (HTTPS dashboard, recommended) or `8080/tcp` (plain HTTP dashboard, testing only).
 - A streaming account and its stream key.
 - A phone app that can send SRT (Moblin, IRL Pro, Larix) or SRTLA bonding (Moblin, Belabox).
 
-## Setup (about 10 minutes)
+## Setup (about 30 minutes)
 
 ```bash
-git clone <this repo> keel && cd keel/stack
+git clone https://github.com/OWNER/keel.git keel && cd keel/stack   # your fork or copy
 cp .env.example .env
 ```
 
@@ -70,9 +70,9 @@ docker compose up -d --build
 docker compose logs -f controller
 ```
 
-Open `http://<server>:8080`, sign in with `KEEL_API_TOKEN`. The dashboard shows the exact URLs to paste into your phone app, with copy buttons.
+Open `http://<server>:8080`, sign in with `KEEL_API_TOKEN`. This is plain HTTP and fine for a first test; for anything public use the HTTPS route below. The dashboard shows the exact URLs to paste into your phone app, with copy buttons.
 
-Optional bonded cellular (SRTLA): `docker compose --profile srtla up -d`. Not yet tested, see below.
+Optional bonded cellular (SRTLA): `docker compose --profile srtla up -d --build`. The receiver image has never been built or run, see below.
 
 **One command on a fresh Ubuntu server, with HTTPS:**
 
@@ -80,7 +80,7 @@ Optional bonded cellular (SRTLA): `docker compose --profile srtla up -d`. Not ye
 KEEL_PUBLIC_HOST=keel.example.com KEEL_STREAM_KEY=live_xxx ./deploy/install.sh
 ```
 
-It generates all secrets, opens the firewall, starts everything with a Caddy certificate, and prints your dashboard URL, token and phone SRT address.
+It generates all secrets, opens the firewall, starts everything with a Caddy certificate, keeps the plain HTTP dashboard port bound to localhost, and prints your dashboard URL, token and phone SRT address. Add `KEEL_SRTLA=1` to also start the (untested) bonding receiver.
 
 ### First test
 
@@ -97,7 +97,7 @@ To test with no phone and no streaming account, run `./scripts/e2e.sh` (needs Do
 - Reliability record: drops held, time on BRB, longest drop, unexpected stops, skipped frames.
 - Phone setup URLs and an event log.
 
-**Twitch chat commands** (set `KEEL_TWITCH_*` in `.env`): `!status`, `!live`, `!low`, `!brb`, `!auto`, `!start`, `!stop`. Broadcaster and mods can run them. `!stop` is broadcaster only. Extra users go in `KEEL_TWITCH_ALLOWED`.
+**Twitch chat commands** (set `KEEL_TWITCH_*` in `.env`): `!status`, `!live`, `!low`, `!brb`, `!auto`, `!start`, `!stop`. Broadcaster and mods can run them. Extra users go in `KEEL_TWITCH_ALLOWED`. `!stop` is limited to the broadcaster and the users in `KEEL_TWITCH_ALLOWED`.
 
 **Metrics:** `GET /metrics` (Prometheus format, needs the bearer token). **Health:** `GET /healthz`.
 
@@ -107,22 +107,22 @@ The BRB and weak signal screens are plain 1920x1080 PNG files in `stack/assets/`
 
 ## Security
 
-- Use TLS: `docker compose --profile tls up -d` (Caddy, automatic certificates) or `deploy/install.sh`. The token is sent as a bearer header, and in the URL for the live event stream, so do not expose it over plain HTTP on the open internet.
+- Use TLS: set `KEEL_DASHBOARD_BIND=127.0.0.1` in `.env` and run `docker compose --profile tls up -d` (Caddy, automatic certificates), or use `deploy/install.sh`, which does both. Docker publishes ports past `ufw`, so binding to localhost is what actually closes 8080. The token is sent as a bearer header, and in the URL for the live event stream, so do not expose it over plain HTTP on the open internet.
 - Only your secret `live/<key>` path can publish or read. Treat it like a password.
 - The OBS websocket and the mediamtx API are not published to the host. Keep it that way.
-- Firewall to the ports listed above. Restrict 8080 to your IP if you can.
+- Firewall to the ports listed above. If you keep 8080 public, restrict it to your IP at the cloud firewall.
 
 ## Auto shutdown
 
-Cloud GPU and CPU time is the main cost, so servers should stop when unused. After `KEEL_IDLE_MINUTES` with no feed, no broadcast and nobody on the dashboard, Keel runs `KEEL_IDLE_ACTION`: `log`, `exit`, or `webhook` (POSTs to `KEEL_IDLE_WEBHOOK`, so an orchestrator can stop the machine).
+Cloud GPU and CPU time is the main cost, so servers should stop when unused. After `KEEL_IDLE_MINUTES` with no feed, no broadcast and no dashboard or app connected, Keel runs `KEEL_IDLE_ACTION`: `log`, `exit`, or `webhook` (POSTs to `KEEL_IDLE_WEBHOOK`, so an orchestrator can stop the machine).
 
 ## Repo layout
 
 | Path | What |
 |---|---|
-| `controller/` | The Keel controller (Node 22, TypeScript run natively, one dependency: `ws`). 52 tests. |
+| `controller/` | The Keel controller (Node 22, TypeScript run natively, one dependency: `ws`). 54 tests. |
 | `stack/` | Docker Compose: mediamtx, OBS, SRTLA, controller, Caddy TLS profile. |
-| `platform/` | Multi-tenant control plane: tenants, server lifecycle, idle shutdown, usage metering, Stripe webhooks, Hetzner adapter. No dependencies. 8 tests. |
+| `platform/` | Multi-tenant control plane: tenants, server lifecycle, idle shutdown, usage metering, Stripe webhooks, Hetzner adapter. No dependencies. 10 tests. |
 | `mobile/` | Expo React Native app: live state, scene and broadcast controls. Logic tested, not yet run on a device. |
 | `web/` | The Keel website, static, deploys to Vercel (Root Directory `web`). |
 | `deploy/` | `install.sh`, one command server setup. |
@@ -136,7 +136,7 @@ Develop without Docker: `cd controller && npm install && npm run dev:mock`, then
 
 Be honest with yourself and your investors about these.
 
-- **Tested for real:** controller logic, real OBS control, ingest over SRT, scene switching on drop and recovery, broadcast continuity through a drop, output reaching an RTMP receiver. Details in [docs/TESTING.md](docs/TESTING.md).
+- **Tested for real (last Docker run before the rebrand, see TESTING.md):** controller logic, real OBS control, ingest over SRT, scene switching on drop and recovery, broadcast continuity through a drop, output reaching an RTMP receiver. Details in [docs/TESTING.md](docs/TESTING.md).
 - **Not tested:** SRTLA bonding image (written, never built or run), NVIDIA encoding, real Twitch/Kick/YouTube ingest, Twitch chat control against live Twitch, a real phone on real cellular, many users at once, anything over hours.
 - **Built but untested against live services:** the platform layer (mock provider tested; Hetzner and Stripe paths not run live), the mobile app on a device.
 - **Not built:** invoicing and usage reporting into Stripe, orphan server sweeper, pre-built images, team accounts. See [docs/ROADMAP.md](docs/ROADMAP.md).

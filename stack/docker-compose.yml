@@ -51,6 +51,7 @@ services:
       KEEL_RTMP_URL: ${KEEL_RTMP_URL:-}
       KEEL_STREAM_KEY: ${KEEL_STREAM_KEY:-}
       KEEL_PUBLIC_HOST: ${KEEL_PUBLIC_HOST:-localhost}
+      KEEL_FPS: ${KEEL_FPS:-30}
       KEEL_LOW_KBPS: ${KEEL_LOW_KBPS:-800}
       KEEL_OFFLINE_KBPS: ${KEEL_OFFLINE_KBPS:-50}
       KEEL_DEGRADE_OFFLINE_S: ${KEEL_DEGRADE_OFFLINE_S:-2}
@@ -66,7 +67,9 @@ services:
     volumes:
       - keel-data:/data
     ports:
-      - "8080:8080"       # dashboard + API (put TLS in front of this, see README)
+      # dashboard + API. Set KEEL_DASHBOARD_BIND=127.0.0.1 when Caddy (profile tls) is in front,
+      # so plain HTTP is not reachable from outside. Docker-published ports bypass ufw.
+      - "${KEEL_DASHBOARD_BIND:-0.0.0.0}:8080:8080"
 
   caddy:
     profiles: ["tls"]     # enable with: docker compose --profile tls up -d

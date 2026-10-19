@@ -84,7 +84,11 @@ export function createApi(keel: Keel, opts: { token: string; publicDir: string }
       push();
     }
   });
-  setInterval(push, 1000).unref();
+  // An open dashboard or app counts as activity, so idle shutdown never fires under someone watching.
+  setInterval(() => {
+    if (clients.size) keel.touch();
+    push();
+  }, 1000).unref();
 
   const authed = (req: IncomingMessage, url: URL): boolean => {
     if (!opts.token) return true;

@@ -11,7 +11,10 @@ Written for the first security pass on day 6. This is a checklist, not a certifi
 - cloud-init values are shell quoted; a test covers an injection attempt in the repo URL.
 - Per-server secrets are generated fresh on every start. OBS websocket and the mediamtx API are never published.
 - Ingest path is secret. Only that path can publish or read.
-- Request bodies are size limited.
+- Request bodies are size limited. Malformed JSON gets a 400, not a 500.
+- Stream keys and RTMP URLs sent to `/v1/server/start` cannot contain whitespace, quotes, `$` or backslashes, so they cannot inject lines into the server's env file.
+- Idle hook secrets are compared in constant time.
+- With HTTPS on (`deploy/install.sh`, platform servers), the plain HTTP dashboard port is bound to localhost. Docker-published ports bypass `ufw`, so this binding is what keeps 8080 off the internet.
 
 ## Known gaps
 

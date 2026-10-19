@@ -6,7 +6,7 @@ Last run: 19 Oct 2026, in a Linux sandbox with Docker, OBS 30.0.2 (Ubuntu 24.04 
 
 | What | How | Result |
 |---|---|---|
-| Switching logic (degrade fast, recover slow, thresholds, manual mode) | 52 unit and integration tests (`cd controller && npm test`), strict TypeScript typecheck | Pass |
+| Switching logic (degrade fast, recover slow, thresholds, manual mode) | 54 unit and integration tests (`cd controller && npm test`), strict TypeScript typecheck | Pass |
 | obs-websocket v5 auth and requests | Tested against a mock and against real OBS | Pass |
 | Scene bootstrap on a real OBS (3 scenes, ingest source, screens, stream settings) | `scripts/e2e.sh` | Pass |
 | SRT ingest into mediamtx, bitrate read from its API | Fake phone at 4000 kbps via SRT | Pass, about 4100 to 4400 kbps measured |
@@ -19,6 +19,16 @@ Last run: 19 Oct 2026, in a Linux sandbox with Docker, OBS 30.0.2 (Ubuntu 24.04 
 Evidence frames pulled from the broadcast output (they show the earlier placeholder screens from the first test run, before the current brand; the behaviour is the evidence, not the look) are in `docs/evidence/`: `2-brb.png` is what viewers received during the drop, `3-recovered.png` after the phone returned. `1-live.png` was taken while the feed was live.
 
 Run it yourself: `./scripts/e2e.sh`.
+
+**Rerun status (19 Oct 2026, later session):** the full Docker test was not rerun after the rebrand and the fixes below. The sandbox could start Docker but its network policy blocks Docker Hub and GitHub, so no base images or mediamtx could be fetched. The evidence frames above are still from the first run. Code-level tests were rerun: 54 controller tests, 10 platform tests, typecheck clean.
+
+## Fixes since the last Docker run (code tested, not yet run in Docker)
+
+- Dashboard port 8080 binds to localhost when HTTPS is on (`KEEL_DASHBOARD_BIND`). Before, it was public over plain HTTP even behind Caddy, because Docker bypasses `ufw`.
+- `KEEL_FPS` now reaches the controller. Before, the controller reset OBS to 30 fps on every start, so 60 fps silently never applied.
+- An open dashboard or app now counts as activity for idle shutdown.
+- `deploy/install.sh` no longer starts the untested SRTLA image by default (`KEEL_SRTLA=1` to opt in). A failed SRTLA build used to block the whole stack from starting.
+- Platform: servers stuck in `error` can be stopped and destroyed; tenants can be linked to a Stripe customer; unsafe stream keys are refused; bad JSON is a 400.
 
 ## Bugs the real-OBS test caught (all fixed)
 

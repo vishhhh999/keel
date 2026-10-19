@@ -18,6 +18,6 @@ These are planning estimates, not quotes. Check current cloud pricing before rel
 
 A streamer live 100 hours a month lands somewhere around $30 to $150 in raw infrastructure depending on the choices above. That sets the floor for pricing. The incumbent's pricing and margins are not verified here.
 
-## Business layer not included
+## What the repo does not cover
 
-Per-customer provisioning, billing, support and monitoring are not in this repo and are the real cost of running this as a service. A solo founder can run a small number of hand-managed servers. Dozens of customers needs an orchestration layer and someone on call during peak streaming hours.
+`platform/` handles per-customer servers, idle shutdown, usage metering and Stripe status webhooks. Still missing: reporting usage into Stripe invoices, an orphan server sweeper, central monitoring and support. People are the real cost of running this as a service: dozens of customers need someone on call during peak streaming hours.

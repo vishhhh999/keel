@@ -74,3 +74,23 @@ test('http api: auth, create tenant, me', async () => {
   assert.equal((await fetch(base + '/v1/me', { headers: { authorization: 'Bearer nope' } })).status, 401);
   srv.close();
 });
+test('a server stuck in error with a provider id can still be stopped', async () => {
+  const { svc, prov, db } = setup(); const t = svc.createTenant('A', 'a@x.com');
+  await svc.start(t.id, stream); assert.equal(prov.servers.size, 1);
+  db.prepare("UPDATE servers SET state='error', error='destroy failed' WHERE tenant_id=?").run(t.id);
+  const s = await svc.stop(t.id); assert.equal(s.state, 'stopped'); assert.equal(prov.servers.size, 0);
+});
+test('http api: bad JSON is 400, unsafe stream keys are refused, stripe customer is linked', async () => {
+  const { svc, prov } = setup(); const srv = api(svc, { adminToken: 'admin' }); await new Promise<void>((r) => srv.listen(0, r));
+  const base = `http://127.0.0.1:${(srv.address() as any).port}`; const admin = { authorization: 'Bearer admin' };
+  assert.equal((await fetch(base + '/v1/admin/tenants', { method: 'POST', headers: admin, body: '{nope' })).status, 400);
+  const r = await fetch(base + '/v1/admin/tenants', { method: 'POST', headers: admin, body: JSON.stringify({ name: 'A', email: 'a@x.com', stripeCustomer: 'cus_9' }) });
+  const { id, token } = await r.json() as any;
+  assert.equal(svc.setStatus('cus_9', 'suspended'), true); svc.setStatus('cus_9', 'active');
+  const start = (k: string) => fetch(base + '/v1/server/start', { method: 'POST', headers: { authorization: 'Bearer ' + token }, body: JSON.stringify({ rtmpUrl: 'rtmp://live.twitch.tv/app', streamKey: k }) });
+  assert.equal((await start('live_x\nKEEL_API_TOKEN=owned')).status, 400);
+  assert.equal((await start("live_x'")).status, 400);
+  assert.equal(prov.servers.size, 0);
+  assert.equal((await start('live_123_abc')).status, 200); assert.equal(svc.server(id).state, 'running');
+  srv.close();
+});

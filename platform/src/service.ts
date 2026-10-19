@@ -1,4 +1,4 @@
-import { randomUUID } from 'node:crypto';
+import { randomUUID, timingSafeEqual } from 'node:crypto';
 import type { DB, Tenant, ServerRow } from './db.ts';
 import { sha, token } from './db.ts';
 import type { Provider } from './providers.ts';
@@ -10,9 +10,9 @@ const now = () => Math.floor(Date.now() / 1000);
 export function service(db: DB, provider: Provider, cfg: Config) {
   const audit = (tenant: string | null, event: string, detail = '') => db.prepare('INSERT INTO audit (t,tenant_id,event,detail) VALUES (?,?,?,?)').run(now(), tenant, event, detail);
 
-  function createTenant(name: string, email: string, plan = 'trial') {
+  function createTenant(name: string, email: string, plan = 'trial', stripeCustomer: string | null = null) {
     const id = randomUUID(); const tk = token('kt'); const hook = token('kh');
-    db.prepare('INSERT INTO tenants (id,name,email,plan,token_hash,hook_secret,created) VALUES (?,?,?,?,?,?,?)').run(id, name, email, plan, sha(tk), hook, now());
+    db.prepare('INSERT INTO tenants (id,name,email,plan,stripe_customer,token_hash,hook_secret,created) VALUES (?,?,?,?,?,?,?,?)').run(id, name, email, plan, stripeCustomer, sha(tk), hook, now());
     db.prepare('INSERT INTO servers (tenant_id,state,updated) VALUES (?,?,?)').run(id, 'none', now());
     audit(id, 'tenant.create', email);
     return { id, token: tk };
@@ -46,7 +46,8 @@ export function service(db: DB, provider: Provider, cfg: Config) {
 
   async function stop(tenantId: string, reason = 'manual') {
     const s = server(tenantId);
-    if (!s || s.state !== 'running' || !s.provider_id) return s;
+    // Also stop servers left in error or provisioning with a provider id, otherwise they bill forever.
+    if (!s || !s.provider_id || !['running', 'error', 'provisioning'].includes(s.state)) return s;
     db.prepare("UPDATE servers SET state='stopping', updated=? WHERE tenant_id=?").run(now(), tenantId);
     try { await provider.destroy(s.provider_id); } catch (e) { db.prepare("UPDATE servers SET state='error', error=? WHERE tenant_id=?").run((e as Error).message, tenantId); audit(tenantId, 'server.error', (e as Error).message); return server(tenantId); }
     const end = now(); const started = s.started ?? end;
@@ -61,7 +62,8 @@ export function service(db: DB, provider: Provider, cfg: Config) {
     return { hours: +(r.s / 3600).toFixed(2), sessions: r.n as number };
   }
   async function idle(tenantId: string, secret: string) {
-    const t = byId(tenantId); if (!t || t.hook_secret !== secret) return false;
+    const t = byId(tenantId);
+    if (!t || t.hook_secret.length !== secret.length || !timingSafeEqual(Buffer.from(t.hook_secret), Buffer.from(secret))) return false;
     await stop(tenantId, 'idle'); return true;
   }
   function setStatus(customer: string, status: string) {

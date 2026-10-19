@@ -16,10 +16,10 @@ Put it behind Caddy or nginx with TLS. Back up `platform.db` nightly (`sqlite3 p
 
 ```bash
 curl -X POST https://api.example.com/v1/admin/tenants \
-  -H "authorization: Bearer $KEEL_ADMIN_TOKEN" -d '{"name":"Channel name","email":"them@example.com"}'
+  -H "authorization: Bearer $KEEL_ADMIN_TOKEN" -d '{"name":"Channel name","email":"them@example.com","stripeCustomer":"cus_..."}'
 ```
 
-The response holds their account token once. Give it to them securely. Only its hash is stored.
+`stripeCustomer` is optional but required for Stripe webhooks to suspend or reactivate the account. The response holds their account token once. Give it to them securely. Only its hash is stored.
 
 ## Daily checks
 
@@ -34,6 +34,7 @@ The response holds their account token once. Give it to them securely. Only its 
 |---|---|
 | Streamer says broadcast is down | Dashboard `/api/status`: is OBS connected, is it streaming? `docker compose logs obs controller`. |
 | Server will not start | Provider quota or token. Check `servers.error`. |
+| Server stuck in `error` | `POST /v1/server/stop` with the tenant token. It destroys the provider server if one was created, so it stops billing. |
 | Bills too high | Servers not stopping. Check idle webhook reachability from the server to the platform URL. |
 | Wrong state shown on dashboard | Compare to mediamtx bitrate. Check thresholds in `.env`. |
 

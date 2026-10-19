@@ -10,6 +10,7 @@ const cfg = loadConfig();
 const log = (msg: string) => console.log(`${new Date().toISOString()} ${msg}`);
 
 if (!cfg.apiToken) log('WARNING: KEEL_API_TOKEN is empty, the dashboard and API are open to anyone who can reach the port.');
+if (cfg.idle.action === 'webhook' && !cfg.idle.webhook) log('WARNING: KEEL_IDLE_ACTION=webhook but KEEL_IDLE_WEBHOOK is empty, idle shutdown will only log.');
 if (cfg.ingestPath === 'live/change-me') log('WARNING: KEEL_INGEST_PATH is the default. Set a long random value so strangers cannot publish to your stream.');
 
 const stats = new Stats(cfg.dataDir);

@@ -8,7 +8,7 @@ import { Switcher, type SignalState } from './switcher.ts';
 import type { Stats } from './stats.ts';
 import { bootstrapObs } from './bootstrap.ts';
 
-export const VERSION = '0.1.0';
+export const VERSION = '0.2.0';
 
 export type SceneKey = 'live' | 'low' | 'brb';
 export type Mode = 'auto' | 'manual';
