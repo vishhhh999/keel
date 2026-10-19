@@ -36,7 +36,7 @@ wait_for 'd["obs"]["synced"]' True 180 || exit 1
 ( while true; do s=$(curl -s -H "$AUTH" localhost:8080/api/status) && echo "$s" | python3 -c "
 import sys,json,time
 d=json.load(sys.stdin)
-print(json.dumps({'t':int(time.time()*1000),'state':d['ingest']['state'],'active':d['ingest']['active'],'scene':d['obs']['scene'],'kbps':d['ingest']['kbps'],'onAir':d['broadcast']['onAir'],'shield':d['broadcast']['shield'],'obs':d['obs']['connected'],'dests':[x['state'] for x in d['broadcast']['destinations']]}))" >> "$OUT/timeline.jsonl"; sleep 1; done ) & LOGGER=$!
+print(json.dumps({'t':int(time.time()*1000),'state':d['ingest']['state'],'active':d['ingest']['active'],'scene':d['obs']['scene'],'kbps':d['ingest']['kbps'],'onAir':d['broadcast']['onAir'],'shield':d['broadcast']['shield'],'obs':d['obs']['connected'],'dests':[x['state'] for x in d['broadcast']['destinations']],'errors':[x['lastError'] for x in d['broadcast']['destinations']]}))" >> "$OUT/timeline.jsonl"; sleep 1; done ) & LOGGER=$!
 
 phone "live/$KEY" "PRIMARY PHONE" 0x2A6F73
 wait_for 'd["obs"]["scene"]' LIVE 40 || exit 1

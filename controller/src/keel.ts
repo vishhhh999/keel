@@ -161,7 +161,8 @@ export class Keel extends EventEmitter {
     this.program?.on('sample', (x) => this.relay?.setInputReady(x.ready));
     if (this.relay) {
       this.relay.on('retry', (d: { id: string; name: string }, wait: number) => {
-        this.emit('log', `${d.name}: connection lost, retrying in ${Math.round(wait / 1000)}s`);
+        const err = this.relay?.status().find((x) => x.id === d.id)?.lastError;
+        this.emit('log', `${d.name}: connection lost, retrying in ${Math.round(wait / 1000)}s${err ? ` (${err})` : ''}`);
         this.stats.record({ t: this.now(), type: 'dest', state: 'retrying', detail: d.name });
         this.alert(`dest-${d.id}`, `${d.name} dropped the connection. Retrying on its own, other platforms are not affected.`);
       });

@@ -81,10 +81,11 @@ export function copyArgs(input: string, url: string): string[] {
   return [
     '-hide_banner', '-loglevel', 'error', '-nostats', '-progress', 'pipe:1',
     '-rw_timeout', '5000000',
-    // Start sending within about a second instead of analysing the input for five.
-    '-analyzeduration', '1000000', '-probesize', '1000000',
+    // Start sending within about two seconds instead of analysing the input for five. Shorter windows
+    // sometimes miss the audio format right after OBS (re)starts, and the copy then fails to start.
+    '-analyzeduration', '2000000', '-probesize', '2000000',
     '-i', input,
-    '-map', '0', '-c', 'copy',
+    '-map', '0:v:0', '-map', '0:a:0?', '-c', 'copy',
     '-f', outFormat(url), url,
   ];
 }
@@ -95,7 +96,8 @@ export function shieldArgs(o: { image: string; fps: number; width: number; heigh
     '-re', '-loop', '1', '-framerate', String(o.fps), '-i', o.image,
     '-f', 'lavfi', '-i', 'anullsrc=channel_layout=stereo:sample_rate=48000',
     '-vf', `scale=${o.width}:${o.height}:force_original_aspect_ratio=decrease,pad=${o.width}:${o.height}:(ow-iw)/2:(oh-ih)/2,format=yuv420p`,
-    '-c:v', 'libx264', '-preset', 'veryfast', '-tune', 'stillimage', '-r', String(o.fps), '-g', String(o.fps * 2),
+    // zerolatency: no lookahead buffering, so the first frame leaves within a fraction of a second.
+    '-c:v', 'libx264', '-preset', 'veryfast', '-tune', 'zerolatency', '-bf', '0', '-r', String(o.fps), '-g', String(o.fps * 2),
     '-b:v', '2500k', '-maxrate', '2500k', '-bufsize', '5000k',
     '-c:a', 'aac', '-b:a', '128k',
     '-f', outFormat(url), url,
