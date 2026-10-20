@@ -1,0 +1,25 @@
+name: Feature request
+description: Something that would stop a stream from failing, or make running one easier.
+title: "[idea] "
+labels: ["idea"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What goes wrong on a real stream today? Who does it hurt, and how often?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What you would like Keel to do
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What you do today instead
+  - type: markdown
+    attributes:
+      value: Check [docs/ROADMAP.md](https://github.com/vishhhh999/keel/blob/main/docs/ROADMAP.md) first. Reliability work comes before features like alerts, clips or overlays.

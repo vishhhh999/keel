@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Try the live demo
+    url: https://keel-web-eta.vercel.app/demo
+    about: The real dashboard on a simulated server. Break it before you file it.
+  - name: Licensing, partnership or acquisition
+    url: https://keel-web-eta.vercel.app/take-it-forward
+    about: Keel is open to acquisition, licensing or partnership. Email work@visheshmahendru.com or DM @vishafterdark on X.
+  - name: Security vulnerability
+    url: https://github.com/vishhhh999/keel/blob/main/docs/SECURITY.md
+    about: Please report security issues privately, not as a public issue.
