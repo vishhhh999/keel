@@ -1,0 +1,31 @@
+Keel
+Copyright (c) 2026 Vishesh Mahendru. All rights reserved.
+
+This repository is published so that streamers, partners and potential acquirers can read,
+evaluate and test Keel. It is not open source.
+
+You may, without asking:
+  1. Read and review the source code, documentation, brand files and website.
+  2. Run Keel privately to evaluate it, for up to 30 days, on infrastructure you control.
+  3. Open issues and pull requests in this repository.
+
+You may not, without written permission from the copyright holder:
+  1. Use Keel, or any part of it, to provide a service to others, paid or free.
+  2. Use Keel for any commercial purpose beyond the evaluation above.
+  3. Redistribute, sublicense or sell Keel or derivative works.
+  4. Use the Keel name, logo or brand for anything other than referring to this project.
+
+Pilot streamers who are given access by the copyright holder may use Keel for their own streams
+for the length of the pilot.
+
+Contributions submitted to this repository are licensed to the copyright holder under these same
+terms and may be included in any future licence or sale of the project.
+
+Third party components (OBS Studio, mediamtx, SRTLA, FFmpeg, Caddy, ws, qrcode-generator) keep
+their own licences. Cabinet Grotesk is used under the Fontshare licence and is not included.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. IN NO EVENT
+SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY ARISING FROM THE
+USE OF THE SOFTWARE.
+
+Licensing, partnership or acquisition: work@visheshmahendru.com or @vishafterdark on X.

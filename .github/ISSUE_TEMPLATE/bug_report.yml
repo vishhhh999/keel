@@ -1,0 +1,56 @@
+name: Bug report
+description: Something in Keel did not work as described.
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Switching (live, weak signal, BRB)
+        - Backup failover
+        - Multistream relay or a destination
+        - Crash shield or auto restart
+        - Dashboard or mobile app
+        - Platform (accounts, servers, billing)
+        - Install or setup
+        - Website or demo
+        - Accessibility
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Start the stack with ...
+        2. ...
+  - type: input
+    id: env
+    attributes:
+      label: Environment
+      placeholder: "Hetzner CPX31, Ubuntu 24.04, commit abc1234, KEEL_OUTPUT_MODE=relay"
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: "`docker compose logs --tail 200 controller obs mediamtx`. Remove stream keys and tokens."
+      render: text
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I removed stream keys, tokens and private data from this report.
+          required: true
+        - label: This is not a security vulnerability (those go to the private channel in docs/SECURITY.md).
+          required: true

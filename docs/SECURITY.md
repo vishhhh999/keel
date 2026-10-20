@@ -1,5 +1,13 @@
 # Security
 
+## Reporting a vulnerability
+
+Please do not open a public issue for security problems. Email **work@visheshmahendru.com** with the subject "Keel security" and include what you found, how to reproduce it, and the impact you expect. You will get a reply within 72 hours. Please give a reasonable time to fix the issue before disclosing it publicly. There is no bug bounty yet; credit in the changelog is offered for valid reports.
+
+In scope: the controller, relay, dashboard and API, the platform service, the install script and the Docker stack. Out of scope: vulnerabilities in third party components (report those upstream), and attacks that need a leaked admin token.
+
+## Hardening status
+
 Written for the first security pass on day 6. This is a checklist, not a certification.
 
 ## What is in place

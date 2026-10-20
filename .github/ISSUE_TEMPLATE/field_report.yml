@@ -1,0 +1,60 @@
+name: Field test report
+description: You streamed through Keel on a real phone. Tell us what happened, good or bad.
+title: "[field] "
+labels: ["field-test"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Real streams are the one thing Keel has not proven yet, so this is the most useful report you can file. Remove stream keys and tokens from anything you paste.
+  - type: input
+    id: phones
+    attributes:
+      label: Encoders
+      description: Phone(s) or devices, app and version, primary and backup if you used one.
+      placeholder: "iPhone 15, Moblin 0.9 (primary); Pixel 8, IRL Pro (backup)"
+    validations:
+      required: true
+  - type: input
+    id: settings
+    attributes:
+      label: Encoder settings
+      placeholder: "SRT, 1080p30, 5 Mbps adaptive, latency 2000 ms"
+    validations:
+      required: true
+  - type: input
+    id: network
+    attributes:
+      label: Network
+      description: Carriers, bonding (SRTLA) or not, moving or still, type of area.
+      placeholder: "Two carriers, SRTLA, car through a city with tunnels"
+    validations:
+      required: true
+  - type: input
+    id: platforms
+    attributes:
+      label: Destinations
+      placeholder: "Twitch and Kick"
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: Each drop or failover, what viewers saw, and what the dashboard showed (round trip, loss, dropped).
+    validations:
+      required: true
+  - type: textarea
+    id: record
+    attributes:
+      label: Reliability record at the end
+      placeholder: "Drops held 7, failovers 2, time on BRB 41s, unexpected stops 0, platform reconnects 1"
+  - type: input
+    id: latency
+    attributes:
+      label: Glass to glass latency, if you measured it
+      placeholder: "About 3.5 s with a phone clock in frame"
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs (optional)
+      description: "`docker compose logs --tail 200 controller` with keys removed."
+      render: text

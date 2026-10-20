@@ -148,4 +148,4 @@ Start with [docs/LAUNCH-WEEK.md](docs/LAUNCH-WEEK.md). Architecture in [docs/ARC
 
 ## License
 
-All rights reserved by the author until agreed otherwise. Third party components (OBS Studio, mediamtx, SRTLA, FFmpeg, Caddy, ws, qrcode-generator) keep their own licenses. Cabinet Grotesk is used under the Fontshare license and is not included in this repo.
+Source available, not open source: see [LICENSE](LICENSE). You can read it, evaluate it privately and contribute; commercial use needs written permission. Also see [contributing](CONTRIBUTING.md), the [code of conduct](CODE_OF_CONDUCT.md), [accessibility](ACCESSIBILITY.md) and [security](docs/SECURITY.md). Third party components (OBS Studio, mediamtx, SRTLA, FFmpeg, Caddy, ws, qrcode-generator) keep their own licenses. Cabinet Grotesk is used under the Fontshare license and is not included in this repo.
